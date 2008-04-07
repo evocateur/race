@@ -1,0 +1,338 @@
+/*
+THEME NAME: Sandbox
+THEME URI: http://www.plaintxt.org/themes/sandbox/
+DESCRIPTION: Rich with powerful and dynamic semantic class selectors, Sandbox is a canvas for CSS artists
+TAGS: widgets, sandbox, microformats, hcard, hatom, xoxo
+VERSION: 1.5.2
+AUTHOR: <a href="http://andy.wordpress.com/">Andy Skelton</a> &amp; <a href="http://www.plaintxt.org/">Scott Allan Wallick</a>
+AUTHOR URI:
+*/
+
+/* reset v1.0 | 20080212 ------------------------------------------------------ */
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after, q:before, q:after {
+	content: '';
+	content: none;
+}
+:focus {
+	outline: 0;
+}
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* Two-column with sidebar on left -------------------------------------------- */
+body {
+	font-size: 1em;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+a {
+	color: green;
+}
+
+div#container {
+	float: right;
+	margin: 0 0 0 -15em;
+	width: 100%;
+}
+div#content {
+	margin: 0 0 0 15em;
+}
+div.sidebar {
+	float: left;
+	width: 13.75em;
+	overflow: hidden;
+}
+div#primary, div#secondary {
+	clear: left;
+}
+div#footer {
+	clear: both;
+	width: 100%;
+}
+
+/* Just some example content */
+div#header {
+/*	text-align: center;*/
+}
+div#access div.skip-link {
+	position: absolute;
+	left: -999em;
+}
+#header h1 {
+	font-size: 2.5em;
+	padding: 0.5em 0 0.5em 4em;
+}
+#header h1 a {
+	text-decoration: none;
+}
+#header #glory {
+	position: absolute;
+	top: 1em;
+	left: 55em;
+}
+#header #blog-description {
+	text-align: center;
+	padding-bottom: 1em;
+	font-size: 1.1em;
+}
+
+/* menu ----------------------------------------------------------------------- */
+div#menu {
+	font-size: 1em;
+	height: 1.5em;
+	padding-top: 0.3em;
+	background: #eee;
+	width: 100%;
+	margin: 0.5em 0;
+}
+div#menu ul a {
+	font-weight: 700;
+	text-decoration: none;
+}
+div#menu ul li {
+	float: left;
+}
+div#menu ul li a {
+	background: #eee;
+	padding: 0.3em 0.5em;
+}
+div#menu ul ul {
+	display: none;
+}
+div#menu ul ul li {
+	float: none;
+}
+div#menu ul ul li a {
+	margin: 0;
+	padding: 0;
+}
+div#menu ul li:hover ul {
+	display: block;
+	font-size: 0.9em;
+	padding-top: 0.5em;
+	position: absolute;
+}
+div#menu ul li:hover ul li a {
+	background: #f5f5f5;
+	border: none;
+	display: block;
+	padding: 0.1em;
+	width: 10em;
+}
+
+/* content -------------------------------------------------------------------- */
+#content {
+	padding-right: 2em;
+}
+#content p {
+	margin: 0.75em 0;
+	line-height: 1.5;
+}
+#content table td {
+	padding: 0.3em 0.5em;
+}
+#content table.zebra tr.alt td {
+	background-color: #ccc;
+}
+.edit-link a {
+	text-decoration: none;
+	border-width: 1px;
+	border-style: solid;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	padding: 3px 4px;
+}
+.entry-title {
+	clear: both;
+	visibility: hidden;
+}
+div#container,div.sidebar {
+/*	margin-top: 2em;*/
+}
+div#nav-above,div#nav-below {
+	display: none;
+	width: 100%;
+	height: 1em;
+}
+div#nav-above {
+	margin-bottom: 1em;
+}
+div#nav-below {
+	margin-top: 1em;
+}
+.alignleft,div.nav-previous {
+	float: left;
+}
+.alignright,div.nav-next {
+	float: right;
+}
+form#commentform .form-label {
+	margin: 1em 0 0;
+}
+form#commentform span.required {
+	background: #fff;
+	color: red;
+}
+form#commentform,form#commentform p {
+	padding: 0;
+}
+input#author,input#email,input#url {
+	width: 50%;
+}
+input#author,input#email,input#url,textarea#comment {
+	padding: 0.2em;
+}
+div.comments ol li {
+	margin: 0 0 3.5em;
+}
+textarea#comment {
+	height: 13em;
+	margin: 0 0 0.5em;
+	overflow: auto;
+	width: 66%;
+}
+
+/* sidebar -------------------------------------------------------------------- */
+div.sidebar h3 {
+	font-size: 1.2em;
+/*	visibility: hidden;*/
+	display: none;
+}
+div.sidebar input#s {
+	width: 7em;
+	margin-left: 2em;
+}
+div.sidebar li {
+	list-style: none;
+	margin: 0.5em 0;
+}
+div.sidebar li form {
+/*	margin: 0.2em 0 0;*/
+}
+div.sidebar ul ul {
+	margin: 0 1.5em;
+}
+div.sidebar ul ul li {
+	list-style: none;
+}
+div.sidebar ul ul ul {
+	margin: 0 0 0 0.5em;
+}
+div.sidebar ul ul ul li {
+	list-style: circle;
+}
+
+div.sidebar li.widget_meta ul {
+	margin: 0 3em;
+}
+div.sidebar li.widget_meta ul li a {
+	text-align:center;
+	text-decoration: none;
+	padding: 3px 4px;
+	display: block;
+	letter-spacing: normal;
+	border-width: 1px;
+	border-style: solid;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#submenu {
+	margin: 0.5em 0 1em 0;
+}
+#submenu ul {
+	border-bottom: 1px solid;
+	margin: 0 0.5em;
+}
+#submenu ul li {
+	margin: 0;
+	border: 1px solid;
+	border-bottom: none;
+}
+#submenu ul li a {
+	text-decoration: none;
+	display: block;
+	font-size: 0.9em;
+	padding: 0.5em 0 0.5em 1em;
+}
+
+/* footer --------------------------------------------------------------------- */
+div#footer {
+	text-align: center;
+	font-size: 0.7em;
+	padding: 1em 0;
+	visibility: hidden;
+}
+
+/* New gallery feature styles; Can't use div.attachment because shortcodes can link to galleries in other posts */
+div.gallery {
+	clear: both;
+	float: left;
+	width: 100%;
+}
+div.gallery dl {
+	float: left;
+	text-align: center;
+}
+div.gallery dl dt {
+	margin: 0;
+}
+div.gallery dl dd {
+	margin-left: 0;
+}
+div.entry-attachment,div.entry-caption {
+	text-align: center;
+}
+div.entry-attachment img,div#nav-images div img {
+	overflow: hidden;
+}
+body.attachment div#nav-images {
+	clear: both;
+	width: 100%;
+}
+body.attachment div#nav-images div {
+	padding: 1em 0;
+	width: 50%;
+}
+body.attachment div#nav-images div.nav-previous {
+	text-align: left;
+}
+body.attachment div#nav-images div.nav-next {
+	text-align: right;
+}
+body.attachment div.entry-meta,body.attachment div#comments {
+	clear: both;
+}
