@@ -58,7 +58,12 @@ body {
 a {
 	color: green;
 }
-
+#wrapper {
+	background-image: url(img/glory.png);
+	background-repeat: no-repeat;
+	background-position: right 0.5em;
+	margin-right: 0.5em;
+}
 div#container {
 	float: right;
 	margin: 0 0 0 -15em;
@@ -82,7 +87,7 @@ div#footer {
 
 /* Just some example content */
 div#header {
-/*	text-align: center;*/
+	
 }
 div#access div.skip-link {
 	position: absolute;
@@ -95,11 +100,6 @@ div#access div.skip-link {
 #header h1 a {
 	text-decoration: none;
 }
-#header #glory {
-	position: absolute;
-	top: 1em;
-	left: 55em;
-}
 #header #blog-description {
 	text-align: center;
 	padding-bottom: 1em;
@@ -110,7 +110,7 @@ div#access div.skip-link {
 div#menu {
 	font-size: 1em;
 	height: 1.5em;
-	padding-top: 0.3em;
+	padding-top: 0.3em 0;
 	background: #eee;
 	width: 100%;
 	margin: 0.5em 0;
@@ -125,7 +125,12 @@ div#menu ul li {
 div#menu ul li a {
 	background: #eee;
 	padding: 0.3em 0.5em;
+	border-right: 1px solid;
+	line-height: 1.5;
+/*	display: block;*/
+/*	outline: 1px solid red;*/
 }
+/*
 div#menu ul ul {
 	display: none;
 }
@@ -149,10 +154,10 @@ div#menu ul li:hover ul li a {
 	padding: 0.1em;
 	width: 10em;
 }
-
+*/
 /* content -------------------------------------------------------------------- */
 #content {
-	padding-right: 2em;
+	padding-right: 10em; /* this will break horribly at 800x600... FIXME */
 }
 #content p {
 	margin: 0.75em 0;
@@ -163,6 +168,10 @@ div#menu ul li:hover ul li a {
 }
 #content table.zebra tr.alt td {
 	background-color: #ccc;
+}
+.edit-link {
+	display: block;
+	margin-top: 1em;
 }
 .edit-link a {
 	text-decoration: none;
@@ -272,7 +281,7 @@ div.sidebar li.widget_meta ul li a {
 }
 
 #submenu {
-	margin: 0.5em 0 1em 0;
+	margin: 0.25em 0 1.2em 0;
 }
 #submenu ul {
 	border-bottom: 1px solid;
