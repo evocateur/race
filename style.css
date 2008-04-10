@@ -2,7 +2,7 @@
 THEME NAME: RACE Charities
 THEME URI: http://danielstockman.com/race/
 DESCRIPTION: CMS-lite theme for RACE Charities
-VERSION: 0.1
+VERSION: 0.2
 AUTHOR: Daniel Stockman
 AUTHOR Uri: http://evocateur.org/
 TAGS: two columns, green, cms
@@ -59,17 +59,17 @@ a {
 	color: green;
 }
 #wrapper {
-	background-image: url(../../uploads/2008/04/glory.png);
+	background-image: url(../../uploads/2008/04/glory.png); /* EDIT ME */
 	background-repeat: no-repeat;
 	background-position: right 0.5em;
 	margin-right: 0.5em;
 }
-div#container {
+#container {
 	float: right;
 	margin: 0 0 0 -15em;
 	width: 100%;
 }
-div#content {
+#content {
 	margin: 0 0 0 15em;
 }
 div.sidebar {
@@ -77,19 +77,19 @@ div.sidebar {
 	width: 13.75em;
 	overflow: hidden;
 }
-div#primary, div#secondary {
+#primary, #secondary {
 	clear: left;
 }
-div#footer {
+#footer {
 	clear: both;
 	width: 100%;
 }
 
 /* Just some example content */
-div#header {
+#header {
 	
 }
-div#access div.skip-link {
+#access div.skip-link {
 	position: absolute;
 	left: -999em;
 }
@@ -107,16 +107,16 @@ div#access div.skip-link {
 }
 
 /* menu ----------------------------------------------------------------------- */
-div#menu {
+#menu {
 	font-size: 1em;
 	height: 1.75em;
 	width: 100%;
 	margin: 0.5em 0 0.75em;
 }
-div#menu ul li {
+#menu ul li {
 	float: left;
 }
-div#menu ul li a {
+#menu ul li a {
 	font-weight: 700;
 	text-decoration: none;
 /*	background: #eee;*/
@@ -125,7 +125,7 @@ div#menu ul li a {
 	line-height: 1;
 	display: block;
 }
-div#menu ul ul {
+#menu ul ul {
 	display: none;
 }
 
@@ -161,18 +161,18 @@ div#menu ul ul {
 	clear: both;
 	visibility: hidden;
 }
-div#container,div.sidebar {
+#container,div.sidebar {
 /*	margin-top: 2em;*/
 }
-div#nav-above,div#nav-below {
+#nav-above,#nav-below {
 	display: none;
 	width: 100%;
 	height: 1em;
 }
-div#nav-above {
+#nav-above {
 	margin-bottom: 1em;
 }
-div#nav-below {
+#nav-below {
 	margin-top: 1em;
 }
 .alignleft,div.nav-previous {
@@ -245,6 +245,7 @@ div.sidebar li.widget_meta ul li a {
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	font-size: 0.8em;
+	border-color: green;
 }
 
 /* submenu widget */
@@ -257,8 +258,11 @@ div.sidebar li.widget_meta ul li a {
 }
 #submenu ul li {
 	margin: 0;
-	border: 1px solid;
-	border-bottom: none;
+	border-top: 1px solid;
+}
+#submenu ul,
+#submenu ul li {
+	border-color: green;
 }
 #submenu ul li a {
 	text-decoration: none;
@@ -268,14 +272,16 @@ div.sidebar li.widget_meta ul li a {
 }
 
 /* menu colors */
+li.widget_meta ul li a,
 ul li.current_page_item a,
 ul li.current_page_parent a {
 	background: green;
 	color: white;
 }
 
+
 /* footer --------------------------------------------------------------------- */
-div#footer {
+#footer {
 	text-align: center;
 	font-size: 0.7em;
 	padding: 1em 0;
