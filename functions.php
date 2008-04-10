@@ -1,18 +1,5 @@
 <?php
 
-function race_globalnav() {
-	$options_wp_list = 'title_li=&sort_column=menu_order&echo=0&depth=1';
-	
-	if ( get_option('show_on_front') == 'page' )
-	    $options_wp_list .= '&exclude=' . get_option('page_on_front');
-	
-	$menu = wp_list_pages($options_wp_list); // Params for the page list in header.php
-	
-	echo '<div id="menu"><ul>';
-	echo str_replace( array( "\r", "\n", "\t" ), '', $menu );
-	echo "</ul></div>\n";
-}
-
 function widget_race_submenu($args) {
 	extract($args);
 	
