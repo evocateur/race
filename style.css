@@ -59,7 +59,7 @@ a {
 	color: green;
 }
 #wrapper {
-	background-image: url(img/glory.png);
+	background-image: url(../../uploads/2008/04/glory.png);
 	background-repeat: no-repeat;
 	background-position: right 0.5em;
 	margin-right: 0.5em;
@@ -109,52 +109,26 @@ div#access div.skip-link {
 /* menu ----------------------------------------------------------------------- */
 div#menu {
 	font-size: 1em;
-	height: 1.5em;
-	padding-top: 0.3em 0;
-	background: #eee;
+	height: 1.75em;
 	width: 100%;
-	margin: 0.5em 0;
-}
-div#menu ul a {
-	font-weight: 700;
-	text-decoration: none;
+	margin: 0.5em 0 0.75em;
 }
 div#menu ul li {
 	float: left;
 }
 div#menu ul li a {
-	background: #eee;
-	padding: 0.3em 0.5em;
+	font-weight: 700;
+	text-decoration: none;
+/*	background: #eee;*/
+	padding: 0.4em 0.5em;
 	border-right: 1px solid;
-	line-height: 1.5;
-/*	display: block;*/
-/*	outline: 1px solid red;*/
+	line-height: 1;
+	display: block;
 }
 div#menu ul ul {
 	display: none;
 }
-/*
-div#menu ul ul li {
-	float: none;
-}
-div#menu ul ul li a {
-	margin: 0;
-	padding: 0;
-}
-div#menu ul li:hover ul {
-	display: block;
-	font-size: 0.9em;
-	padding-top: 0.5em;
-	position: absolute;
-}
-div#menu ul li:hover ul li a {
-	background: #f5f5f5;
-	border: none;
-	display: block;
-	padding: 0.1em;
-	width: 10em;
-}
-*/
+
 /* content -------------------------------------------------------------------- */
 #content {
 	padding-right: 10em; /* this will break horribly at 800x600... FIXME */
@@ -253,18 +227,10 @@ div.sidebar li form {
 div.sidebar ul ul {
 	margin: 0 1.5em;
 }
-div.sidebar ul ul li {
-	list-style: none;
-}
-div.sidebar ul ul ul {
-	margin: 0 0 0 0.5em;
-}
-div.sidebar ul ul ul li {
-	list-style: circle;
-}
 
+/* meta widget */
 div.sidebar li.widget_meta ul {
-	margin: 0 3em;
+	margin: 0 4em;
 }
 div.sidebar li.widget_meta ul li a {
 	text-align:center;
@@ -278,10 +244,12 @@ div.sidebar li.widget_meta ul li a {
 	-khtml-border-radius: 3px;
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
+	font-size: 0.8em;
 }
 
+/* submenu widget */
 #submenu {
-	margin: 0.25em 0 1.2em 0;
+	margin: 0.8em 0 1.2em 0;
 }
 #submenu ul {
 	border-bottom: 1px solid;
@@ -299,6 +267,13 @@ div.sidebar li.widget_meta ul li a {
 	padding: 0.5em 0 0.5em 1em;
 }
 
+/* menu colors */
+ul li.current_page_item a,
+ul li.current_page_parent a {
+	background: green;
+	color: white;
+}
+
 /* footer --------------------------------------------------------------------- */
 div#footer {
 	text-align: center;
@@ -307,7 +282,9 @@ div#footer {
 	visibility: hidden;
 }
 
-/* New gallery feature styles; Can't use div.attachment because shortcodes can link to galleries in other posts */
+/* New gallery feature styles
+	Can't use div.attachment because shortcodes can link to galleries in other posts 
+*/
 div.gallery {
 	clear: both;
 	float: left;
