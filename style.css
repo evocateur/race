@@ -50,47 +50,52 @@ table {
 	border-spacing: 0;
 }
 
-/* Two-column with sidebar on left -------------------------------------------- */
+/* layout --------------------------------------------------------------------- */
 body {
 	font-size: 1em;
 	font-family: "Helvetica Neue", Helvetica, sans-serif;
 	background-image: url(../../uploads/2008/04/bglogo.png); /* EDIT ME */
 	background-repeat: no-repeat;
-	background-position: 0.25em 0;
-}
-a {
-	color: green;
+	background-position: 4px 0;
 }
 #wrapper {
 	background-image: url(../../uploads/2008/04/glory.png); /* EDIT ME */
 	background-repeat: no-repeat;
-	background-position: right 0.5em;
-	margin-right: 0.5em;
+	background-position: right 4px;
+	margin-right: 4px;
 }
+
+/* 3 column sidebars on both sides -------------------------------------------- */
 #container {
-	float: right;
-	margin: 0 0 0 -15em;
+	float: left;
 	width: 100%;
 }
 #content {
-	margin: 0 0 0 15em;
+	margin: 0 190px;
 }
 div.sidebar {
 	float: left;
-	width: 13.75em;
 	overflow: hidden;
+	width: 180px;
 }
-#primary, #secondary {
+#primary {
+	margin: 0 0 0 -100%;
+}
+* html #primary {
+	left: 10px;
+	position: relative;
+}
+#secondary {
+	margin: 0 0 0 -180px;
+}
+#footer { 
 	clear: left;
-}
-#footer {
-	clear: both;
 	width: 100%;
 }
 
-/* Just some example content */
+/* header --------------------------------------------------------------------- */
 #header {
-	
+	height: 128px;
 }
 #access div.skip-link {
 	position: absolute;
@@ -133,7 +138,7 @@ div.sidebar {
 
 /* content -------------------------------------------------------------------- */
 #content {
-	padding-right: 10em; /* this will break horribly at 800x600... FIXME */
+	
 }
 #content p {
 	margin: 0.75em 0;
@@ -227,12 +232,12 @@ div.sidebar li form {
 /*	margin: 0.2em 0 0;*/
 }
 div.sidebar ul ul {
-	margin: 0 1.5em;
+/*	margin: 0 1.5em;*/
 }
 
 /* meta widget */
 div.sidebar li.widget_meta ul {
-	margin: 0 4em;
+	margin: 0 40px;
 }
 div.sidebar li.widget_meta ul li a {
 	text-align:center;
@@ -270,7 +275,18 @@ div.sidebar li.widget_meta ul li a {
 	text-decoration: none;
 	display: block;
 	font-size: 0.9em;
-	padding: 0.5em 0 0.5em 1em;
+	padding: 0.5em 0 0.5em 5px;
+}
+
+#sidegallery ul li {
+	text-align: center;
+	font-size: 0.8em;
+	margin: 1em 0;
+}
+#sidegallery ul li img {
+	display: block;
+	margin: 0 auto 0.25em;
+	max-width: 100%;
 }
 
 /* ============ Colors ============ */
@@ -287,6 +303,10 @@ div.sidebar li.widget_meta ul li a {
 	FFBFDC   "bubble"  soft light pink (black)
 	FF80B8   "pepto"   healthy pink
 */
+a {
+	color: green;
+}
+
 /* menu colors */
 li.widget_meta ul li a,
 ul li.current_page_item a,
