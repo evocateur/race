@@ -54,12 +54,12 @@ table {
 body {
 	font-size: 1em;
 	font-family: "Helvetica Neue", Helvetica, sans-serif;
-	background-image: url(../../uploads/2008/04/bglogo.png); /* EDIT ME */
+	background-image: url(logobg.png);
 	background-repeat: no-repeat;
 	background-position: 4px 0;
 }
 #wrapper {
-	background-image: url(../../uploads/2008/04/glory.png); /* EDIT ME */
+	background-image: url(glorybg.png);
 	background-repeat: no-repeat;
 	background-position: right 4px;
 	margin-right: 4px;
