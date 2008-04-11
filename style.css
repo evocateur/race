@@ -54,6 +54,9 @@ table {
 body {
 	font-size: 1em;
 	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	background-image: url(../../uploads/2008/04/bglogo.png); /* EDIT ME */
+	background-repeat: no-repeat;
+	background-position: 0.25em 0;
 }
 a {
 	color: green;
@@ -119,10 +122,9 @@ div.sidebar {
 #menu ul li a {
 	font-weight: 700;
 	text-decoration: none;
-/*	background: #eee;*/
-	padding: 0.4em 0.5em;
+	padding: 0.3em 0.5em;
 	border-right: 1px solid;
-	line-height: 1;
+	line-height: 1.5;
 	display: block;
 }
 #menu ul ul {
@@ -271,6 +273,20 @@ div.sidebar li.widget_meta ul li a {
 	padding: 0.5em 0 0.5em 1em;
 }
 
+/* ============ Colors ============ */
+/*
+	Green & Pink:  http://tinyurl.com/6rrwr9
+	
+	33FF00   "lime"    current highlight  (black)
+	24B300   "dark"    unselected default (white)
+	CCFFBF   "tan"     very light greenish tan (black)
+	99FF80   "mint"    soft light green, accent/block (black)
+	
+	E60066   "barbie"  very pink (white)
+	A10048   "cherry"  deep reddish pink (white)
+	FFBFDC   "bubble"  soft light pink (black)
+	FF80B8   "pepto"   healthy pink
+*/
 /* menu colors */
 li.widget_meta ul li a,
 ul li.current_page_item a,
