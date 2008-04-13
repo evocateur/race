@@ -1,12 +1,9 @@
-// jQuery suckerfish
 (function($) {
-	/*if ($.browser.msie) $(function() {
-		$('#nav li').hover(
-			function() { $(this).addClass('hover'); },
-			function() { $(this).removeClass('hover'); }
-		);
-	});*/
 	$(function() {
+		$('.gallery-item a').facebox({
+			loadingImage: WP_THEME_ROOT + '/facebox/loading.gif',
+			closeImage:   WP_THEME_ROOT + '/facebox/closelabel.gif'
+		});
 		$('table.zebra tr:odd').addClass('alt');
 	});
 })(jQuery);
