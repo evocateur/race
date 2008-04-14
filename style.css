@@ -2,7 +2,7 @@
 THEME NAME: RACE Charities
 THEME URI: http://danielstockman.com/race/
 DESCRIPTION: CMS-lite theme for RACE Charities
-VERSION: 0.2
+VERSION: 0.3
 AUTHOR: Daniel Stockman
 AUTHOR Uri: http://evocateur.org/
 TAGS: two columns, green, cms
@@ -65,7 +65,7 @@ body {
 	margin-right: 4px;
 }
 
-/* 3 column sidebars on both sides -------------------------------------------- */
+/* 3 column sidebars on both sides */
 #container {
 	float: left;
 	width: 100%;
@@ -88,7 +88,7 @@ div.sidebar {
 #secondary {
 	margin: 0 0 0 -180px;
 }
-#footer { 
+#footer {
 	clear: left;
 	width: 100%;
 }
@@ -102,8 +102,9 @@ div.sidebar {
 	left: -999em;
 }
 #header h1 {
-	font-size: 2.5em;
-	padding: 0.5em 0 0.5em 4em;
+	font-size: 3em;
+	margin-top: 0;
+	padding: 16px 0;
 }
 #header h1 a {
 	text-decoration: none;
@@ -138,7 +139,7 @@ div.sidebar {
 
 /* content -------------------------------------------------------------------- */
 #content {
-	
+	font-size: 0.8em;
 }
 #content p {
 	margin: 0.75em 0;
@@ -166,7 +167,8 @@ div.sidebar {
 }
 .entry-title {
 	clear: both;
-	visibility: hidden;
+/*	visibility: hidden;*/
+	display: none;
 }
 #container,div.sidebar {
 /*	margin-top: 2em;*/
@@ -236,10 +238,14 @@ div.sidebar ul ul {
 }
 
 /* meta widget */
-div.sidebar li.widget_meta ul {
+#meta ul {
 	margin: 0 40px;
+	/* push administrivia away from submenu */
+	position: absolute;
+	bottom: 16px;
+	left: 16px;
 }
-div.sidebar li.widget_meta ul li a {
+#meta ul li a {
 	text-align:center;
 	text-decoration: none;
 	padding: 3px 4px;
@@ -267,10 +273,6 @@ div.sidebar li.widget_meta ul li a {
 	margin: 0;
 	border-top: 1px solid;
 }
-#submenu ul,
-#submenu ul li {
-	border-color: green;
-}
 #submenu ul li a {
 	text-decoration: none;
 	display: block;
@@ -289,6 +291,14 @@ div.sidebar li.widget_meta ul li a {
 	max-width: 100%;
 }
 
+/* footer --------------------------------------------------------------------- */
+#footer {
+	text-align: center;
+	font-size: 0.7em;
+	padding: 1em 0;
+	visibility: hidden;
+}
+
 /* ============ Colors ============ */
 /*
 	Green & Pink:  http://tinyurl.com/6rrwr9
@@ -303,25 +313,79 @@ div.sidebar li.widget_meta ul li a {
 	FFBFDC   "bubble"  soft light pink (black)
 	FF80B8   "pepto"   healthy pink
 */
-a {
-	color: green;
+a:link, h1 a:visited, .edit-link a {
+	color: #24B300; /* dark */
+}
+
+.edit-link a:focus,
+.edit-link a:hover,
+.edit-link a:active {
+	color: #fff;
+	background:   #24B300; /* dark */
+	border-color: #24B300; /* dark */
+}
+#submenu ul,
+#submenu ul li {
+	border-color: #99FF80; /* mint */
 }
 
 /* menu colors */
-li.widget_meta ul li a,
-ul li.current_page_item a,
-ul li.current_page_parent a {
-	background: green;
-	color: white;
+ul li.page_item a {
+	color: #CCFFBF; /* tan */
+	background: #24B300; /* dark */
+	border-color: #fff;
 }
 
+ul li.current_page_item a:link,
+ul li.current_page_item a:visited,
+ul li.current_page_item a:hover,
+ul li.current_page_item a:active {
+	color: #000;
+	background: #CCFFBF; /* tan */
+	border-color: #fff;
+}
 
-/* footer --------------------------------------------------------------------- */
-#footer {
-	text-align: center;
-	font-size: 0.7em;
-	padding: 1em 0;
-	visibility: hidden;
+ul li.current_page_parent a:link,
+ul li.current_page_parent a:visited,
+ul li.current_page_parent a:hover,
+ul li.current_page_parent a:active {
+	color: #333; /* dark grey */
+	background: #99FF80; /* mint */
+	border-color: #fff;
+}
+
+ul li.page_item a:focus,
+li.page_item a:hover,
+li.page_item a:active {
+	color: #fff;
+	background: #33FF00; /* lime */
+}
+
+#meta ul li a {
+	color: #eee; /* light grey */
+	background:   #24B300; /* dark */
+	border-color: #24B300; /* dark */
+}
+#meta ul li a:focus,
+#meta ul li a:hover,
+#meta ul li a:active {
+	color: #fff;
+	background:   #33FF00; /* lime */
+	border-color: #33FF00; /* lime */
+}
+
+/* typography ----------------------------------------------------------------- */
+
+blockquote {
+	margin: 0.5em 3.5em 0.5em 2em;
+	padding: 0 1em;
+	border: 2px solid #99FF80; /* mint */
+	border-left-width: 1.5em;
+	background: #CCFFBF; /* ta */
+}
+blockquote cite {
+	display: block;
+	text-align: right;
 }
 
 /* New gallery feature styles
