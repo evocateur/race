@@ -54,12 +54,12 @@ table {
 body {
 	font-size: 1em;
 	font-family: "Helvetica Neue", Helvetica, sans-serif;
-	background-image: url(logobg.png);
+	background-image: url(images/logobg.png);
 	background-repeat: no-repeat;
 	background-position: 4px 0;
 }
 #wrapper {
-	background-image: url(glorybg.png);
+	background-image: url(images/glorybg.png);
 	background-repeat: no-repeat;
 	background-position: right 4px;
 	margin-right: 4px;
