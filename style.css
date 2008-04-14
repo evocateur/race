@@ -54,15 +54,6 @@ table {
 body {
 	font-size: 1em;
 	font-family: "Helvetica Neue", Helvetica, sans-serif;
-	background-image: url(images/logobg.png);
-	background-repeat: no-repeat;
-	background-position: 4px 0;
-}
-#wrapper {
-	background-image: url(images/glorybg.png);
-	background-repeat: no-repeat;
-	background-position: right 4px;
-	margin-right: 4px;
 }
 
 /* 3 column sidebars on both sides */
@@ -93,9 +84,36 @@ div.sidebar {
 	width: 100%;
 }
 
+/* headings ------------------------------------------------------------------- */
+h1, h2 {
+	text-align: center;
+}
+h1 { font-size: 3.0em; margin-top: 0.33em; }
+h2 { font-size: 2.0em; margin-top: 0.50em; }
+h3 { font-size: 1.5em; margin-top: 0.75em; }
+h4 { font-size: 1.2em; margin-top: 0.87em; }
+h5 { font-size: 1.0em; margin-top: 0.99em; }
+
+/* hide front page content title */
+body.home #content h2.entry-title {
+	display: none;
+}
+
+/* backgrounds ---------------------------------------------------------------- */
+
+#wrapper {
+	background-image: url(images/glorybg.png);
+	background-repeat: no-repeat;
+	background-position: right 4px;
+	margin-right: 4px;
+}
+
 /* header --------------------------------------------------------------------- */
 #header {
 	height: 128px;
+	background-image: url(images/logobg.png);
+	background-repeat: no-repeat;
+	background-position: 4px 0;
 }
 #access div.skip-link {
 	position: absolute;
