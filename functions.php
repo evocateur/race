@@ -99,6 +99,8 @@ function race_widget_init() {
 	wp_register_sidebar_widget('sidegallery', 'Page Gallery', 'widget_race_gallery', $widget_ops);
 }
 
+add_action('widgets_init', 'race_widget_init');
+
 // theme utilities =============================
 function race_header() {
 	$root = get_bloginfo('stylesheet_directory');
@@ -113,8 +115,15 @@ HTML;
 	wp_enqueue_script('race', "{$root}/util.js", array('facebox'));
 }
 
-add_action('widgets_init', 'race_widget_init');
-
 add_action('wp_print_scripts', 'race_header');
 
+function race_footer() {
+	$root = get_bloginfo('stylesheet_directory');
+	
+	echo <<<HTML
+<img src="{$root}/images/glorybg.png" id="glory" alt="Glory Gensch" />\n
+HTML;
+}
+
+add_action('get_footer', 'race_footer');
 ?>

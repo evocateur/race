@@ -98,22 +98,36 @@ h5 { font-size: 1.0em; margin-top: 0.99em; }
 body.home #content h2.entry-title {
 	display: none;
 }
+.entry-title {
+	clear: both;
+/*	visibility: hidden;*/
+	display: none;
+}
 
 /* backgrounds ---------------------------------------------------------------- */
-
+body {
+	background-image: url(images/bg.png);
+	background-repeat: repeat-y;
+	background-position: left top;
+}
 #wrapper {
-	background-image: url(images/glorybg.png);
+/*	background-image: url(images/glorybg.png);
 	background-repeat: no-repeat;
-	background-position: right 4px;
-	margin-right: 4px;
+	background-position: right top;*/
+}
+#glory {
+	position: absolute;
+	top: 0;
+	right: 0;
 }
 
 /* header --------------------------------------------------------------------- */
 #header {
-	height: 128px;
-	background-image: url(images/logobg.png);
+	height: 138px;
+	background-image: url(images/fflogo.png);
 	background-repeat: no-repeat;
-	background-position: 4px 0;
+	background-position: 20px 0;
+	background-color: #98FF80;
 }
 #access div.skip-link {
 	position: absolute;
@@ -126,19 +140,41 @@ body.home #content h2.entry-title {
 }
 #header h1 a {
 	text-decoration: none;
+	display: block;
 }
 #header #blog-description {
 	text-align: center;
 	padding-bottom: 1em;
 	font-size: 1.1em;
 }
+#header #blog-description span.acro {
+	color: #1F9900;
+	font-weight: bold;
+}
 
 /* menu ----------------------------------------------------------------------- */
+#access {
+/*	float: left;
+	padding-right: 1.25em;
+	background-image: url(images/bgleft.png);
+	background-position: -90px top;*/
+}
 #menu {
 	font-size: 1em;
 	height: 1.75em;
 	width: 100%;
-	margin: 0.5em 0 0.75em;
+/*	margin-right: -1em;
+	padding-right: 1em;
+	background-image: url(images/bgleft.png);
+	background-position: left top;*/
+/*	margin: 0.5em 0 0.75em;*/
+/*	background-color: white;*/
+}
+#menu ul {
+	float: left;
+/*	padding-left:1em;
+	background-image: url(images/bgright.png);
+	background-position: left top;*/
 }
 #menu ul li {
 	float: left;
@@ -146,7 +182,7 @@ body.home #content h2.entry-title {
 #menu ul li a {
 	font-weight: 700;
 	text-decoration: none;
-	padding: 0.3em 0.5em;
+	padding: 0.15em 0.5em;
 	border-right: 1px solid;
 	line-height: 1.5;
 	display: block;
@@ -159,15 +195,23 @@ body.home #content h2.entry-title {
 #content {
 	font-size: 0.8em;
 }
+#content h2,
+#content h3 {
+	color: #247300;
+}
 #content p {
 	margin: 0.75em 0;
 	line-height: 1.5;
 }
 #content table td {
-	padding: 0.3em 0.5em;
+	padding: 0.4em 0.6em;
 }
+/* zebra-striped table rows */
 #content table.zebra tr.alt td {
 	background-color: #ccc;
+}
+#content table.zebra {
+	border: 1px solid #aaa;
 }
 .edit-link {
 	display: block;
@@ -182,14 +226,6 @@ body.home #content h2.entry-title {
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	padding: 3px 4px;
-}
-.entry-title {
-	clear: both;
-/*	visibility: hidden;*/
-	display: none;
-}
-#container,div.sidebar {
-/*	margin-top: 2em;*/
 }
 #nav-above,#nav-below {
 	display: none;
@@ -257,7 +293,7 @@ div.sidebar ul ul {
 
 /* meta widget */
 #meta ul {
-	margin: 0 40px;
+	margin: 0 auto 0 25px;
 	/* push administrivia away from submenu */
 	position: absolute;
 	bottom: 16px;
@@ -277,6 +313,7 @@ div.sidebar ul ul {
 	border-radius: 3px;
 	font-size: 0.8em;
 	border-color: green;
+	width: 80px;
 }
 
 /* submenu widget */
@@ -285,7 +322,7 @@ div.sidebar ul ul {
 }
 #submenu ul {
 	border-bottom: 1px solid;
-	margin: 0 0.5em;
+	margin: 0 0.35em;
 }
 #submenu ul li {
 	margin: 0;
@@ -332,7 +369,8 @@ div.sidebar ul ul {
 	FF80B8   "pepto"   healthy pink
 */
 a:link, h1 a:visited, .edit-link a {
-	color: #24B300; /* dark */
+	color: #1F9900; /* dark */
+	text-decoration: none;
 }
 
 .edit-link a:focus,
@@ -358,9 +396,8 @@ ul li.current_page_item a:link,
 ul li.current_page_item a:visited,
 ul li.current_page_item a:hover,
 ul li.current_page_item a:active {
-	color: #000;
-	background: #CCFFBF; /* tan */
-	border-color: #fff;
+	color: #fff;
+	background: #33FF00; /* lime */
 }
 
 ul li.current_page_parent a:link,
@@ -368,7 +405,7 @@ ul li.current_page_parent a:visited,
 ul li.current_page_parent a:hover,
 ul li.current_page_parent a:active {
 	color: #333; /* dark grey */
-	background: #99FF80; /* mint */
+	background: #CCFFBF; /* tan */
 	border-color: #fff;
 }
 
