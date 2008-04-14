@@ -72,10 +72,6 @@ div.sidebar {
 #primary {
 	margin: 0 0 0 -100%;
 }
-* html #primary {
-	left: 10px;
-	position: relative;
-}
 #secondary {
 	margin: 0 0 0 -180px;
 }
