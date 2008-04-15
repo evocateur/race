@@ -103,16 +103,7 @@ add_action('widgets_init', 'race_widget_init');
 
 // theme utilities =============================
 function race_header() {
-	$root = get_bloginfo('stylesheet_directory');
-
-	echo <<<HTML
-<link rel="stylesheet" type="text/css" href="{$root}/facebox/facebox.css" />
-<script type="text/javascript">WP_THEME_ROOT = '{$root}';</script>\n
-HTML;
-
-	wp_register_script('facebox', "{$root}/facebox/facebox.js", array('jquery'), '1.2');
-
-	wp_enqueue_script('race', "{$root}/util.js", array('facebox'));
+	wp_enqueue_script('race', get_bloginfo('stylesheet_directory') . "/util.js", array('facebox'));
 }
 
 add_action('wp_print_scripts', 'race_header');
