@@ -103,7 +103,7 @@ add_action('widgets_init', 'race_widget_init');
 
 // theme utilities =============================
 function race_header() {
-	wp_enqueue_script('race', get_bloginfo('stylesheet_directory') . "/util.js", array('facebox'));
+	wp_enqueue_script('race', get_bloginfo('stylesheet_directory') . "/util.js", array('jquery'));
 }
 
 add_action('wp_print_scripts', 'race_header');
