@@ -112,7 +112,7 @@ function race_footer() {
 	$root = get_bloginfo('stylesheet_directory');
 	
 	echo <<<HTML
-\n\t<img src="{$root}/images/glorybg.png" id="glory" alt="Glory Gensch" />\n
+\n<img src="{$root}/images/glorybg.png" id="glory" alt="Glory Gensch" />\n
 HTML;
 }
 

@@ -99,7 +99,7 @@ h2.entry-title {
 #glory {
 	position: absolute;
 	top: 0;
-	right: 0;
+	right: 16px;
 	z-index: 999;
 }
 
