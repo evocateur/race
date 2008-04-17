@@ -168,9 +168,6 @@ h2.entry-title {
 #content {
 	font-size: 0.8em;
 	min-height: 15em;
-	height: auto !important;
-	height: 20em;
-	/* min-height fast hack */
 }
 #content h2,
 #content h3 {
