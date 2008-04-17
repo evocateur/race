@@ -60,6 +60,7 @@ body {
 #container {
 	float: left;
 	width: 100%;
+	background-color: #fff;
 }
 #content {
 	margin: 0 190px;
@@ -78,6 +79,13 @@ div.sidebar {
 #footer {
 	clear: left;
 	width: 100%;
+	background-color: #fff;
+}
+#wrapper {
+	background-image: url(images/glorybg.png);
+	background-repeat: no-repeat;
+	background-position: right top;
+	background-color: #98FF80;
 }
 
 /* headings ------------------------------------------------------------------- */
@@ -95,21 +103,12 @@ h2.entry-title {
 	display: none;
 }
 
-/* upper right picture of Glory */
-#glory {
-	position: absolute;
-	top: 0;
-	right: 16px;
-	z-index: 999;
-}
-
 /* header --------------------------------------------------------------------- */
 #header {
 	height: 138px;
 	background-image: url(images/fight_logo.png);
 	background-repeat: no-repeat;
 	background-position: 20px 0;
-	background-color: #98FF80;
 }
 #access div.skip-link {
 	position: absolute;
@@ -145,6 +144,7 @@ h2.entry-title {
 	font-size: 1em;
 	height: 1.75em;
 	width: 100%;
+	background-color: #98FF80;
 }
 #menu ul {
 	float: left;
@@ -167,6 +167,10 @@ h2.entry-title {
 /* content -------------------------------------------------------------------- */
 #content {
 	font-size: 0.8em;
+	min-height: 15em;
+	height: auto !important;
+	height: 20em;
+	/* min-height fast hack */
 }
 #content h2,
 #content h3 {
@@ -188,7 +192,7 @@ h2.entry-title {
 }
 .edit-link {
 	display: block;
-	margin-top: 1em;
+	margin: 1em 0;
 }
 .edit-link a {
 	text-decoration: none;
@@ -258,9 +262,6 @@ div.sidebar li {
 	list-style: none;
 	margin: 0.5em 0;
 }
-div.sidebar li form {
-/*	margin: 0.2em 0 0;*/
-}
 
 /* meta widget */
 #meta ul {
@@ -303,7 +304,7 @@ div.sidebar li form {
 	text-decoration: none;
 	display: block;
 	font-size: 0.9em;
-	padding: 0.5em 0 0.5em 5px;
+	padding: 0.55em 0 0.55em 5px;
 }
 
 #sidegallery ul li {
@@ -322,7 +323,6 @@ div.sidebar li form {
 	text-align: center;
 	font-size: 0.7em;
 	padding: 1em 0;
-	visibility: hidden;
 }
 
 /* ============ Colors ============ */

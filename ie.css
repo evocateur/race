@@ -1,0 +1,14 @@
+#submenu ul {
+	margin-top: -1.1em;
+	border-bottom: 0;
+}
+#submenu ul li {
+	border-top: 0;
+	width: 100%;
+}
+#submenu ul li a {
+	float: left;
+	clear: left;
+	width: 99%;
+	padding: 0.5em 0 0.5em 5px;
+}
