@@ -256,7 +256,7 @@ function race_template_hijack() {
 	$uri .= $_SERVER['REQUEST_URI'];
 
 	if ($uri == trailingslashit(get_option('siteurl'))) {
-		include(STYLESHEETPATH . '/front.php');
+		include(STYLESHEETPATH . '/root.php');
 		exit;
 	}
 }
