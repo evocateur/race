@@ -14,6 +14,9 @@ function build_race_gallery() {
 	// i love the smell of code duplication in the morning
 	global $post;
 
+	if ( is_front_page() )
+		return false;
+
 	extract(array(
 		'orderby'    => 'menu_order ASC, ID ASC',
 		'id'         => $post->ID,
@@ -180,6 +183,7 @@ function race_template_hijack() {
 		exit;
 	}
 }
+
 add_action( 'template_redirect', 'race_template_hijack' );
 
 ?>
