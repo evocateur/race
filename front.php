@@ -24,10 +24,5 @@
 
 	</div><!-- #container -->
 
-<div id="spotlight" class="sidebar">
-	<h3>In the Spotlight</h3>
-<?php race_front_meta('spotlight'); ?>
-</div><!-- #spotlight -->
-
 <?php get_sidebar() ?>
 <?php get_footer() ?>
