@@ -76,7 +76,7 @@ div.sidebar {
 #secondary {
 	margin: 0 0 0 -180px;
 }
-#footer {
+#footer, #meta-footer {
 	clear: left;
 	width: 100%;
 	background-color: #fff;
@@ -89,9 +89,7 @@ div.sidebar {
 }
 
 /* headings ------------------------------------------------------------------- */
-h1, h2 {
-	text-align: center;
-}
+h1, h2 { text-align: center; }
 h1 { font-size: 3.0em; margin-top: 0.33em; }
 h2 { font-size: 2.0em; margin-top: 0.50em; }
 h3 { font-size: 1.5em; margin-top: 0.75em; }
@@ -130,9 +128,14 @@ h2.entry-title {
 }
 #header #blog-description {
 	text-align: center;
-	padding-bottom: 1em;
+	/*padding-bottom: 1em;*/
+	padding: 0.5em 0;
 	font-size: 1.1em;
-	color: #1F9900;
+	/*color: #1F9900;*/
+	color: #fff;
+	background: #24B300;
+	margin: 0 auto;
+	width: 20em;
 }
 #header #blog-description span.acro {
 	color: #000;
@@ -145,9 +148,7 @@ h2.entry-title {
 	height: 1.75em;
 	width: 100%;
 }
-#menu ul {
-	float: left;
-}
+#menu ul,
 #menu ul li {
 	float: left;
 }
@@ -188,7 +189,9 @@ h2.entry-title {
 }
 .edit-link {
 	display: block;
-	margin: 1em 0;
+	position: absolute;
+	bottom: 1em;
+	right: 0.5em;
 }
 .edit-link a {
 	text-decoration: none;
@@ -199,6 +202,17 @@ h2.entry-title {
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	padding: 3px 4px;
+}
+
+/* hanging bullets in content lists */
+#content ul {
+	margin: 1em 0 1.5em;
+	padding-right: 6em;
+}
+#content ul li {
+	line-height: 1.5;
+	margin-bottom: 1em;
+	list-style-type: disc;
 }
 
 #nav-above,#nav-below {
@@ -303,6 +317,12 @@ div.sidebar li {
 	padding: 0.55em 0 0.55em 5px;
 }
 
+body.home #submenu {
+	/* don't display submenu on homepage */
+	display: none;
+}
+
+/* sidegallery */
 #sidegallery ul li {
 	text-align: center;
 	font-size: 0.8em;
@@ -316,9 +336,15 @@ div.sidebar li {
 
 /* footer --------------------------------------------------------------------- */
 #footer {
+	display: none;
+}
+#meta-footer {
 	text-align: center;
-	font-size: 0.7em;
-	padding: 1em 0;
+	font-size: 0.8em;
+	padding: 0.25em 0;
+}
+#meta-footer ul li {
+	display: inline;
 }
 
 /* ============ Colors ============ */

@@ -102,8 +102,10 @@ function race_widget_init() {
 add_action( 'widgets_init', 'race_widget_init' );
 
 // theme utilities =============================
+
+// link util.js, conditional ie stylesheet inside header
 function race_header() {
-	$root = get_bloginfo( 'stylesheet_directory' );
+	$root = get_stylesheet_directory_uri();
 
 	// because IE is a friggin retard
 	echo <<<HTML
@@ -114,5 +116,34 @@ HTML;
 }
 
 add_action( 'wp_print_scripts', 'race_header' );
+
+// footer thingy
+function race_footer() {
+	$base = get_option('home');
+	?>
+
+	<div id="meta-footer">
+
+		<?php sandbox_globalnav(); ?>
+
+		<p>
+			<?php wp_loginout(); echo "\n"; ?>
+			<span class="meta-sep">|</span>
+			<?php wp_register('',''); echo "\n"; ?>
+			<span class="meta-sep">|</span>
+			<a href="<?php echo $base; ?>/home/user-agreement/">User Agreement</a>
+			<span class="meta-sep">|</span>
+			<a href="<?php echo $base; ?>/home/privacy-policy/">Privacy Policy</a>
+			<span class="meta-sep">|</span>
+			<a href="mailto:<?php echo antispambot( get_option( 'admin_email' ) ); ?>">Contact Us</a>
+			<span class="meta-sep">|</span>
+			<a href="<?php echo $base; ?>/">Home</a>
+		</p>
+
+	</div>
+	<?php
+}
+
+add_action ( 'get_footer', 'race_footer' );
 
 ?>
