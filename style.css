@@ -424,12 +424,27 @@ li.page_item a:active {
 
 /* custom front page ---------------------------------------------------------- */
 
+/* pull splash image rightward */
+body.home #content img.alignright {
+	margin-right: -140px;
+	margin-left: 5px;
+}
+/* faux-center "welcome" title */
+body.home #content h2 {
+	margin-right: 25%;
+}
+
 /* in the spotlight */
 body.home #content {
 	margin-left: 260px;
 }
 #spotlight {
 	width: 250px;
+}
+#spotlight h3 {
+	display: block;
+	font-size: 100%;
+	text-align: center;
 }
 
 /* who / what / when / etc */
@@ -464,8 +479,7 @@ body.home #content {
 #quadrant img {
 	float: right;
 	height: 64px;
-	height: 64px;
-	margin-left: 0.3em;
+	/*width: 64px;*/
 }
 
 /* typography ----------------------------------------------------------------- */
