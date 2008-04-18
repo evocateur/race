@@ -60,6 +60,7 @@ function race_gallery( $attr ) {
 
 add_filter('post_gallery', 'race_gallery');
 
+
 // sub menu ====================================
 function widget_race_submenu( $args ) {
 	extract( $args );
@@ -93,12 +94,12 @@ function race_widget_init() {
 		'classname'   => 'widget_submenu',
 		'description' => "A submenu that displays children of the current page."
 	);
+	wp_register_sidebar_widget( 'submenu', 'Page Sub-Menu', 'widget_race_submenu', $widget_ops );
 
-	wp_register_sidebar_widget( 'submenu', 'Page Sub-menu', 'widget_race_submenu', $widget_ops );
-
-	$widget_ops['classname']   = 'widget_gallery';
-	$widget_ops['description'] = "A sidebar image gallery using shortcodes for post";
-
+	$widget_ops = array(
+		'classname'   => 'widget_gallery',
+		'description' => "A sidebar image gallery that displays images associated with a page."
+	);
 	wp_register_sidebar_widget( 'sidegallery', 'Page Gallery', 'widget_race_gallery', $widget_ops );
 }
 
