@@ -70,7 +70,7 @@ div.sidebar {
 	overflow: hidden;
 	width: 180px;
 }
-#primary {
+#primary, #spotlight {
 	margin: 0 0 0 -100%;
 }
 #secondary {
@@ -420,6 +420,52 @@ li.page_item a:active {
 	color: #fff;
 	background:   #33FF00; /* lime */
 	border-color: #33FF00; /* lime */
+}
+
+/* custom front page ---------------------------------------------------------- */
+
+/* in the spotlight */
+body.home #content {
+	margin-left: 260px;
+}
+#spotlight {
+	width: 250px;
+}
+
+/* who / what / when / etc */
+#quadrant {
+	clear: left;
+	float: left;
+	font-size: 0.8em;
+	padding: 0.5em 0;
+	width: 100%;
+}
+#quadrant ul {
+	width: 90%;
+	margin: 0 auto;
+}
+#quadrant ul li {
+	list-style: none;
+	float: left;
+	display: inline;
+	overflow: hidden;
+	width: 23%;
+	height: 175px;
+	margin: 0 -1px 0 0;
+	padding: 0.5em;
+	border: 1px solid;
+	line-height: 1.2;
+}
+#quadrant h4 {
+	margin: 0 0 0.5em;
+	text-align: center;
+	font-size: 1.4em;
+}
+#quadrant img {
+	float: right;
+	height: 64px;
+	height: 64px;
+	margin-left: 0.3em;
 }
 
 /* typography ----------------------------------------------------------------- */

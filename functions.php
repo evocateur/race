@@ -146,4 +146,40 @@ function race_footer() {
 
 add_action ( 'get_footer', 'race_footer' );
 
+// spotlight or quadrant
+function race_front_meta( $type='' ) {
+	global $post;
+
+	$content = '';
+
+	$custom = get_post_custom();
+	$values = $custom[$type];
+
+	if ( count($values) > 0 ) {
+		$content[] = "<ul id='$type-meta'>";
+
+		for ($i=0; $i < count($values); $i++) {
+			$value = trim($values[$i]);
+			$content[] = "<li>{$value}</li>";
+		}
+		$content[] = "</ul>";
+		$content = implode($content, "\n");
+	}
+
+	echo $content;
+}
+
+// manhandle static front page to use stylesheet_dir template
+function race_template_hijack() {
+	$uri  = ( isset($_SERVER['HTTPS'] ) && strtolower($_SERVER['HTTPS']) == 'on' ) ? 'https://' : 'http://';
+	$uri .= $_SERVER['HTTP_HOST'];
+	$uri .= $_SERVER['REQUEST_URI'];
+
+	if ($uri == trailingslashit(get_option('siteurl'))) {
+		include(STYLESHEETPATH . '/front.php');
+		exit;
+	}
+}
+add_action( 'template_redirect', 'race_template_hijack' );
+
 ?>
