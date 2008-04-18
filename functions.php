@@ -85,6 +85,75 @@ function widget_race_submenu( $args ) {
 	}
 }
 
+
+// spotlight ===================================
+function widget_race_spotlight($args) {
+	if ( $output = wp_cache_get('widget_race_spotlight', 'widget') )
+		return print($output);
+
+	ob_start();
+	extract($args);
+	$options = get_option('widget_race_spotlight');
+	$title = empty($options['title']) ? __('In the Spotlight') : $options['title'];
+	if ( !$number = (int) $options['number'] )
+		$number = 3;
+	else if ( $number < 1 )
+		$number = 1;
+	else if ( $number > 15 )
+		$number = 15;
+
+	$r = new WP_Query("showposts=$number&what_to_show=posts&nopaging=0&post_status=publish");
+	if ($r->have_posts()) :
+?>
+		<?php echo $before_widget; ?>
+			<?php echo $before_title . $title . $after_title; ?>
+			<ul>
+			<?php  while ($r->have_posts()) : $r->the_post(); ?>
+			<li><a href="<?php the_permalink() ?>"><?php if ( get_the_title() ) the_title(); else the_ID(); ?> </a></li>
+			<?php endwhile; ?>
+			</ul>
+		<?php echo $after_widget; ?>
+<?php
+		wp_reset_query();  // Restore global post data stomped by the_post().
+	endif;
+	wp_cache_add('widget_race_spotlight', ob_get_flush(), 'widget');
+}
+
+function flush_widget_race_spotlight() {
+	wp_cache_delete('widget_race_spotlight', 'widget');
+}
+
+add_action('save_post', 'flush_widget_race_spotlight');
+add_action('deleted_post', 'flush_widget_race_spotlight');
+add_action('switch_theme', 'flush_widget_race_spotlight');
+
+function widget_race_spotlight_control() {
+	$options = $newoptions = get_option('widget_race_spotlight');
+	if ( $_POST["race-spotlight-submit"] ) {
+		$newoptions['title'] = strip_tags(stripslashes($_POST["race-spotlight-title"]));
+		$newoptions['number'] = (int) $_POST["race-spotlight-number"];
+	}
+	if ( $options != $newoptions ) {
+		$options = $newoptions;
+		update_option('widget_race_spotlight', $options);
+		flush_widget_race_spotlight();
+	}
+	$title = attribute_escape($options['title']);
+	if ( !$number = (int) $options['number'] )
+		$number = 5;
+?>
+
+			<p><label for="race-spotlight-title"><?php _e('Title:'); ?> <input class="widefat" id="race-spotlight-title" name="race-spotlight-title" type="text" value="<?php echo $title; ?>" /></label></p>
+			<p>
+				<label for="race-spotlight-number"><?php _e('Number of posts to show:'); ?> <input style="width: 25px; text-align: center;" id="race-spotlight-number" name="race-spotlight-number" type="text" value="<?php echo $number; ?>" /></label>
+				<br />
+				<small><?php _e('(at most 15)'); ?></small>
+			</p>
+			<input type="hidden" id="race-spotlight-submit" name="race-spotlight-submit" value="1" />
+<?php
+}
+
+
 // theme widget init ===========================
 function race_widget_init() {
 	if ( !function_exists( 'register_sidebars' ) )
@@ -101,6 +170,13 @@ function race_widget_init() {
 		'description' => "A sidebar image gallery that displays images associated with a page."
 	);
 	wp_register_sidebar_widget( 'sidegallery', 'Page Gallery', 'widget_race_gallery', $widget_ops );
+
+	$widget_ops = array(
+		'classname'   => 'widget_spotlight',
+		'description' => "In the Spotlight"
+	);
+	wp_register_sidebar_widget( 'spotlight', 'Page Spotlight', 'widget_race_spotlight', $widget_ops );
+	wp_register_widget_control( 'spotlight', 'Page Spotlight', 'widget_race_spotlight_control' );
 }
 
 add_action( 'widgets_init', 'race_widget_init' );
