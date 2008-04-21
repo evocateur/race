@@ -170,9 +170,9 @@ function widget_race_spotlight_control() {
 
 	$all_query = <<<SQL
 		SELECT u.ID, u.display_name FROM $wpdb->users AS u
-		INNER JOIN $wpdb->usermeta AS m ON (m.user_id = u.ID)
-		WHERE m.meta_key = '{$wpdb->prefix}capabilities'
-		  AND INSTR(m.meta_value,'subscriber') > 0
+		-- INNER JOIN $wpdb->usermeta AS m ON (m.user_id = u.ID)
+		-- WHERE m.meta_key = '{$wpdb->prefix}capabilities'
+		--   AND INSTR(m.meta_value,'subscriber') > 0
 		ORDER BY u.display_name
 SQL;
 	$all_logins = $wpdb->get_results($all_query);
