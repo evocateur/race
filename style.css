@@ -317,11 +317,6 @@ div.sidebar li {
 	padding: 0.55em 0 0.55em 5px;
 }
 
-body.home #submenu {
-	/* don't display submenu on homepage */
-	display: none;
-}
-
 /* sidegallery */
 #sidegallery ul li {
 	text-align: center;

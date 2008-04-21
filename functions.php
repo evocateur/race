@@ -72,7 +72,7 @@ function widget_race_submenu( $args ) {
 
 	if ( $post->post_parent )
 		$list_ops .= $post->post_parent;
-	else if ( is_page() )
+	else if ( is_page() && !is_front_page() )
 		$list_ops .= $post->ID;
 	else
 		return '';
@@ -91,11 +91,14 @@ function widget_race_submenu( $args ) {
 
 // spotlight ===================================
 function widget_race_spotlight($args) {
+	if ( !is_front_page() )
+		return '';
 	if ( $output = wp_cache_get('widget_race_spotlight', 'widget') )
 		return print($output);
 
 	ob_start();
 	extract($args);
+
 	$options = get_option('widget_race_spotlight');
 	$title = empty($options['title']) ? __('In the Spotlight') : $options['title'];
 	if ( !$number = (int) $options['number'] )
