@@ -450,13 +450,44 @@ body.home #content h2 {
 body.home #content {
 	margin-left: 260px;
 }
+body.home #primary,
 #spotlight {
 	width: 250px;
 }
+#spotlight ul {
+	padding: 0 8px;
+}
+#spotlight li {
+	clear: left;
+	float: left;
+	width: 97.5%;
+	font-size: 0.8em;
+	padding: 6px;
+	margin: 6px 1px 0 0;
+	border: 1px solid #1F9900;
+}
 #spotlight h3 {
 	display: block;
-	font-size: 100%;
 	text-align: center;
+}
+#spotlight h3,
+#spotlight h4 {
+	font-size: 105%;
+	margin: 0;
+}
+#spotlight h4 a {
+	text-decoration: none;
+	color: #1F9900;
+}
+#spotlight img {
+	float: left;
+}
+#spotlight li div {
+	margin-left: 54px;
+}
+#spotlight li div p {
+	margin: 0.5em 0;
+	font-size: 85%;
 }
 
 /* who / what / when / etc */
