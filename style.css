@@ -70,13 +70,13 @@ div.sidebar {
 	overflow: hidden;
 	width: 180px;
 }
-#primary, #spotlight {
+#primary {
 	margin: 0 0 0 -100%;
 }
 #secondary {
 	margin: 0 0 0 -180px;
 }
-#footer, #meta-footer {
+#footer, #ft {
 	clear: left;
 	width: 100%;
 	background-color: #fff;
@@ -338,13 +338,36 @@ body.home #submenu {
 #footer {
 	display: none;
 }
-#meta-footer {
+#ft {
 	text-align: center;
 	font-size: 0.8em;
 	padding: 0.25em 0;
 }
-#meta-footer ul li {
+#ft a {
+	text-decoration: none;
+	color: #1F9900;
+	background: #fff;
+}
+#ft a:focus,
+#ft a:hover {
+	color: #000;
+	border-bottom: 1px dotted #1F9900;
+}
+#ft ul.menu-parent {
+	margin: 0.5em 0 1em;
+/*	outline: 1px solid blue;*/
+}
+#ft ul.menu-parent li {
 	display: inline;
+	padding: 0 0.5em;
+	border: 1px solid #333;
+	border-width: 0 1px;
+	margin-left: -1px;
+}
+#ft ul.menu-parent li a {
+/*	display: inline-block;
+	text-decoration: none;
+	padding: 0.5em 0;*/
 }
 
 /* ============ Colors ============ */

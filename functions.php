@@ -225,22 +225,24 @@ function race_footer() {
 	$base = get_option('home');
 	?>
 
-	<div id="meta-footer">
+	<div id="ft">
 
 		<?php sandbox_globalnav(); ?>
 
 		<p>
+			<span class="meta-sep">|</span>
 			<?php wp_loginout(); echo "\n"; ?>
 			<span class="meta-sep">|</span>
 			<?php wp_register('',''); echo "\n"; ?>
 			<span class="meta-sep">|</span>
-			<a href="<?php echo $base; ?>/home/user-agreement/">User Agreement</a>
+			<a href="<?php echo $base; ?>/home/user-agreement/" title="View User Agreement">User Agreement</a>
 			<span class="meta-sep">|</span>
-			<a href="<?php echo $base; ?>/home/privacy-policy/">Privacy Policy</a>
+			<a href="<?php echo $base; ?>/home/privacy-policy/" title="View Privacy Policy">Privacy Policy</a>
 			<span class="meta-sep">|</span>
 			<a href="mailto:<?php echo antispambot( get_option( 'admin_email' ) ); ?>">Contact Us</a>
 			<span class="meta-sep">|</span>
-			<a href="<?php echo $base; ?>/">Home</a>
+			<a href="<?php echo $base; ?>/" title="Go to homepage">Home</a>
+			<span class="meta-sep">|</span>
 		</p>
 
 	</div>
