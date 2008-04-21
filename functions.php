@@ -1,4 +1,5 @@
 <?php
+
 // gallery  ====================================
 function widget_race_gallery( $args ) {
 	extract( $args );
@@ -154,6 +155,27 @@ function widget_race_spotlight_control() {
 }
 
 
+// warriors ====================================
+/*	Notes re: profile.php / user-edit.php
+
+	Actions
+	-------
+		personal_options_update
+			after flash when redirected after POST
+
+		profile_personal_options
+			between colors and name etc (midway)
+
+		show_user_profile
+		edit_user_profile (admin)
+			after everything, before "submit"
+
+	Filters
+	-------
+		show_password_fields
+			boolean decision to allow password change on profile
+*/
+
 // theme widget init ===========================
 function race_widget_init() {
 	if ( !function_exists( 'register_sidebars' ) )
@@ -180,6 +202,7 @@ function race_widget_init() {
 }
 
 add_action( 'widgets_init', 'race_widget_init' );
+
 
 // theme utilities =============================
 
@@ -226,7 +249,7 @@ function race_footer() {
 
 add_action ( 'get_footer', 'race_footer' );
 
-// spotlight or quadrant
+// quadrant
 function race_front_meta( $type='' ) {
 	global $post;
 

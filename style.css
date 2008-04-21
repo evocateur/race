@@ -481,6 +481,9 @@ body.home #content {
 	height: 64px;
 	/*width: 64px;*/
 }
+#quadrant ul li p {
+	margin: 0 0.75em 0.75em;
+}
 
 /* typography ----------------------------------------------------------------- */
 
