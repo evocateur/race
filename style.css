@@ -355,7 +355,6 @@ body.home #submenu {
 }
 #ft ul.menu-parent {
 	margin: 0.5em 0 1em;
-/*	outline: 1px solid blue;*/
 }
 #ft ul.menu-parent li {
 	display: inline;
@@ -363,11 +362,6 @@ body.home #submenu {
 	border: 1px solid #333;
 	border-width: 0 1px;
 	margin-left: -1px;
-}
-#ft ul.menu-parent li a {
-/*	display: inline-block;
-	text-decoration: none;
-	padding: 0.5em 0;*/
 }
 
 /* ============ Colors ============ */
@@ -488,7 +482,7 @@ body.home #content {
 	display: inline;
 	overflow: hidden;
 	width: 23%;
-	height: 175px;
+	height: 150px;
 	margin: 0 -1px 0 0;
 	padding: 0.5em;
 	border: 1px solid;

@@ -15,7 +15,7 @@ function build_race_gallery() {
 	// i love the smell of code duplication in the morning
 	global $post;
 
-	if ( is_front_page() )
+	if ( is_front_page() || !is_page() )
 		return false;
 
 	extract(array(
@@ -72,8 +72,10 @@ function widget_race_submenu( $args ) {
 
 	if ( $post->post_parent )
 		$list_ops .= $post->post_parent;
-	else
+	else if ( is_page() )
 		$list_ops .= $post->ID;
+	else
+		return '';
 
 	$children = wp_list_pages( $list_ops );
 
