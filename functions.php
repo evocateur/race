@@ -2,7 +2,7 @@
 
 // gallery  ====================================
 function widget_race_gallery( $args ) {
-	extract( $args );
+	extract( $args, EXTR_SKIP );
 
 	$gallery = build_race_gallery();
 
@@ -25,7 +25,7 @@ function build_race_gallery() {
 		'captiontag' => 'p',
 		'columns'    => 1,
 		'size'       => 'thumbnail',
-	));
+	), EXTR_SKIP);
 
 	$id = intval( $id );
 	$orderby = addslashes( $orderby );
@@ -56,6 +56,7 @@ function build_race_gallery() {
 }
 
 function race_gallery( $attr ) {
+	// TODO: make this a more elegant choice
 	return '<!-- gallery in sidebar -->';
 }
 
@@ -64,7 +65,7 @@ add_filter('post_gallery', 'race_gallery');
 
 // sub menu ====================================
 function widget_race_submenu( $args ) {
-	extract( $args );
+	extract( $args, EXTR_SKIP );
 
 	global $post;
 
@@ -93,21 +94,24 @@ function widget_race_submenu( $args ) {
 function widget_race_spotlight($args) {
 	if ( !is_front_page() )
 		return '';
+
 	if ( $output = wp_cache_get('widget_race_spotlight', 'widget') )
 		return print($output);
 
 	ob_start();
-	extract($args);
+	extract($args, EXTR_SKIP);
 
 	$options = get_option('widget_race_spotlight');
 	$title = empty($options['title']) ? __('In the Spotlight') : $options['title'];
 	$selected = (array) $options['posts'];
+
 	if ( !count($selected) )
 		return '';
 
 	$wp_url = get_bloginfo('wpurl');
 	$scount = count($selected);
 	$r = array();
+
 	for ($i=0; $i < $scount; $i++) {
 		if ( $selected[$i] > 0 && $ruser = get_userdata( $selected[$i] ) )
 			$r[] = $ruser;
