@@ -132,12 +132,14 @@ function widget_race_spotlight( $args ) {
 				if ( count($blurb) > 10 ) $etc = '...';
 
 				$blurb = implode(' ', array_slice($blurb, 0, 10)) . $etc;
+
+				$href = $wp_url . "/accounts/warrior/?user=" . $spot_user->ID;
 			?>
 			<li>
-				<?php echo get_avatar($spot_user, '48'); ?>
+				<a href="<?php echo $href; ?>"><?php echo get_avatar($spot_user, '48'); ?></a>
 				<div>
-					<h4><a href="<?php echo $wp_url . "/accounts/warrior/?user={$spot_user->ID}" ?>"><?php echo $spot_user->display_name; ?></a></h4>
-					<?php echo wpautop( wptexturize( $blurb ) ); ?>
+					<h4><a href="<?php echo $href ?>"><?php echo $spot_user->display_name; ?></a></h4>
+					<?php echo wpautop( wptexturize($blurb) ); ?>
 				</div>
 			</li>
 			<?php } ?>

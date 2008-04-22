@@ -467,7 +467,7 @@ body.home #primary,
 	float: left;
 	width: 97.5%;
 	font-size: 0.8em;
-	padding: 6px;
+	padding: 6px 6px 0 6px;
 	margin: 6px 1px 0 0;
 	border: 1px solid #1F9900;
 }
@@ -483,15 +483,23 @@ body.home #primary,
 #spotlight h4 a {
 	text-decoration: none;
 	color: #1F9900;
+	display: block;
+	width: 100%;
+	padding: 4px 0;
+}
+#spotlight h4 a:focus,
+#spotlight h4 a:hover {
+	background-color: #CCFFBF;
 }
 #spotlight img {
 	float: left;
+	margin-bottom: 6px;
 }
 #spotlight li div {
 	margin-left: 54px;
 }
 #spotlight li div p {
-	margin: 0.5em 0;
+	margin: 0 0 0.5em;
 	font-size: 85%;
 }
 
