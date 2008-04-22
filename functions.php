@@ -330,7 +330,7 @@ function race_front_meta( $type='' ) {
 		$content = implode($content, "\n");
 	}
 
-	echo $content;
+	return $content;
 }
 
 // manhandle static front page to use stylesheet_dir template
