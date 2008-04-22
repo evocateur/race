@@ -299,6 +299,17 @@ function race_footer() {
 
 add_action('get_footer', 'race_footer');
 
+// change text of wp_register links
+function race_filter_register( $arg ) {
+	return preg_replace(
+		array('/Register/','/Site Admin/'),
+		array('Become A Warrior','Dashboard'),
+		$arg
+	);
+}
+
+add_filter('register', 'race_filter_register');
+
 // quadrant
 function race_front_meta( $type='' ) {
 	global $post;
