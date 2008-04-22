@@ -89,7 +89,7 @@ function widget_race_submenu( $args ) {
 
 
 // spotlight ===================================
-function widget_race_spotlight($args) {
+function widget_race_spotlight( $args ) {
 	if ( !is_front_page() )
 		return '';
 
@@ -110,26 +110,28 @@ function widget_race_spotlight($args) {
 	$scount = count($selected);
 	$r = array();
 
-	for ($i=0; $i < $scount; $i++) {
-		if ( $selected[$i] > 0 && $ruser = get_userdata( $selected[$i] ) )
+	for ( $i=0; $i < $scount; $i++ ) {
+		if ( $selected[$i] > 0 && $ruser = get_userdata($selected[$i]) )
 			$r[] = $ruser;
 	}
 
-	if (!empty($r)) :
+	if ( !empty($r) ) :
 		$rcount = count($r)
 ?>
 		<?php echo $before_widget; ?>
 			<?php echo $before_title . $title . $after_title; ?>
 		<ul>
-			<?php  for ($ri = 0; $ri < $rcount; $ri++) {
+			<?php for ( $ri = 0; $ri < $rcount; $ri++ ) {
 				$spot_user = $r[$ri];
-				if ($spot_user->ID == -1)
-					continue;
+
+				if ( $spot_user->ID == -1 ) continue;
+
 				$etc = '';
-				$blurb = explode( ' ', $spot_user->description );
-				if ( count($blurb) > 10 )
-					$etc = '...';
-				$blurb = implode(' ', array_slice( $blurb, 0, 10 ) ) . $etc;
+				$blurb = explode(' ', $spot_user->description);
+
+				if ( count($blurb) > 10 ) $etc = '...';
+
+				$blurb = implode(' ', array_slice($blurb, 0, 10)) . $etc;
 			?>
 			<li>
 				<?php echo get_avatar($spot_user, '48'); ?>
@@ -180,7 +182,7 @@ SQL;
 ?>
 			<p><label for="race-spotlight-title"><?php _e('Title:'); ?> <input class="widefat" id="race-spotlight-title" name="race-spotlight-title" type="text" value="<?php echo $title; ?>" /></label></p>
 			<h3><?php _e('Users:'); ?></h3>
-			<?php for ($i=0; $i < 3; $i++) {
+			<?php for ( $i=0; $i < 3; $i++ ) {
 				$choice = $selected[$i];
 				$choices = preg_replace("/(=\"$choice\")(>)/", "$1 selected=\"selected\"$2", $logins);
 				?>
@@ -219,20 +221,20 @@ SQL;
 
 // theme widget init ===========================
 function race_widget_init() {
-	if ( !function_exists( 'register_sidebars' ) )
+	if ( !function_exists('register_sidebars') )
 		return;
 
 	$widget_ops = array(
 		'classname'   => 'widget_submenu',
 		'description' => "A submenu that displays children of the current page."
 	);
-	wp_register_sidebar_widget( 'submenu', 'Page Sub-Menu', 'widget_race_submenu', $widget_ops );
+	wp_register_sidebar_widget('submenu', 'Page Sub-Menu', 'widget_race_submenu', $widget_ops);
 
 	$widget_ops = array(
 		'classname'   => 'widget_gallery',
 		'description' => "A sidebar image gallery that displays images associated with a page."
 	);
-	wp_register_sidebar_widget( 'sidegallery', 'Page Gallery', 'widget_race_gallery', $widget_ops );
+	wp_register_sidebar_widget('sidegallery', 'Page Gallery', 'widget_race_gallery', $widget_ops);
 
 	if ( is_active_widget('widget_race_gallery') ) {
 		// don't clobber gallery when inactive
@@ -243,8 +245,8 @@ function race_widget_init() {
 		'classname'   => 'widget_spotlight',
 		'description' => "In the Spotlight"
 	);
-	wp_register_sidebar_widget( 'spotlight', 'Page Spotlight', 'widget_race_spotlight', $widget_ops );
-	wp_register_widget_control( 'spotlight', 'Page Spotlight', 'widget_race_spotlight_control' );
+	wp_register_sidebar_widget('spotlight', 'Page Spotlight', 'widget_race_spotlight', $widget_ops);
+	wp_register_widget_control('spotlight', 'Page Spotlight', 'widget_race_spotlight_control');
 
 	if ( is_active_widget('widget_race_spotlight') ) {
 		// it's polite to flush
@@ -254,7 +256,7 @@ function race_widget_init() {
 	}
 }
 
-add_action( 'widgets_init', 'race_widget_init' );
+add_action('widgets_init', 'race_widget_init');
 
 
 // theme utilities =============================
@@ -271,7 +273,7 @@ HTML;
 	wp_enqueue_script( 'race', $root . "/util.js", array('jquery') );
 }
 
-add_action( 'wp_print_scripts', 'race_header' );
+add_action('wp_print_scripts', 'race_header');
 
 // footer thingy
 function race_footer() {
@@ -295,7 +297,7 @@ function race_footer() {
 	<?php
 }
 
-add_action ( 'get_footer', 'race_footer' );
+add_action('get_footer', 'race_footer');
 
 // quadrant
 function race_front_meta( $type='' ) {
@@ -309,7 +311,7 @@ function race_front_meta( $type='' ) {
 	if ( count($values) > 0 ) {
 		$content[] = "<ul id='$type-meta'>";
 
-		for ($i=0; $i < count($values); $i++) {
+		for ( $i=0; $i < count($values); $i++ ) {
 			$value = trim($values[$i]);
 			$content[] = "<li>{$value}</li>";
 		}
@@ -322,16 +324,16 @@ function race_front_meta( $type='' ) {
 
 // manhandle static front page to use stylesheet_dir template
 function race_template_hijack() {
-	$uri  = ( isset($_SERVER['HTTPS'] ) && strtolower($_SERVER['HTTPS']) == 'on' ) ? 'https://' : 'http://';
+	$uri  = ( isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ) ? 'https://' : 'http://';
 	$uri .= $_SERVER['HTTP_HOST'];
 	$uri .= $_SERVER['REQUEST_URI'];
 
-	if ($uri == trailingslashit(get_option('siteurl'))) {
+	if ( $uri == trailingslashit(get_option('siteurl')) ) {
 		include(STYLESHEETPATH . '/root.php');
 		exit;
 	}
 }
 
-add_action( 'template_redirect', 'race_template_hijack' );
+add_action('template_redirect', 'race_template_hijack');
 
 ?>
