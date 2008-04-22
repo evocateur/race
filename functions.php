@@ -272,21 +272,14 @@ function race_footer() {
 
 		<?php sandbox_globalnav(); ?>
 
-		<p>
-			<span class="meta-sep">|</span>
-			<?php wp_loginout(); echo "\n"; ?>
-			<span class="meta-sep">|</span>
-			<?php wp_register('',''); echo "\n"; ?>
-			<span class="meta-sep">|</span>
-			<a href="<?php echo $base; ?>/home/user-agreement/" title="View User Agreement">User Agreement</a>
-			<span class="meta-sep">|</span>
-			<a href="<?php echo $base; ?>/home/privacy-policy/" title="View Privacy Policy">Privacy Policy</a>
-			<span class="meta-sep">|</span>
-			<a href="mailto:<?php echo antispambot( get_option( 'admin_email' ) ); ?>">Contact Us</a>
-			<span class="meta-sep">|</span>
-			<a href="<?php echo $base; ?>/" title="Go to homepage">Home</a>
-			<span class="meta-sep">|</span>
-		</p>
+		<ul id="ft-admin" class="menu-parent"
+			><li><?php wp_register('',''); ?></li
+			><li><?php wp_loginout(); ?></li
+			><li><a href="<?php echo $base; ?>/home/user-agreement/" title="View User Agreement">User Agreement</a></li
+			><li><a href="<?php echo $base; ?>/home/privacy-policy/" title="View Privacy Policy">Privacy Policy</a></li
+			><li><a href="mailto:<?php echo antispambot( get_option( 'admin_email' ) ); ?>">Contact Us</a></li
+			><li><a href="<?php echo $base; ?>/" title="Go to homepage">Home</a></li
+		></ul>
 
 	</div>
 	<?php

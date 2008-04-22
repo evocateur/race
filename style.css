@@ -358,6 +358,11 @@ div.sidebar li {
 	border-width: 0 1px;
 	margin-left: -1px;
 }
+#ft ul.menu-parent li:first-child { border-left-width: 0; }
+#ft ul.menu-parent li:last-child { border-right-width: 0; }
+#ft #ft-admin {
+	margin: 1.25em 0 0.5em;
+}
 
 /* ============ Colors ============ */
 /*
