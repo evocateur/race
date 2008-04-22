@@ -60,8 +60,6 @@ function race_gallery( $attr ) {
 	return '<!-- gallery in sidebar -->';
 }
 
-add_filter('post_gallery', 'race_gallery');
-
 
 // sub menu ====================================
 function widget_race_submenu( $args ) {
@@ -152,10 +150,6 @@ function flush_widget_race_spotlight() {
 	wp_cache_delete('widget_race_spotlight', 'widget');
 }
 
-add_action('save_post', 'flush_widget_race_spotlight');
-add_action('deleted_post', 'flush_widget_race_spotlight');
-add_action('switch_theme', 'flush_widget_race_spotlight');
-
 function widget_race_spotlight_control() {
 	global $wpdb;
 
@@ -240,12 +234,24 @@ function race_widget_init() {
 	);
 	wp_register_sidebar_widget( 'sidegallery', 'Page Gallery', 'widget_race_gallery', $widget_ops );
 
+	if ( is_active_widget('widget_race_gallery') ) {
+		// don't clobber gallery when inactive
+		add_filter('post_gallery', 'race_gallery');
+	}
+
 	$widget_ops = array(
 		'classname'   => 'widget_spotlight',
 		'description' => "In the Spotlight"
 	);
 	wp_register_sidebar_widget( 'spotlight', 'Page Spotlight', 'widget_race_spotlight', $widget_ops );
 	wp_register_widget_control( 'spotlight', 'Page Spotlight', 'widget_race_spotlight_control' );
+
+	if ( is_active_widget('widget_race_spotlight') ) {
+		// it's polite to flush
+		add_action('save_post',    'flush_widget_race_spotlight');
+		add_action('deleted_post', 'flush_widget_race_spotlight');
+		add_action('switch_theme', 'flush_widget_race_spotlight');
+	}
 }
 
 add_action( 'widgets_init', 'race_widget_init' );
