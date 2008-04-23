@@ -104,9 +104,7 @@ h2.entry-title {
 /* header --------------------------------------------------------------------- */
 #header {
 	height: 138px;
-	background-image: url(images/fight_logo.png);
-	background-repeat: no-repeat;
-	background-position: 20px 0;
+	background: url(images/fight_logo.png) 20px top no-repeat;
 }
 #access div.skip-link {
 	position: absolute;
@@ -115,30 +113,29 @@ h2.entry-title {
 #header h1 {
 	font-size: 3em;
 	margin-top: 0;
-	padding: 16px 0;
+	padding: 10px 0;
+	height: 80px;
+	text-indent: -999em;
+	background: url(images/header.jpg) 50% top no-repeat;
 }
 #header h1 a {
+	height: 80px;
+	width: 370px;
+	margin: 0 auto;
 	text-decoration: none;
 	display: block;
 	color: #000;
 }
-#header h1 a:focus,
-#header h1 a:hover {
-	color: #1F9900; /* dark */
-}
 #header #blog-description {
 	text-align: center;
-	/*padding-bottom: 1em;*/
-	padding: 0.5em 0;
+	padding: 5px 0;
 	font-size: 1.1em;
-	/*color: #1F9900;*/
-	color: #fff;
-	background: #24B300;
+	color: #000;
 	margin: 0 auto;
 	width: 20em;
 }
 #header #blog-description span.acro {
-	color: #000;
+	color: #070;
 	font-weight: bold;
 }
 
