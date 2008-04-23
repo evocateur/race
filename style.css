@@ -442,6 +442,7 @@ li.page_item a:active {
 body.home #content img.alignright {
 	margin-right: -140px;
 	margin-left: 5px;
+	position: relative;/* dumb IE */
 }
 /* faux-center "welcome" title */
 body.home #content h2 {
