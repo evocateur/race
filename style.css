@@ -497,7 +497,9 @@ body.home #primary,
 }
 #spotlight img {
 	float: left;
+	margin-right: 6px;
 	margin-bottom: 6px;
+	width: 64px;
 }
 #spotlight li div {
 	margin-left: 54px;
@@ -528,7 +530,7 @@ body.home #primary,
 	height: 150px;
 	margin: 0 -1px 0 0;
 	padding: 0.5em;
-	border: 1px solid;
+	border: 1px solid #1F9900;
 	line-height: 1.2;
 }
 #quadrant h4 {
@@ -539,7 +541,6 @@ body.home #primary,
 #quadrant img {
 	float: right;
 	height: 64px;
-	/*width: 64px;*/
 }
 #quadrant ul li p {
 	margin: 0 0.75em 0.75em;

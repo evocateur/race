@@ -101,52 +101,50 @@ function widget_race_spotlight( $args ) {
 
 	$options = get_option('widget_race_spotlight');
 	$title = empty($options['title']) ? __('In the Spotlight') : $options['title'];
-	$selected = (array) $options['posts'];
+	$tag = 'in-the-spotlight';
+	if ( !$number = (int) $options['number'] )
+		$number = 3;
+	else if ( $number < 1 )
+		$number = 1;
+	else if ( $number > 5 )
+		$number = 5;
+	$default_src = get_option('siteurl') . '/wp-content/uploads/default_avatar.jpg';
 
-	if ( !count($selected) )
-		return '';
-
-	$wp_url = get_bloginfo('wpurl');
-	$scount = count($selected);
-	$r = array();
-
-	for ( $i=0; $i < $scount; $i++ ) {
-		if ( $selected[$i] > 0 && $ruser = get_userdata($selected[$i]) )
-			$r[] = $ruser;
-	}
-
-	if ( !empty($r) ) :
-		$rcount = count($r)
+	$r = new WP_Query("showposts=$number&post_status=publish&tag=$tag");
+	if ($r->have_posts()) :
 ?>
 		<?php echo $before_widget; ?>
 			<?php echo $before_title . $title . $after_title; ?>
 		<ul>
-			<?php for ( $ri = 0; $ri < $rcount; $ri++ ) {
-				$spot_user = $r[$ri];
-
-				if ( $spot_user->ID == -1 ) continue;
-
-				$etc = '';
-				$blurb = explode(' ', $spot_user->description);
-
-				if ( count($blurb) > 10 ) $etc = '...';
-
-				$blurb = implode(' ', array_slice($blurb, 0, 10)) . $etc;
-
-				$href = $wp_url . "/accounts/warrior/?user=" . $spot_user->ID;
+			<?php while ( $r->have_posts() ) : $r->the_post();
+				global $post;
+				$thumb = get_children("post_parent={$post->ID}&post_type=attachment&post_mime_type=image&numberposts=1");
+				if ( is_array($thumb) ) {
+					$thumb = array_shift( $thumb );
+					if ( $thumb = wp_get_attachment_image_src($thumb->ID) )
+						$thumb_src = $thumb[0];
+					else
+						$thumb_src = $default_src;
+				}
+				else {
+					$thumb_src = $default_src;
+				}
+				$thumb_img = "<img src=\"{$thumb_src}\" alt=\"\" />";
 			?>
 			<li>
-				<a href="<?php echo $href; ?>"><?php echo get_avatar($spot_user, '48'); ?></a>
+				<a href="<?php the_permalink(); ?>"><?php echo $thumb_img; ?></a>
 				<div>
-					<h4><a href="<?php echo $href ?>"><?php echo $spot_user->display_name; ?></a></h4>
-					<?php echo wpautop( wptexturize($blurb) ); ?>
+					<h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+					<?php the_excerpt(); ?>
 				</div>
 			</li>
-			<?php } ?>
+			<?php endwhile; ?>
 		</ul>
 		<?php echo $after_widget; ?>
 <?php
+		wp_reset_query();  // Restore global post data stomped by the_post().
 	endif;
+
 	wp_cache_add('widget_race_spotlight', ob_get_flush(), 'widget');
 }
 
@@ -155,12 +153,10 @@ function flush_widget_race_spotlight() {
 }
 
 function widget_race_spotlight_control() {
-	global $wpdb;
-
 	$options = $newoptions = get_option('widget_race_spotlight');
 	if ( $_POST["race-spotlight-submit"] ) {
-		$newoptions['title'] = strip_tags(stripslashes($_POST["race-spotlight-title"]));
-		$newoptions['posts'] = (array) $_POST["race-spotlight-posts"];
+		$newoptions['title']  = strip_tags(stripslashes($_POST["race-spotlight-title"]));
+		$newoptions['number'] = (int) $_POST["race-spotlight-number"];
 	}
 	if ( $options != $newoptions ) {
 		$options = $newoptions;
@@ -168,33 +164,17 @@ function widget_race_spotlight_control() {
 		flush_widget_race_spotlight();
 	}
 	$title = attribute_escape($options['title']);
-	$selected = !empty( $options['posts'] ) ? $options['posts'] : array(-1, -1, -1);
-
-	$all_query = <<<SQL
-		SELECT u.ID, u.display_name FROM $wpdb->users AS u
-		-- INNER JOIN $wpdb->usermeta AS m ON (m.user_id = u.ID)
-		-- WHERE m.meta_key = '{$wpdb->prefix}capabilities'
-		--   AND INSTR(m.meta_value,'subscriber') > 0
-		ORDER BY u.display_name
-SQL;
-	$all_logins = $wpdb->get_results($all_query);
-	$logins = '<option value="-1">Select</option>';
-	foreach ( (array) $all_logins as $login )
-		$logins .= "<option value=\"{$login->ID}\">". wp_specialchars($login->display_name) ."</option>\n";
+	if ( !$number = (int) $options['number'] )
+		$number = 3;
 ?>
-			<p><label for="race-spotlight-title"><?php _e('Title:'); ?> <input class="widefat" id="race-spotlight-title" name="race-spotlight-title" type="text" value="<?php echo $title; ?>" /></label></p>
-			<h3><?php _e('Users:'); ?></h3>
-			<?php for ( $i=0; $i < 3; $i++ ) {
-				$choice = $selected[$i];
-				$choices = preg_replace("/(=\"$choice\")(>)/", "$1 selected=\"selected\"$2", $logins);
-				?>
 			<p>
-				<select id="race-spotlight-post-<?php echo $i; ?>" name="race-spotlight-posts[]">
-<?php echo $choices; ?>
-				</select>
+				<label for="race-spotlight-title"><?php _e('Title:'); ?> <input class="widefat" id="race-spotlight-title" name="race-spotlight-title" type="text" value="<?php echo $title; ?>" /></label>
 			</p>
-				<?php
-			} ?>
+			<p>
+				<label for="race-spotlight-number"><?php _e('Number of Spotlight posts:'); ?> <input style="width: 25px; text-align: center;" id="race-spotlight-number" name="race-spotlight-number" type="text" value="<?php echo $number; ?>" /></label>
+				<br />
+				<small><?php _e('(3 default, no more than 5)'); ?></small>
+			</p>
 			<input type="hidden" id="race-spotlight-submit" name="race-spotlight-submit" value="1" />
 <?php
 }
