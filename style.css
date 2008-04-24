@@ -255,6 +255,10 @@ textarea#comment {
 	width: 66%;
 }
 
+#comments, div.entry-meta, div.entry-date {
+	display: none;
+}
+
 /* sidebar -------------------------------------------------------------------- */
 div.sidebar h3 {
 	font-size: 1.2em;
@@ -544,6 +548,21 @@ body.home #primary,
 }
 #quadrant ul li p {
 	margin: 0 0.75em 0.75em;
+}
+
+/* profile */
+#profile div.user-image {
+	float: left;
+	margin-right: 1em;
+	margin-bottom: 1em;
+}
+#content #race-summary {
+	clear: left;
+	font-size: 0.9em;
+	padding-top: 1em;
+}
+#content #race-summary p {
+	line-height: 1.4;
 }
 
 /* typography ----------------------------------------------------------------- */
