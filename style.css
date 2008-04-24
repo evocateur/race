@@ -184,22 +184,6 @@ h2.entry-title {
 #content table.zebra {
 	border: 1px solid #aaa;
 }
-.edit-link {
-	display: block;
-	position: absolute;
-	bottom: 1em;
-	right: 0.5em;
-}
-.edit-link a {
-	text-decoration: none;
-	border-width: 1px;
-	border-style: solid;
-	-moz-border-radius: 3px;
-	-khtml-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	padding: 3px 4px;
-}
 
 /* hanging bullets in content lists */
 #content ul {
@@ -256,7 +240,24 @@ textarea#comment {
 }
 
 #comments, div.entry-meta, div.entry-date {
-	display: none;
+	text-indent: -999em;
+}
+.edit-link {
+	display: block;
+	position: absolute;
+	bottom: 1em;
+	right: 0.5em;
+	text-indent: 0;
+}
+.edit-link a {
+	text-decoration: none;
+	border-width: 1px;
+	border-style: solid;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	padding: 3px 4px;
 }
 
 /* sidebar -------------------------------------------------------------------- */
