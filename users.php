@@ -5,17 +5,20 @@
 
 	<?php if ( have_users() ) {  ?>
 
-			<h2>Warriors</h2>
+		<h2>Current Warriors for Life</h2>
 
-<?php while ( have_users() ) { the_user(); ?>
-			<div class="user">
-				<h4 class="user-title" id="user-<?php aleph_the_user_ID(); ?>"><a href="<?php echo aleph_get_user_profile_url(); ?>"><?php aleph_the_user_avatar(); ?></a></h4>
-				<p class="metadata">
-				<?php aleph_the_user_complete_name('<strong class="user-name">', '</strong>'); ?>
-				</p>
-			</div>
+		<ul class="user-list">
+<?php while ( have_users() ) { the_user();
+		$profile_url = aleph_get_user_profile_url();
+		?>
+			<li class="user">
+				<a class="user-avatar" href="<?php echo $profile_url; ?>"><?php aleph_the_user_avatar(); ?></a>
+				<h4 class="user-title" id="user-<?php aleph_the_user_ID(); ?>">
+					<a href="<?php echo $profile_url; ?>"><?php aleph_the_user_complete_name('', ''); ?></a>
+				</h4>
+			</li>
 <?php } ?>
-
+		</ul>
 		<p><?php previous_users_link("&laquo; Previous Users"); ?> <?php next_users_link("Next Users &raquo;"); ?></p>
 
 	<?php } else { ?>

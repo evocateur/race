@@ -71,7 +71,10 @@ function widget_race_submenu( $args ) {
 
 	if ( $post->post_parent )
 		$list_ops .= $post->post_parent;
-	else if ( is_page() && !is_front_page() )
+	else if ( $post->slug == 'author-list' ) {
+		$child = array_shift(query_posts('pagename=warriors/current'));
+		$list_ops .= $child->post_parent;
+	} else if ( is_page() && !is_front_page() )
 		$list_ops .= $post->ID;
 	else
 		return '';
