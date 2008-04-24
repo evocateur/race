@@ -441,12 +441,18 @@ li.page_item a:active {
 /* pull splash image rightward */
 body.home #content img.alignright {
 	margin-right: -140px;
-	margin-left: 5px;
+	margin-left: 10px;
 	position: relative;/* dumb IE */
 }
 /* faux-center "welcome" title */
 body.home #content h2 {
 	margin-right: 25%;
+}
+body.home #content p {
+	text-align: justify;
+	font-size: small;
+	line-height: 1.4;
+	font-family: "Hoefler Text", Cambria, Georgia, "Times New Roman", serif;
 }
 
 /* in the spotlight */
