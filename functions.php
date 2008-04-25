@@ -1,5 +1,29 @@
 <?php
 
+// globalnav
+function race_menu( $before = '', $after = '' ) {
+	$content = '';
+	$options_wp_list = 'title_li=&sort_column=menu_order&echo=0&depth=1';
+
+	if ( get_option('show_on_front') == 'page' )
+	    $options_wp_list .= '&exclude=' . get_option('page_on_front');
+
+	$menu = wp_list_pages($options_wp_list);
+
+	if ( $menu ) {
+		$content .= '<ul class="menu-parent">';
+		$content .= str_replace( array( "\r", "\n", "\t" ), '', $menu );
+		$content .= "</ul>";
+	}
+	return $before . $content . $after;
+}
+
+function race_filter_sandbox_menu() {
+	return race_menu( '<div id="menu">', '</div>' );
+}
+
+add_filter('sandbox_menu', 'race_filter_sandbox_menu');
+
 // gallery  ====================================
 function widget_race_gallery( $args ) {
 	extract( $args, EXTR_SKIP );
@@ -267,7 +291,7 @@ function race_footer() {
 
 	<div id="ft">
 
-		<?php sandbox_globalnav(); ?>
+		<?php echo race_menu(); ?>
 
 		<ul id="ft-admin" class="menu-parent"
 			><li><?php wp_register('',''); ?></li
