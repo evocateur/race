@@ -96,10 +96,8 @@ h3 { font-size: 1.5em; margin-top: 0.75em; }
 h4 { font-size: 1.2em; margin-top: 0.87em; }
 h5 { font-size: 1.0em; margin-top: 0.99em; }
 
-h2.entry-title {
-	clear: both;
-	display: none;
-}
+h2.entry-title { clear: both; }
+body.page h2.entry-title { display: none; }
 
 /* header --------------------------------------------------------------------- */
 #header {
