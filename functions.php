@@ -348,7 +348,7 @@ function race_quadrants() {
 				<h4><?php the_title(); ?></h4>
 				<?php race_get_thumb_image(); ?>
 
-				<?php the_excerpt(); ?>
+				<?php the_content(); ?>
 			</li>
 <?php endwhile; ?>
 		</ul>

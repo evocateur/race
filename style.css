@@ -544,10 +544,14 @@ body.home #primary,
 }
 #quadrant img {
 	float: right;
-	height: 64px;
+	width: 64px;
+	margin-left: 6px;
+	margin-bottom: 6px;
 }
 #quadrant ul li p {
-	margin: 0 0.75em 0.75em;
+	margin: 0 0 0.75em 0.5em;
+	font-size: smaller;
+	line-height: 1.2;
 }
 
 /* profile */
