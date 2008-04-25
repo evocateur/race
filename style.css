@@ -53,7 +53,7 @@ table {
 /* layout --------------------------------------------------------------------- */
 body {
 	font-size: 1em;
-	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	font-family: Verdana, "Helvetica Neue", Helvetica, sans-serif;
 }
 
 /* 3 column sidebars on both sides */
@@ -141,7 +141,7 @@ h2.entry-title {
 
 /* menu ----------------------------------------------------------------------- */
 #menu {
-	font-size: 1em;
+	font-size: 0.9em;
 	height: 1.75em;
 	width: 100%;
 	background-color: #fff;
@@ -151,7 +151,7 @@ h2.entry-title {
 	float: left;
 }
 #menu ul li a {
-	font-weight: 700;
+	font-weight: bold;
 	text-decoration: none;
 	padding: 0.15em 0.5em;
 	border-right: 1px solid;
@@ -458,7 +458,7 @@ body.home #content p {
 	text-align: justify;
 	font-size: small;
 	line-height: 1.4;
-	font-family: "Hoefler Text", Cambria, Georgia, "Times New Roman", serif;
+	/*font-family: "Hoefler Text", Cambria, Georgia, "Times New Roman", serif;*/
 }
 
 /* in the spotlight */
