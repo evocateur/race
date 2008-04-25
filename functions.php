@@ -135,31 +135,16 @@ function widget_race_spotlight( $args ) {
 		$number = 1;
 	else if ( $number > 5 )
 		$number = 5;
-	$default_src = get_option('siteurl') . '/wp-content/uploads/default_avatar.jpg';
 
 	$r = new WP_Query("showposts=$number&post_status=publish&tag=$tag");
-	if ($r->have_posts()) :
+	if ( $r->have_posts() ) :
 ?>
 		<?php echo $before_widget; ?>
 			<?php echo $before_title . $title . $after_title; ?>
 		<ul>
-			<?php while ( $r->have_posts() ) : $r->the_post();
-				global $post;
-				$thumb = get_children("post_parent={$post->ID}&post_type=attachment&post_mime_type=image&numberposts=1");
-				if ( is_array($thumb) ) {
-					$thumb = array_shift( $thumb );
-					if ( $thumb = wp_get_attachment_image_src($thumb->ID) )
-						$thumb_src = $thumb[0];
-					else
-						$thumb_src = $default_src;
-				}
-				else {
-					$thumb_src = $default_src;
-				}
-				$thumb_img = "<img src=\"{$thumb_src}\" alt=\"\" />";
-			?>
+			<?php while ( $r->have_posts() ) : $r->the_post(); ?>
 			<li>
-				<a href="<?php the_permalink(); ?>"><?php echo $thumb_img; ?></a>
+				<a href="<?php the_permalink(); ?>"><?php race_get_thumb_image(); ?></a>
 				<div>
 					<h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
 					<?php the_excerpt(); ?>
@@ -206,6 +191,26 @@ function widget_race_spotlight_control() {
 <?php
 }
 
+$default_avatar = get_option('siteurl') . '/wp-content/uploads/default_avatar.jpg';
+function race_get_thumb_image() {
+	global $post, $default_avatar;
+	$thumb_src  = $default_avatar; // tentative
+
+	$thumb = get_children(array(
+		'post_parent'    => $post->ID,
+		'post_type'      => 'attachment',
+		'post_mime_type' => 'image',
+		'numberposts'    => 1
+	));
+
+	if ( is_array($thumb) ) {
+		$thumb = array_shift( $thumb );
+		if ( $thumb = wp_get_attachment_image_src($thumb->ID) )
+			$thumb_src = $thumb[0];
+	}
+
+	echo "<img src=\"{$thumb_src}\" alt=\"\" />";
+}
 
 // warriors ====================================
 /*	Notes re: profile.php / user-edit.php
@@ -319,28 +324,48 @@ function race_filter_register( $arg ) {
 
 add_filter('register', 'race_filter_register');
 
-// quadrant
-function race_front_meta( $type='' ) {
-	global $post;
-
-	$content = '';
-
-	$custom = get_post_custom();
-	$values = $custom[$type];
-
-	if ( count($values) > 0 ) {
-		$content[] = "<ul id='$type-meta'>";
-
-		for ( $i=0; $i < count($values); $i++ ) {
-			$value = trim($values[$i]);
-			$content[] = "<li>{$value}</li>";
-		}
-		$content[] = "</ul>";
-		$content = implode($content, "\n");
-	}
-
-	return $content;
+// remove 'protected: ' and 'private: ' from the_title
+function race_filter_title( $arg ) {
+	return preg_replace( array('/^Protected: /', '/^Private: /'), '', $arg );
 }
+
+add_filter('the_title', 'race_filter_title');
+
+// quadrants
+function race_quadrants() {
+	if ( $content = wp_cache_get('theme_race_quadrants') )
+		return print($content);
+
+	ob_start();
+
+	$q = new WP_Query("showposts=4&category_name=quadrant");
+
+	if ( $q->have_posts() ) : ?>
+	<div id="quadrant">
+		<ul class="xoxo">
+<?php while ( $q->have_posts() ) : $q->the_post(); ?>
+			<li>
+				<h4><?php the_title(); ?></h4>
+				<?php race_get_thumb_image(); ?>
+
+				<?php the_excerpt(); ?>
+			</li>
+<?php endwhile; ?>
+		</ul>
+	</div>
+<?php
+		wp_reset_query();
+	endif;
+
+	wp_cache_add('theme_race_quadrants', ob_get_flush());
+}
+
+function flush_race_quadrants() {
+	wp_cache_delete('theme_race_quadrants');
+}
+
+add_action('save_post',    'flush_race_quadrants');
+add_action('deleted_post', 'flush_race_quadrants');
 
 // manhandle static front page to use stylesheet_dir template
 function race_template_hijack() {

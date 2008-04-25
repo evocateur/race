@@ -18,9 +18,7 @@
 
 		</div><!-- #content -->
 
-		<div id="quadrant">
-<?php echo race_front_meta('quadrant'); ?>
-		</div>
+<?php race_quadrants(); ?>
 
 	</div><!-- #container -->
 
