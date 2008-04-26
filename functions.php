@@ -1,4 +1,13 @@
 <?php
+/*
+	Initialization
+*/
+function race_theme_init() {
+	if (!get_option('race_theme_email'))
+		add_option('race_theme_email', 'info@racecharities.org');
+}
+
+add_action('init', 'race_theme_init');
 
 // globalnav
 function race_menu( $before = '', $after = '' ) {
@@ -281,7 +290,7 @@ function race_header() {
 
 	// because IE is a friggin retard
 	echo <<<HTML
-<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{$root}/ie.css" /><![endif]-->
+<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{$root}/ie.css" /><![endif]-->\n
 HTML;
 
 	wp_enqueue_script( 'race', $root . "/util.js", array('jquery') );
@@ -292,6 +301,9 @@ add_action('wp_print_scripts', 'race_header');
 // footer thingy
 function race_footer() {
 	$base = get_option('home');
+	$email = get_option('race_theme_email');
+	if (empty($email))
+		$email = get_option('admin_email');
 	?>
 
 	<div id="ft">
@@ -303,7 +315,7 @@ function race_footer() {
 			><li><?php wp_loginout(); ?></li
 			><li><a href="<?php echo $base; ?>/home/user-agreement/" title="View User Agreement">User Agreement</a></li
 			><li><a href="<?php echo $base; ?>/home/privacy-policy/" title="View Privacy Policy">Privacy Policy</a></li
-			><li><a href="mailto:<?php echo antispambot( get_option( 'admin_email' ) ); ?>">Contact Us</a></li
+			><li><a href="mailto:<?php echo antispambot( $email ); ?>">Contact Us</a></li
 			><li><a href="<?php echo $base; ?>/" title="Go to homepage">Home</a></li
 		></ul>
 
