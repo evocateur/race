@@ -304,21 +304,26 @@ function race_footer() {
 	$email = get_option('race_theme_email');
 	if (empty($email))
 		$email = get_option('admin_email');
+	$email = antispambot( $email );
+
+	$list = '<li>';
+	$list .= implode('</li><li>', array(
+		"<a href=\"$base/home/user-agreement/\" title=\"View User Agreement\">User Agreement</a>",
+		"<a href=\"$base/home/privacy-policy/\" title=\"View Privacy Policy\">Privacy Policy</a>",
+		"<a href=\"mailto:$email\">Contact Us</a>",
+		"<a href=\"$base/\" title=\"Go to homepage\">Home</a>"
+	));
+	$list .= '</li>';
 	?>
 
 	<div id="ft">
-
 		<?php echo race_menu(); ?>
 
-		<ul id="ft-admin" class="menu-parent"
-			><li><?php wp_register('',''); ?></li
-			><li><?php wp_loginout(); ?></li
-			><li><a href="<?php echo $base; ?>/home/user-agreement/" title="View User Agreement">User Agreement</a></li
-			><li><a href="<?php echo $base; ?>/home/privacy-policy/" title="View Privacy Policy">Privacy Policy</a></li
-			><li><a href="mailto:<?php echo antispambot( $email ); ?>">Contact Us</a></li
-			><li><a href="<?php echo $base; ?>/" title="Go to homepage">Home</a></li
-		></ul>
-
+		<ul id="ft-admin" class="menu-parent"><?php
+			wp_register();
+			echo '<li>'; wp_loginout(); echo '</li>';
+			echo $list;
+		?></ul>
 	</div>
 	<?php
 }

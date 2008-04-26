@@ -1,6 +1,9 @@
 #content {
 	height: 20em; /* splat min-height hack */
 }
+#menu ul li a {
+	padding: 0.15em 0.4em;
+}
 #submenu ul {
 	margin-top: -1.1em;
 	border-bottom: 0;

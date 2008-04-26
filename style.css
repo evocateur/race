@@ -142,7 +142,6 @@ body.page h2.entry-title { display: none; }
 	font-size: 0.9em;
 	height: 1.75em;
 	width: 100%;
-	background-color: #fff;
 }
 #menu ul,
 #menu ul li {
@@ -151,10 +150,10 @@ body.page h2.entry-title { display: none; }
 #menu ul li a {
 	font-weight: bold;
 	text-decoration: none;
-	padding: 0.15em 0.5em;
-	border-right: 1px solid;
-	line-height: 1.5;
-	display: block;
+	padding: 0.25em 0.5em;
+	border-right: 1px solid #99FF80;
+	line-height: 1.6;
+	float: left;
 }
 #menu ul ul {
 	display: none;
@@ -492,7 +491,6 @@ body.home #primary,
 	text-decoration: none;
 	color: #1F9900;
 	display: block;
-	width: 100%;
 	padding: 4px 0;
 }
 #spotlight h4 a:focus,
@@ -505,10 +503,7 @@ body.home #primary,
 	margin-bottom: 6px;
 	width: 64px;
 }
-#spotlight li div {
-/*	margin-left: 70px;*/
-}
-#spotlight li div p {
+#spotlight li p {
 	margin: 0 0 0.5em;
 	font-size: 85%;
 }
