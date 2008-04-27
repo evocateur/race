@@ -115,14 +115,14 @@ function race_build_gallery() {
 	if ( is_front_page() || !is_page() )
 		return false;
 
-	extract(array(
+	extract( array(
 		'orderby'    => 'menu_order ASC, ID ASC',
 		'id'         => $post->ID,
 		'itemtag'    => 'li',
 		'captiontag' => 'p',
 		'columns'    => 1,
 		'size'       => 'thumbnail',
-	), EXTR_SKIP);
+	), EXTR_SKIP );
 
 	$id = intval( $id );
 	$orderby = addslashes( $orderby );
@@ -170,11 +170,11 @@ function widget_race_submenu( $args ) {
 		$list_ops .= $post->post_parent;
 	}
 	else if ( $post->slug == 'author-list' ) {
-		$child = array_shift(query_posts('pagename=warriors/current'));
+		$child = array_shift( query_posts( 'pagename=warriors/current' ) );
 		$list_ops .= $child->post_parent;
 	}
 	else if ( $post->slug == 'author-profile' ) {
-		$child = array_shift(query_posts('pagename=donations/online'));
+		$child = array_shift( query_posts( 'pagename=donations/online' ) );
 		$list_ops .= $child->ID;
 	}
 	else if ( is_page() && !is_front_page() ) {
@@ -199,14 +199,14 @@ function widget_race_spotlight( $args ) {
 	if ( !is_front_page() )
 		return '';
 
-	if ( $output = wp_cache_get('widget_race_spotlight', 'widget') )
+	if ( $output = wp_cache_get( 'widget_race_spotlight', 'widget' ) )
 		return print($output);
 
 	ob_start();
 	extract($args, EXTR_SKIP);
 
-	$options = get_option('widget_race_spotlight');
-	$title = empty($options['title']) ? __('In the Spotlight') : $options['title'];
+	$options = get_option( 'widget_race_spotlight' );
+	$title = empty( $options['title'] ) ? __('In the Spotlight') : $options['title'];
 	$tag = 'in-the-spotlight';
 	if ( !$number = (int) $options['number'] )
 		$number = 3;
@@ -215,7 +215,7 @@ function widget_race_spotlight( $args ) {
 	else if ( $number > 5 )
 		$number = 5;
 
-	$r = new WP_Query("showposts=$number&post_status=publish&tag=$tag");
+	$r = new WP_Query( "showposts=$number&post_status=publish&tag=$tag" );
 	if ( $r->have_posts() ) :
 ?>
 		<?php echo $before_widget; ?>
@@ -236,21 +236,21 @@ function widget_race_spotlight( $args ) {
 		wp_reset_query();  // Restore global post data stomped by the_post().
 	endif;
 
-	wp_cache_add('widget_race_spotlight', ob_get_flush(), 'widget');
+	wp_cache_add( 'widget_race_spotlight', ob_get_flush(), 'widget' );
 }
 
 function widget_race_spotlight_control() {
-	$options = $newoptions = get_option('widget_race_spotlight');
+	$options = $newoptions = get_option( 'widget_race_spotlight' );
 	if ( $_POST["race-spotlight-submit"] ) {
-		$newoptions['title']  = strip_tags(stripslashes($_POST["race-spotlight-title"]));
+		$newoptions['title']  = strip_tags( stripslashes( $_POST["race-spotlight-title"] ) );
 		$newoptions['number'] = (int) $_POST["race-spotlight-number"];
 	}
 	if ( $options != $newoptions ) {
 		$options = $newoptions;
-		update_option('widget_race_spotlight', $options);
+		update_option( 'widget_race_spotlight', $options );
 		widget_race_spotlight_flush();
 	}
-	$title = attribute_escape($options['title']);
+	$title = attribute_escape( $options['title'] );
 	if ( !$number = (int) $options['number'] )
 		$number = 3;
 ?>
@@ -267,17 +267,17 @@ function widget_race_spotlight_control() {
 }
 
 function widget_race_spotlight_flush() {
-	wp_cache_delete('widget_race_spotlight', 'widget');
+	wp_cache_delete( 'widget_race_spotlight', 'widget' );
 }
 
 // quadrants ===================================
 function race_quadrants() {
-	if ( $content = wp_cache_get('theme_race_quadrants') )
-		return print($content);
+	if ( $content = wp_cache_get( 'theme_race_quadrants' ) )
+		return print( $content );
 
 	ob_start();
 
-	$q = new WP_Query("showposts=4&category_name=quadrant");
+	$q = new WP_Query( "showposts=4&category_name=quadrant" );
 
 	if ( $q->have_posts() ) : ?>
 	<div id="quadrant">
@@ -296,11 +296,11 @@ function race_quadrants() {
 		wp_reset_query();
 	endif;
 
-	wp_cache_add('theme_race_quadrants', ob_get_flush());
+	wp_cache_add( 'theme_race_quadrants', ob_get_flush() );
 }
 
 function race_quadrants_flush() {
-	wp_cache_delete('theme_race_quadrants');
+	wp_cache_delete( 'theme_race_quadrants' );
 }
 
 
@@ -312,10 +312,10 @@ function race_menu( $before = '', $after = '' ) {
 	$content = '';
 	$options_wp_list = 'title_li=&sort_column=menu_order&echo=0&depth=1';
 
-	if ( get_option('show_on_front') == 'page' )
-	    $options_wp_list .= '&exclude=' . get_option('page_on_front');
+	if ( get_option( 'show_on_front' ) == 'page' )
+	    $options_wp_list .= '&exclude=' . get_option( 'page_on_front' );
 
-	$menu = wp_list_pages($options_wp_list);
+	$menu = wp_list_pages( $options_wp_list );
 
 	if ( $menu ) {
 		$content .= '<ul class="menu-parent">';
@@ -329,16 +329,16 @@ function race_thumb_image() {
 	global $post;
 	$thumb_src = RACE_DEFAULT_AVATAR; // tentative
 
-	$thumb = get_children(array(
+	$thumb = get_children( array(
 		'post_parent'    => $post->ID,
 		'post_type'      => 'attachment',
 		'post_mime_type' => 'image',
 		'numberposts'    => 1
-	));
+	) );
 
 	if ( is_array($thumb) ) {
 		$thumb = array_shift( $thumb );
-		if ( $thumb = wp_get_attachment_image_src($thumb->ID) )
+		if ( $thumb = wp_get_attachment_image_src( $thumb->ID ) )
 			$thumb_src = $thumb[0];
 	}
 
@@ -386,10 +386,10 @@ HTML;
 }
 
 function race_footer() {
-	$base = get_option('home');
-	$email = get_option('race_theme_email');
-	if (empty($email))
-		$email = get_option('admin_email');
+	$base = get_option( 'home' );
+	$email = get_option( 'race_theme_email' );
+	if ( empty( $email ) )
+		$email = get_option( 'admin_email' );
 	$email = antispambot( $email );
 
 	$list = '<li>';
@@ -424,7 +424,7 @@ function race_profile_form() {
 		'phone'  => ''
 	);
 	$race_opts = array_merge( $defaults,
-		array_filter( (array) get_usermeta($userdata->ID, 'race_profile') )
+		array_filter( (array) get_usermeta( $userdata->ID, 'race_profile' ) )
 	);
 ?>
 	<style type="text/css">
@@ -494,7 +494,7 @@ function race_profile_process( $uid ) {
 			'zip'    => '',
 			'phone'  => ''
 		);
-		$posted = maybe_unserialize($_POST['race_profile']);
+		$posted = maybe_unserialize( $_POST['race_profile'] );
 
 		foreach ( $posted as $k => $v ) {
 			$postage[$k] = wp_specialchars( trim($v) );
@@ -505,13 +505,13 @@ function race_profile_process( $uid ) {
 }
 
 function race_template_hijack() {
-	$uri  = ( isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ) ? 'https://' : 'http://';
+	$uri  = ( isset( $_SERVER['HTTPS'] ) && strtolower( $_SERVER['HTTPS'] ) == 'on' ) ? 'https://' : 'http://';
 	$uri .= $_SERVER['HTTP_HOST'];
 	$uri .= $_SERVER['REQUEST_URI'];
 
 	// manhandle static front page to use stylesheet_dir template
-	if ( $uri == trailingslashit(get_option('siteurl')) ) {
-		include(STYLESHEETPATH . '/root.php');
+	if ( $uri == trailingslashit( get_option( 'siteurl' ) ) ) {
+		include( STYLESHEETPATH . '/root.php' );
 		exit;
 	}
 }
