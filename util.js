@@ -15,6 +15,7 @@ jQuery(function($) {
 		$('a[title=Signup],a[title=Login]', sub).each(function(i) {
 			var iz = this.title.toLowerCase();
 			var path = WPFB.site;
+			var loc = location.pathname.replace(/(.*)(warriors\/)(.*\/)/, "$1$2");
 			switch (iz) {
 			case 'signup':
 				path += ( loggedin
@@ -26,8 +27,8 @@ jQuery(function($) {
 			break;
 			case 'login':
 				path += '/wp-login.php' + ( loggedin
-					? '?action=logout&redirect_to='+ location.pathname.replace(/(.*)login\//, "$1")
-					: '?redirect_to='+ location.pathname +'login/'
+					? '?action=logout&redirect_to='+ loc
+					: '?redirect_to='+ loc +'login/'
 				);
 				if (loggedin)
 					$(this).text('Logout').attr('title', 'Logout')
