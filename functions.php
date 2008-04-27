@@ -1,82 +1,113 @@
 <?php
 /*
-	Initialization
+*	Initialization
 */
+define('RACE_DEFAULT_AVATAR', get_option('siteurl') . '/wp-content/uploads/default_avatar.jpg');
+
+add_action('init', 'race_theme_init');
+add_action('widgets_init', 'race_widget_init');
+
 function race_theme_init() {
 	if (!get_option('race_theme_email'))
 		add_option('race_theme_email', 'info@racecharities.org');
 
-	add_action('admin_head', 'race_nuke_dashboard_js', 1);
-	add_filter('wp_dashboard_widgets', 'race_nuke_dashboard_widgets');
+	race_theme_init_hooks();
+}
 
+function race_theme_init_hooks() {
+	/*
+		ACTIONS
+	*/
+	add_action('template_redirect', 'race_template_hijack');
+
+	// headers, footers
+	add_action('wp_print_scripts', 'race_header');
+	add_action('login_head', 'race_login_header');
+	add_action('get_footer', 'race_footer');
+
+	// quadrant cache
+	add_action('save_post',    'race_quadrants_flush');
+	add_action('deleted_post', 'race_quadrants_flush');
+
+	// profiles
+	add_action('show_user_profile', 'race_profile_form', 9);
+	add_action('edit_user_profile', 'race_profile_form', 9);
+	add_action('profile_update',    'race_profile_process');
+
+	/*
+		FILTERS
+	*/
+
+	// aleph
 	add_filter('users_join',  'race_aleph_join');
 	add_filter('users_where', 'race_aleph_where');
-}
-function race_aleph_join( $join ) {
-	global $wpdb;
-	$join .= " INNER JOIN {$wpdb->usermeta} AS m ON (m.user_id = {$wpdb->users}.ID)";
-	return $join;
-}
-function race_aleph_where( $where ) {
-	global $wpdb;
-	$where .= " AND m.meta_key = '{$wpdb->prefix}capabilities'";
-	$where .= " AND INSTR(m.meta_value,'subscriber') > 0";
-	return $where;
-}
-function race_nuke_dashboard_js() {
-	remove_action('admin_head', 'index_js');
-}
-function race_nuke_dashboard_widgets() {
-	return array();
+
+	// dashboard nuking
+	add_action('admin_head',           'race_nuke_dashboard_js', 1);
+	add_filter('wp_dashboard_widgets', 'race_nuke_dashboard_widgets', 1);
+
+	// sandbox
+	add_filter('sandbox_menu', 'race_sandbox_menu');
+	add_filter('body_class',   'race_sandbox_class');
+	add_filter('post_class',   'race_sandbox_class');
+
+	// wp overrides
+	add_filter('register',  'race_wp_register');
+	add_filter('the_title', 'race_wp_title');
 }
 
-add_action('init', 'race_theme_init');
+function race_widget_init() {
+	if ( !function_exists('register_sidebars') )
+		return;
 
-// globalnav
-function race_menu( $before = '', $after = '' ) {
-	$content = '';
-	$options_wp_list = 'title_li=&sort_column=menu_order&echo=0&depth=1';
+	$widget_ops = array(
+		'classname'   => 'widget_submenu',
+		'description' => "A submenu that displays children of the current page."
+	);
+	wp_register_sidebar_widget('submenu', 'Page Sub-Menu', 'widget_race_submenu', $widget_ops);
 
-	if ( get_option('show_on_front') == 'page' )
-	    $options_wp_list .= '&exclude=' . get_option('page_on_front');
+	$widget_ops = array(
+		'classname'   => 'widget_gallery',
+		'description' => "A sidebar image gallery that displays images associated with a page."
+	);
+	wp_register_sidebar_widget('sidegallery', 'Page Gallery', 'widget_race_gallery', $widget_ops);
 
-	$menu = wp_list_pages($options_wp_list);
-
-	if ( $menu ) {
-		$content .= '<ul class="menu-parent">';
-		$content .= str_replace( array( "\r", "\n", "\t" ), '', $menu );
-		$content .= "</ul>";
+	if ( is_active_widget('widget_race_gallery') ) {
+		// don't clobber gallery when inactive
+		add_filter('post_gallery', 'race_post_gallery');
 	}
-	return $before . $content . $after;
+
+	$widget_ops = array(
+		'classname'   => 'widget_spotlight',
+		'description' => "In the Spotlight"
+	);
+	wp_register_sidebar_widget('spotlight', 'Page Spotlight', 'widget_race_spotlight', $widget_ops);
+	wp_register_widget_control('spotlight', 'Page Spotlight', 'widget_race_spotlight_control');
+
+	if ( is_active_widget('widget_race_spotlight') ) {
+		// it's polite to flush
+		add_action('save_post',    'widget_race_spotlight_flush');
+		add_action('deleted_post', 'widget_race_spotlight_flush');
+		add_action('switch_theme', 'widget_race_spotlight_flush');
+	}
 }
 
-function race_filter_sandbox_menu() {
-	return race_menu( '<div id="menu">', '</div>' );
-}
-
-add_filter('sandbox_menu', 'race_filter_sandbox_menu');
-
-function race_sandbox_class( $c ) {
-	// remove date crap, untagged
-	// remove ids of -1, or - dangling at end
-	return preg_grep('/(^[ymdh]\d{2,4}|untagged|-(-1)?)$/', $c, PREG_GREP_INVERT);
-}
-
-add_filter('body_class', 'race_sandbox_class');
-add_filter('post_class', 'race_sandbox_class');
+/*
+*	Widgets
+*/
 
 // gallery  ====================================
 function widget_race_gallery( $args ) {
 	extract( $args, EXTR_SKIP );
 
-	$gallery = build_race_gallery();
+	$gallery = race_build_gallery();
 
 	if ( $gallery ) {
 		echo $before_widget . "\n\t\t\t\t" . $gallery . $after_widget;
 	}
 }
 
-function build_race_gallery() {
+function race_build_gallery() {
 	// i love the smell of code duplication in the morning
 	global $post;
 
@@ -120,11 +151,11 @@ function build_race_gallery() {
 	return $output;
 }
 
-function race_gallery( $attr ) {
+function race_post_gallery( $attr ) {
+	// filter gallery shortcode
 	// TODO: make this a more elegant choice
 	return '<!-- gallery in sidebar -->';
 }
-
 
 // sub menu ====================================
 function widget_race_submenu( $args ) {
@@ -162,7 +193,6 @@ function widget_race_submenu( $args ) {
 	}
 }
 
-
 // spotlight ===================================
 function widget_race_spotlight( $args ) {
 	if ( !is_front_page() )
@@ -192,7 +222,7 @@ function widget_race_spotlight( $args ) {
 		<ul>
 			<?php while ( $r->have_posts() ) : $r->the_post(); ?>
 			<li>
-				<a href="<?php the_permalink(); ?>"><?php race_get_thumb_image(); ?></a>
+				<a href="<?php the_permalink(); ?>"><?php race_thumb_image(); ?></a>
 				<div>
 					<h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
 					<?php the_excerpt(); ?>
@@ -208,10 +238,6 @@ function widget_race_spotlight( $args ) {
 	wp_cache_add('widget_race_spotlight', ob_get_flush(), 'widget');
 }
 
-function flush_widget_race_spotlight() {
-	wp_cache_delete('widget_race_spotlight', 'widget');
-}
-
 function widget_race_spotlight_control() {
 	$options = $newoptions = get_option('widget_race_spotlight');
 	if ( $_POST["race-spotlight-submit"] ) {
@@ -221,7 +247,7 @@ function widget_race_spotlight_control() {
 	if ( $options != $newoptions ) {
 		$options = $newoptions;
 		update_option('widget_race_spotlight', $options);
-		flush_widget_race_spotlight();
+		widget_race_spotlight_flush();
 	}
 	$title = attribute_escape($options['title']);
 	if ( !$number = (int) $options['number'] )
@@ -239,10 +265,67 @@ function widget_race_spotlight_control() {
 <?php
 }
 
-$default_avatar = get_option('siteurl') . '/wp-content/uploads/default_avatar.jpg';
-function race_get_thumb_image() {
-	global $post, $default_avatar;
-	$thumb_src  = $default_avatar; // tentative
+function widget_race_spotlight_flush() {
+	wp_cache_delete('widget_race_spotlight', 'widget');
+}
+
+// quadrants ===================================
+function race_quadrants() {
+	if ( $content = wp_cache_get('theme_race_quadrants') )
+		return print($content);
+
+	ob_start();
+
+	$q = new WP_Query("showposts=4&category_name=quadrant");
+
+	if ( $q->have_posts() ) : ?>
+	<div id="quadrant">
+		<ul class="xoxo">
+<?php while ( $q->have_posts() ) : $q->the_post(); ?>
+			<li>
+				<h4><?php the_title(); ?></h4>
+				<?php race_thumb_image(); ?>
+
+				<?php the_content(); ?>
+			</li>
+<?php endwhile; ?>
+		</ul>
+	</div>
+<?php
+		wp_reset_query();
+	endif;
+
+	wp_cache_add('theme_race_quadrants', ob_get_flush());
+}
+
+function race_quadrants_flush() {
+	wp_cache_delete('theme_race_quadrants');
+}
+
+/*
+*	Utilities
+*/
+
+function race_menu( $before = '', $after = '' ) {
+	$content = '';
+	$options_wp_list = 'title_li=&sort_column=menu_order&echo=0&depth=1';
+
+	if ( get_option('show_on_front') == 'page' )
+	    $options_wp_list .= '&exclude=' . get_option('page_on_front');
+
+	$menu = wp_list_pages($options_wp_list);
+
+	if ( $menu ) {
+		$content .= '<ul class="menu-parent">';
+		$content .= str_replace( array( "\r", "\n", "\t" ), '', $menu );
+		$content .= "</ul>";
+	}
+	return $before . $content . $after;
+}
+
+function race_thumb_image() {
+	global $post;
+	$thumb_src = RACE_DEFAULT_AVATAR; // tentative
 
 	$thumb = get_children(array(
 		'post_parent'    => $post->ID,
@@ -260,26 +343,75 @@ function race_get_thumb_image() {
 	echo "<img src=\"{$thumb_src}\" alt=\"\" />";
 }
 
-// warriors ====================================
-/*	Notes re: profile.php / user-edit.php
 
-	Actions
-	-------
-		personal_options_update
-			after flash when redirected after POST
+// ACTIONS
 
-		profile_personal_options
-			between colors and name etc (midway)
+function race_header() {
+	// link util.js, conditional ie stylesheet inside header
+	$root = get_stylesheet_directory_uri();
 
-		show_user_profile
-		edit_user_profile (admin)
-			after everything, before "submit"
+	// because IE is a friggin retard
+	echo <<<HTML
+<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{$root}/ie.css" /><![endif]-->\n
+HTML;
 
-	Filters
-	-------
-		show_password_fields
-			boolean decision to allow password change on profile
-*/
+	wp_enqueue_script( 'race', $root . "/util.js", array('jquery') );
+}
+
+function race_login_header() {
+	echo <<<HTML
+	<script type="text/javascript">
+	function ale(f){var o=window.onload;if(typeof o!='function'){window.onload=f;}else{window.onload=function(){o();f();};}}
+	function patch_redirect() {
+		var r = document.forms[0]['redirect_to'];
+		if (r && r.value == 'wp-admin/') r.value = 'warriors/login/';
+	}
+	ale(patch_redirect);
+	function registered_blurb() {
+		var p = document.getElementsByTagName('P')[0];
+		if (p && p.className && p.className == 'message') {
+			var t = p.firstChild && p.firstChild.nodeType == 3 ? p.firstChild : null;
+			if (t && t.nodeValue && (/registration complete/i).test(t.nodeValue)) {
+				p.replaceChild(document.createTextNode(
+					"Registration complete. Please login to continue."
+				), t);
+			}
+		}
+	}
+	ale(registered_blurb);
+	</script>\n
+HTML;
+}
+
+function race_footer() {
+	$base = get_option('home');
+	$email = get_option('race_theme_email');
+	if (empty($email))
+		$email = get_option('admin_email');
+	$email = antispambot( $email );
+
+	$list = '<li>';
+	$list .= implode('</li><li>', array(
+		"<a href=\"$base/home/user-agreement/\" title=\"View User Agreement\">User Agreement</a>",
+		"<a href=\"$base/home/privacy-policy/\" title=\"View Privacy Policy\">Privacy Policy</a>",
+		"<a href=\"mailto:$email\">Contact Us</a>",
+		"<a href=\"$base/\" title=\"Go to homepage\">Home</a>"
+	));
+	$list .= '</li>';
+	?>
+
+	<div id="ft">
+		<?php echo race_menu(); ?>
+
+		<ul id="ft-admin" class="menu-parent"><?php
+			wp_register();
+			echo '<li>'; wp_loginout(); echo '</li>';
+			echo $list;
+		?></ul>
+	</div>
+	<?php
+}
+
 function race_profile_form() {
 	global $userdata;
 	$defaults = array(
@@ -370,192 +502,60 @@ function race_profile_process( $uid ) {
 	}
 }
 
-add_action('show_user_profile', 'race_profile_form', 9);
-add_action('edit_user_profile', 'race_profile_form', 9);
-
-add_action('profile_update', 'race_profile_process');
-
-// theme widget init ===========================
-function race_widget_init() {
-	if ( !function_exists('register_sidebars') )
-		return;
-
-	$widget_ops = array(
-		'classname'   => 'widget_submenu',
-		'description' => "A submenu that displays children of the current page."
-	);
-	wp_register_sidebar_widget('submenu', 'Page Sub-Menu', 'widget_race_submenu', $widget_ops);
-
-	$widget_ops = array(
-		'classname'   => 'widget_gallery',
-		'description' => "A sidebar image gallery that displays images associated with a page."
-	);
-	wp_register_sidebar_widget('sidegallery', 'Page Gallery', 'widget_race_gallery', $widget_ops);
-
-	if ( is_active_widget('widget_race_gallery') ) {
-		// don't clobber gallery when inactive
-		add_filter('post_gallery', 'race_gallery');
-	}
-
-	$widget_ops = array(
-		'classname'   => 'widget_spotlight',
-		'description' => "In the Spotlight"
-	);
-	wp_register_sidebar_widget('spotlight', 'Page Spotlight', 'widget_race_spotlight', $widget_ops);
-	wp_register_widget_control('spotlight', 'Page Spotlight', 'widget_race_spotlight_control');
-
-	if ( is_active_widget('widget_race_spotlight') ) {
-		// it's polite to flush
-		add_action('save_post',    'flush_widget_race_spotlight');
-		add_action('deleted_post', 'flush_widget_race_spotlight');
-		add_action('switch_theme', 'flush_widget_race_spotlight');
-	}
-}
-
-add_action('widgets_init', 'race_widget_init');
-
-
-// theme utilities =============================
-
-// link util.js, conditional ie stylesheet inside header
-function race_header() {
-	$root = get_stylesheet_directory_uri();
-
-	// because IE is a friggin retard
-	echo <<<HTML
-<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{$root}/ie.css" /><![endif]-->\n
-HTML;
-
-	wp_enqueue_script( 'race', $root . "/util.js", array('jquery') );
-}
-
-add_action('wp_print_scripts', 'race_header');
-
-function race_login_header() {
-	echo <<<HTML
-	<script type="text/javascript">
-	function ale(f){var o=window.onload;if(typeof o!='function'){window.onload=f;}else{window.onload=function(){o();f();};}}
-	function patch_redirect() {
-		var r = document.forms[0]['redirect_to'];
-		if (r && r.value == 'wp-admin/') r.value = 'warriors/login/';
-	}
-	ale(patch_redirect);
-	function registered_blurb() {
-		var p = document.getElementsByTagName('P')[0];
-		if (p && p.className && p.className == 'message') {
-			var t = p.firstChild && p.firstChild.nodeType == 3 ? p.firstChild : null;
-			if (t && t.nodeValue && (/registration complete/i).test(t.nodeValue)) {
-				p.replaceChild(document.createTextNode(
-					"Registration complete. Please login to continue."
-				), t);
-			}
-		}
-	}
-	ale(registered_blurb);
-	</script>\n
-HTML;
-}
-
-add_action('login_head', 'race_login_header');
-
-// footer thingy
-function race_footer() {
-	$base = get_option('home');
-	$email = get_option('race_theme_email');
-	if (empty($email))
-		$email = get_option('admin_email');
-	$email = antispambot( $email );
-
-	$list = '<li>';
-	$list .= implode('</li><li>', array(
-		"<a href=\"$base/home/user-agreement/\" title=\"View User Agreement\">User Agreement</a>",
-		"<a href=\"$base/home/privacy-policy/\" title=\"View Privacy Policy\">Privacy Policy</a>",
-		"<a href=\"mailto:$email\">Contact Us</a>",
-		"<a href=\"$base/\" title=\"Go to homepage\">Home</a>"
-	));
-	$list .= '</li>';
-	?>
-
-	<div id="ft">
-		<?php echo race_menu(); ?>
-
-		<ul id="ft-admin" class="menu-parent"><?php
-			wp_register();
-			echo '<li>'; wp_loginout(); echo '</li>';
-			echo $list;
-		?></ul>
-	</div>
-	<?php
-}
-
-add_action('get_footer', 'race_footer');
-
-// change text of wp_register links
-function race_filter_register( $arg ) {
-	return preg_replace(
-		array('/Register/','/Site Admin/'),
-		array('Become A Warrior','Dashboard'),
-		$arg
-	);
-}
-
-add_filter('register', 'race_filter_register');
-
-// remove 'protected: ' and 'private: ' from the_title
-function race_filter_title( $arg ) {
-	return preg_replace( array('/^Protected: /', '/^Private: /'), '', $arg );
-}
-
-add_filter('the_title', 'race_filter_title');
-
-// quadrants
-function race_quadrants() {
-	if ( $content = wp_cache_get('theme_race_quadrants') )
-		return print($content);
-
-	ob_start();
-
-	$q = new WP_Query("showposts=4&category_name=quadrant");
-
-	if ( $q->have_posts() ) : ?>
-	<div id="quadrant">
-		<ul class="xoxo">
-<?php while ( $q->have_posts() ) : $q->the_post(); ?>
-			<li>
-				<h4><?php the_title(); ?></h4>
-				<?php race_get_thumb_image(); ?>
-
-				<?php the_content(); ?>
-			</li>
-<?php endwhile; ?>
-		</ul>
-	</div>
-<?php
-		wp_reset_query();
-	endif;
-
-	wp_cache_add('theme_race_quadrants', ob_get_flush());
-}
-
-function flush_race_quadrants() {
-	wp_cache_delete('theme_race_quadrants');
-}
-
-add_action('save_post',    'flush_race_quadrants');
-add_action('deleted_post', 'flush_race_quadrants');
-
-// manhandle static front page to use stylesheet_dir template
 function race_template_hijack() {
 	$uri  = ( isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ) ? 'https://' : 'http://';
 	$uri .= $_SERVER['HTTP_HOST'];
 	$uri .= $_SERVER['REQUEST_URI'];
 
+	// manhandle static front page to use stylesheet_dir template
 	if ( $uri == trailingslashit(get_option('siteurl')) ) {
 		include(STYLESHEETPATH . '/root.php');
 		exit;
 	}
 }
 
-add_action('template_redirect', 'race_template_hijack');
+
+// FILTERS
+
+function race_aleph_join( $join ) {
+	global $wpdb;
+	$join .= " INNER JOIN {$wpdb->usermeta} AS m ON (m.user_id = {$wpdb->users}.ID)";
+	return $join;
+}
+function race_aleph_where( $where ) {
+	global $wpdb;
+	$where .= " AND m.meta_key = '{$wpdb->prefix}capabilities'";
+	$where .= " AND INSTR(m.meta_value,'subscriber') > 0";
+	return $where;
+}
+
+function race_nuke_dashboard_js() {
+	remove_action('admin_head', 'index_js');
+}
+function race_nuke_dashboard_widgets() {
+	return array();
+}
+
+function race_sandbox_menu() {
+	return race_menu( '<div id="menu">', '</div>' );
+}
+function race_sandbox_class( $c ) {
+	// remove date crap, untagged
+	// remove ids of -1, or - dangling at end
+	return preg_grep('/(^[ymdh]\d{2,4}|untagged|-(-1)?)$/', $c, PREG_GREP_INVERT);
+}
+
+function race_wp_register( $arg ) {
+	// change text of wp_register links
+	return preg_replace(
+		array('/Register/','/Site Admin/'),
+		array('Become A Warrior','Dashboard'),
+		$arg
+	);
+}
+function race_wp_title( $arg ) {
+	// remove 'protected: ' and 'private: ' from the_title
+	return preg_replace( array('/^Protected: /', '/^Private: /'), '', $arg );
+}
 
 ?>
