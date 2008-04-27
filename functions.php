@@ -1,7 +1,7 @@
 <?php
-/*
-*	Initialization
-*/
+/********************
+ *  Initialization  *
+ ********************/
 define('RACE_DEFAULT_AVATAR', get_option('siteurl') . '/wp-content/uploads/default_avatar.jpg');
 
 add_action('init', 'race_theme_init');
@@ -92,9 +92,10 @@ function race_widget_init() {
 	}
 }
 
-/*
-*	Widgets
-*/
+
+/********************
+ *      Widgets     *
+ ********************/
 
 // gallery  ====================================
 function widget_race_gallery( $args ) {
@@ -302,9 +303,10 @@ function race_quadrants_flush() {
 	wp_cache_delete('theme_race_quadrants');
 }
 
-/*
-*	Utilities
-*/
+
+/********************
+ *     Utilities    *
+ ********************/
 
 function race_menu( $before = '', $after = '' ) {
 	$content = '';
