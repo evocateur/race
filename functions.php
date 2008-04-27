@@ -505,12 +505,8 @@ function race_profile_process( $uid ) {
 }
 
 function race_template_hijack() {
-	$uri  = ( isset( $_SERVER['HTTPS'] ) && strtolower( $_SERVER['HTTPS'] ) == 'on' ) ? 'https://' : 'http://';
-	$uri .= $_SERVER['HTTP_HOST'];
-	$uri .= $_SERVER['REQUEST_URI'];
-
-	// manhandle static front page to use stylesheet_dir template
-	if ( $uri == trailingslashit( get_option( 'siteurl' ) ) ) {
+	global $post;
+	if ( is_front_page() ) {
 		include( STYLESHEETPATH . '/root.php' );
 		exit;
 	}
