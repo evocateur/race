@@ -271,6 +271,100 @@ function race_get_thumb_image() {
 		show_password_fields
 			boolean decision to allow password change on profile
 */
+function race_profile_form() {
+	global $userdata;
+	$defaults = array(
+		'street' => '',
+		'city'   => '',
+		'state'  => '',
+		'zip'    => '',
+		'phone'  => ''
+	);
+	$race_opts = array_merge( $defaults,
+		array_filter( (array) get_usermeta($userdata->ID, 'race_profile') )
+	);
+?>
+	<style type="text/css">
+	#profile-page #race input {
+		margin: 1px 0;
+		padding: 3px;
+	}
+	#profile-page #race label {
+		float: left;
+		margin-right: 0.4em;
+	}
+	#profile-page #race td > label {
+		margin-right: 0.5em;
+	}
+	#profile-page #race label.center,
+	#profile-page #race label.center input {
+		text-align: center;
+	}
+	#profile-page #race label input {
+		display: block;
+	}
+	#profile-page #race td br {
+		clear: both;
+	}
+	#profile-page #race-street { width: 20em; }
+	#profile-page #race-city   { width: 12em; }
+	#profile-page #race-state  { width:  2em; }
+	#profile-page #race-zip    { width:  4em; }
+	#profile-page #race-phone  { width:  8em; }
+	#race-mail-wrap {
+		padding-bottom: 1.5em;
+	}
+	</style>
+	<table class="form-table" id="race">
+		<tbody>
+			<tr>
+				<th>Mailing Address</th>
+				<td id="race-mail-wrap">
+					<label for="race-street">Street
+					<input type="text" name="race_profile[street]" value="<?php echo $race_opts['street'] ?>" id="race-street" /></label><br />
+					<label for="race-city">City
+					<input type="text" name="race_profile[city]" value="<?php echo $race_opts['city']; ?>" id="race-city" /></label>
+					<label for="race-state" class="center">State
+					<input type="text" name="race_profile[state]" value="<?php echo $race_opts['state']; ?>" id="race-state" /></label>
+					<label for="race-zip">Zip
+					<input type="text" name="race_profile[zip]" value="<?php echo $race_opts['zip']; ?>" id="race-zip" /></label>
+				</td>
+			</tr>
+			<tr>
+				<th><label for="race-phone">Phone</label></th>
+				<td>
+					<input type="text" name="race_profile[phone]" value="<?php echo $race_opts['phone']; ?>" id="race-phone" />
+					<input type="hidden" name="race_profile_update" value="1" />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+<?php
+}
+
+function race_profile_process( $uid ) {
+	if ( isset( $_POST['race_profile_update'] ) ) {
+		$postage = array(
+			'street' => '',
+			'city'   => '',
+			'state'  => '',
+			'zip'    => '',
+			'phone'  => ''
+		);
+		$posted = maybe_unserialize($_POST['race_profile']);
+
+		foreach ( $posted as $k => $v ) {
+			$postage[$k] = wp_specialchars( trim($v) );
+		}
+
+		update_usermeta( $uid, 'race_profile', $postage );
+	}
+}
+
+add_action('show_user_profile', 'race_profile_form', 9);
+add_action('edit_user_profile', 'race_profile_form', 9);
+
+add_action('profile_update', 'race_profile_process');
 
 // theme widget init ===========================
 function race_widget_init() {
