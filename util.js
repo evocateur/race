@@ -26,8 +26,8 @@ jQuery(function($) {
 			break;
 			case 'login':
 				path += '/wp-login.php' + ( loggedin
-					? '?action=logout&redirect_to='+ WPFB.home +'/warriors/'
-					: '?redirect_to='+ WPFB.home +'/warriors/login/'
+					? '?action=logout&redirect_to='+ location.pathname.replace(/(.*)login\//, "$1")
+					: '?redirect_to='+ location.pathname +'login/'
 				);
 				if (loggedin)
 					$(this).text('Logout').attr('title', 'Logout')
