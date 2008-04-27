@@ -6,7 +6,7 @@
 <?php if (have_users()) { the_user();  ?>
 			<div id="profile" class="<?php sandbox_post_class() ?>">
 				<h2 class="profile-title"><?php aleph_the_user_complete_name(); ?></h2>
-				<div class="entry-content">
+				<div class="entry-content" id="user-<?php aleph_the_user_ID(); ?>">
 <?php aleph_the_user_photo('<div class="user-image">', '</div>'); ?>
 <?php aleph_the_user_description(); ?>
 				</div>

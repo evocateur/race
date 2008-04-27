@@ -19,7 +19,7 @@
 			</li>
 <?php } ?>
 		</ul>
-		<p><?php previous_users_link("&laquo; Previous Users"); ?> <?php next_users_link("Next Users &raquo;"); ?></p>
+		<p><?php previous_users_link("&laquo; Previous"); ?> <?php next_users_link("Next &raquo;"); ?></p>
 
 	<?php } else { ?>
 		<h1>Sorry</h1>

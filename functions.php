@@ -5,6 +5,20 @@
 function race_theme_init() {
 	if (!get_option('race_theme_email'))
 		add_option('race_theme_email', 'info@racecharities.org');
+
+	add_filter('users_join',  'race_aleph_join');
+	add_filter('users_where', 'race_aleph_where');
+}
+function race_aleph_join( $join ) {
+	global $wpdb;
+	$join .= " INNER JOIN {$wpdb->usermeta} AS m ON (m.user_id = {$wpdb->users}.ID)";
+	return $join;
+}
+function race_aleph_where( $where ) {
+	global $wpdb;
+	$where .= " AND m.meta_key = '{$wpdb->prefix}capabilities'";
+	$where .= " AND INSTR(m.meta_value,'subscriber') > 0";
+	return $where;
 }
 
 add_action('init', 'race_theme_init');
@@ -32,6 +46,15 @@ function race_filter_sandbox_menu() {
 }
 
 add_filter('sandbox_menu', 'race_filter_sandbox_menu');
+
+function race_sandbox_class( $c ) {
+	// remove date crap, untagged
+	// remove ids of -1, or - dangling at end
+	return preg_grep('/(^[ymdh]\d{2,4}|untagged|-(-1)?)$/', $c, PREG_GREP_INVERT);
+}
+
+add_filter('body_class', 'race_sandbox_class');
+add_filter('post_class', 'race_sandbox_class');
 
 // gallery  ====================================
 function widget_race_gallery( $args ) {
@@ -100,15 +123,22 @@ function widget_race_submenu( $args ) {
 
 	global $post;
 
-	$list_ops = "title_li=&echo=0&sort_column=menu_order&child_of=";
+	$list_ops = "title_li=&echo=0&sort_column=menu_order&depth=1&child_of=";
 
-	if ( $post->post_parent )
+	if ( $post->post_parent ) {
 		$list_ops .= $post->post_parent;
+	}
 	else if ( $post->slug == 'author-list' ) {
 		$child = array_shift(query_posts('pagename=warriors/current'));
 		$list_ops .= $child->post_parent;
-	} else if ( is_page() && !is_front_page() )
+	}
+	else if ( $post->slug == 'author-profile' ) {
+		$child = array_shift(query_posts('pagename=donations/online'));
+		$list_ops .= $child->ID;
+	}
+	else if ( is_page() && !is_front_page() ) {
 		$list_ops .= $post->ID;
+	}
 	else
 		return '';
 
@@ -297,6 +327,23 @@ HTML;
 }
 
 add_action('wp_print_scripts', 'race_header');
+
+/*
+function race_login_header() {
+	echo <<<HTML
+	<script type="text/javascript">
+	function ale(f){var o=window.onload;if(typeof o!='function'){window.onload=f;}else{window.onload=function(){o();f();};}}
+	function patch_redirect() {
+		var r = document.forms[0]['redirect_to'];
+		if (r && r.value == 'wp-admin/') r.value = 'warriors/login/';
+	}
+	ale(patch_redirect);
+	</script>\n
+HTML;
+}
+
+add_action('login_head', 'race_login_header');
+*/
 
 // footer thingy
 function race_footer() {
