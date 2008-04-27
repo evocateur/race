@@ -6,6 +6,9 @@ function race_theme_init() {
 	if (!get_option('race_theme_email'))
 		add_option('race_theme_email', 'info@racecharities.org');
 
+	add_action('admin_head', 'race_nuke_dashboard_js', 1);
+	add_filter('wp_dashboard_widgets', 'race_nuke_dashboard_widgets');
+
 	add_filter('users_join',  'race_aleph_join');
 	add_filter('users_where', 'race_aleph_where');
 }
@@ -19,6 +22,12 @@ function race_aleph_where( $where ) {
 	$where .= " AND m.meta_key = '{$wpdb->prefix}capabilities'";
 	$where .= " AND INSTR(m.meta_value,'subscriber') > 0";
 	return $where;
+}
+function race_nuke_dashboard_js() {
+	remove_action('admin_head', 'index_js');
+}
+function race_nuke_dashboard_widgets() {
+	return array();
 }
 
 add_action('init', 'race_theme_init');
