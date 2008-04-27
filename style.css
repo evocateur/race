@@ -596,6 +596,11 @@ blockquote cite {
 	text-align: right;
 }
 
+/* admin stuff ---------------------------------------------------------------- */
+body.wp-admin div.color-option {
+	display: none;
+}
+
 /* New gallery feature styles
 	Can't use div.attachment because shortcodes can link to galleries in other posts 
 */
