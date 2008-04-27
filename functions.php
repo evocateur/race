@@ -431,7 +431,6 @@ HTML;
 
 add_action('wp_print_scripts', 'race_header');
 
-/*
 function race_login_header() {
 	echo <<<HTML
 	<script type="text/javascript">
@@ -441,12 +440,23 @@ function race_login_header() {
 		if (r && r.value == 'wp-admin/') r.value = 'warriors/login/';
 	}
 	ale(patch_redirect);
+	function registered_blurb() {
+		var p = document.getElementsByTagName('P')[0];
+		if (p && p.className && p.className == 'message') {
+			var t = p.firstChild && p.firstChild.nodeType == 3 ? p.firstChild : null;
+			if (t && t.nodeValue && (/registration complete/i).test(t.nodeValue)) {
+				p.replaceChild(document.createTextNode(
+					"Registration complete. Please login to continue."
+				), t);
+			}
+		}
+	}
+	ale(registered_blurb);
 	</script>\n
 HTML;
 }
 
 add_action('login_head', 'race_login_header');
-*/
 
 // footer thingy
 function race_footer() {
