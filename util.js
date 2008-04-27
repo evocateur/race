@@ -15,18 +15,19 @@ jQuery(function($) {
 		$('a[title=Signup],a[title=Login]', sub).each(function(i) {
 			var iz = this.title.toLowerCase();
 			var path = WPFB.site;
+			var home = WPFB.home;
 			switch (iz) {
 			case 'signup':
 				path += (loggedin)
 					? '/wp-admin/profile.php'
-					: '/wp-login.php?action=register&redirect_to=warriors/signup/';
+					: '/wp-login.php?action=register';
 				if (loggedin)
 					$(this).text('Edit Profile').attr('title', 'Edit Profile');
 			break;
 			case 'login':
 				path += '/wp-login.php' + ( loggedin
-					? '?action=logout&redirect_to=warriors/'
-					: '?redirect_to=warriors/login/'
+					? '?action=logout&redirect_to='+ home +'/warriors/'
+					: '?redirect_to='+ home +'/warriors/login/'
 				);
 				if (loggedin)
 					$(this).text('Logout').attr('title', 'Logout')
