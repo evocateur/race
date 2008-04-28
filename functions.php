@@ -542,7 +542,7 @@ function race_profile_form_top() {
 		'total' => 0
 	);
 	$opts = array_merge( $defaults, array_filter( (array) $userdata->race_profile ) );
-	$total = wp_sprintf( '<strong>$%d</strong> raised so far', (int) $opts['total'] );
+	$total = wp_sprintf( '<strong>$%d</strong> pledged so far', (int) $opts['total'] );
 	/*
 		TODO: "reset current progress" amount
 			(changing events until target reset in-place)
