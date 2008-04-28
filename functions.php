@@ -2,7 +2,8 @@
 /********************
  *  Initialization  *
  ********************/
-define('RACE_DEFAULT_AVATAR', get_option('siteurl') . '/wp-content/uploads/default_avatar.jpg');
+define( 'RACE_DEFAULT_AVATAR', get_option('siteurl') . '/wp-content/uploads/default_avatar.jpg' );
+define( 'RACE_THEME_ROOT_URI', get_stylesheet_directory_uri() );
 
 add_action('init', 'race_theme_init');
 add_action('widgets_init', 'race_widget_init');
@@ -10,6 +11,9 @@ add_action('widgets_init', 'race_widget_init');
 function race_theme_init() {
 	if (!get_option('race_theme_email'))
 		add_option('race_theme_email', 'info@racecharities.org');
+
+	wp_register_script( 'race_pages', RACE_THEME_ROOT_URI . "/util.js",  array('jquery') );
+	wp_register_script( 'race_admin', RACE_THEME_ROOT_URI . "/admin.js", array('jquery') );
 
 	race_theme_init_hooks();
 }
@@ -30,6 +34,9 @@ function race_theme_init_hooks() {
 	add_action('deleted_post', 'race_quadrants_flush');
 
 	// profiles
+	add_action('admin_print_scripts',      'race_profile_css_js',    1);
+	add_action('profile_personal_options', 'race_profile_inline_js', 1);
+
 	add_action('show_user_profile', 'race_profile_form', 9);
 	add_action('edit_user_profile', 'race_profile_form', 9);
 	add_action('profile_update',    'race_profile_process');
@@ -43,7 +50,7 @@ function race_theme_init_hooks() {
 	add_filter('users_where', 'race_aleph_where');
 
 	// dashboard nuking
-	add_action('admin_head',           'race_nuke_dashboard_js', 1);
+	add_action('admin_head',           'race_nuke_dashboard_js',      1);
 	add_filter('wp_dashboard_widgets', 'race_nuke_dashboard_widgets', 1);
 
 	// sandbox
@@ -349,15 +356,17 @@ function race_thumb_image() {
 // ACTIONS
 
 function race_header() {
-	// link util.js, conditional ie stylesheet inside header
-	$root = get_stylesheet_directory_uri();
+	if ( is_admin() )
+		return '';
+	// link util.js, conditional ie stylesheet inside header (non-admin)
+	$root = RACE_THEME_ROOT_URI;
 
 	// because IE is a friggin retard
 	echo <<<HTML
 <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{$root}/ie.css" /><![endif]-->\n
 HTML;
 
-	wp_enqueue_script( 'race', $root . "/util.js", array('jquery') );
+	wp_enqueue_script( 'race_pages' );
 }
 
 function race_login_header() {
@@ -414,20 +423,23 @@ function race_footer() {
 	<?php
 }
 
-function race_profile_form() {
-	global $userdata;
-	$defaults = array(
-		'street' => '',
-		'city'   => '',
-		'state'  => '',
-		'zip'    => '',
-		'phone'  => ''
-	);
-	$race_opts = array_merge( $defaults,
-		array_filter( (array) get_usermeta( $userdata->ID, 'race_profile' ) )
-	);
+function race_profile_inline_js() {
+	// alas the odiousness of inline script (to hide color options)
 ?>
-	<style type="text/css">
+<script type="text/javascript">
+(function(){
+    var pp = document.getElementById('profile-page'), ft = pp.getElementsByTagName('TABLE'), h2 = pp.getElementsByTagName('H2');
+    if (ft[0] && ft[0].className == 'form-table') ft[0].style.display = 'none';
+    if (h2[0] && h2[0].firstChild.nodeType == 3)  h2[0].replaceChild(document.createTextNode("Profile Options"), h2[0].firstChild);
+})();
+</script>
+<?php
+}
+
+function race_profile_css_js() {
+	wp_enqueue_script( 'race_admin' );
+?>
+<style type="text/css">
 	#profile-page #race input {
 		margin: 1px 0;
 		padding: 3px;
@@ -457,7 +469,23 @@ function race_profile_form() {
 	#race-mail-wrap {
 		padding-bottom: 1.5em;
 	}
-	</style>
+</style>
+<?php
+}
+
+function race_profile_form() {
+	global $userdata;
+	$defaults = array(
+		'street' => '',
+		'city'   => '',
+		'state'  => '',
+		'zip'    => '',
+		'phone'  => ''
+	);
+	$race_opts = array_merge( $defaults,
+		array_filter( (array) get_usermeta( $userdata->ID, 'race_profile' ) )
+	);
+?>
 	<table class="form-table" id="race">
 		<tbody>
 			<tr>
