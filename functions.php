@@ -352,6 +352,41 @@ function race_thumb_image() {
 	echo "<img src=\"{$thumb_src}\" alt=\"\" />";
 }
 
+function race_goal_select( $selected = '', $name = '', $id = '', $indent = 5, $echo = true ) {
+	// TODO: look into instance of subclassed Walker
+	$t = str_repeat("\t", $indent);
+	if ( empty( $name ) )
+		$name = "race_profile[goal]";
+	if ( empty( $id ) )
+		$id = 'race-goal';
+	$selected = (int) $selected;
+	$sel = <<<HTML
+<select name="$name" id="$id">
+$t	<option value="">Amount</option>
+$t	<option value="50">$50</option>
+$t	<option value="100">$100</option>
+$t	<option value="150">$150</option>
+$t	<option value="200">$200</option>
+$t	<option value="250">$250</option>
+$t	<option value="300">$300</option>
+$t	<option value="400">$400</option>
+$t	<option value="500">$500</option>
+$t	<option value="600">$600</option>
+$t	<option value="750">$750</option>
+$t	<option value="1000">$1000</option>
+$t	<option value="1500">$1500</option>
+$t	<option value="2000">$2000</option>
+$t</select>\n
+HTML;
+	if ( ! empty( $selected ) ) {
+		$sel = preg_replace("/$selected/", "$selected\" selected=\"selected", $sel, 1 );
+	}
+	if ( $echo )
+		echo $sel;
+	else
+		return "\n$t" . $sel;
+}
+
 
 // ACTIONS
 
