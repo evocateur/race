@@ -5,7 +5,7 @@ jQuery(function($){
 	var profile = $('body.wp-admin #profile-page');
 	if (profile.length) {
 		// resize text inputs
-		$('table.form-table:not(#race) input[type=text]', profile)
+		$('table.form-table:not(.race) input[type=text]', profile)
 			.css('width', '150px')
 			.filter('#email')
 				.css('width', '300px');

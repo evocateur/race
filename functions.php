@@ -440,25 +440,26 @@ function race_profile_css_js() {
 	wp_enqueue_script( 'race_admin' );
 ?>
 <style type="text/css">
-	#profile-page #race input {
+	#profile-page table.race input {
 		margin: 1px 0;
 		padding: 3px;
 	}
-	#profile-page #race label {
+	/* bottom */
+	#profile-page table.race label {
 		float: left;
-		margin-right: 0.4em;
+		margin-right: 0.4em; /* IE */
 	}
-	#profile-page #race td > label {
+	#profile-page table.race td > label {
 		margin-right: 0.5em;
 	}
-	#profile-page #race label.center,
-	#profile-page #race label.center input {
+	#profile-page table.race label.center,
+	#profile-page table.race label.center input {
 		text-align: center;
 	}
-	#profile-page #race label input {
+	#profile-page table.race label input {
 		display: block;
 	}
-	#profile-page #race td br {
+	#profile-page table.race td br {
 		clear: both;
 	}
 	#profile-page #race-street { width: 20em; }
@@ -486,7 +487,7 @@ function race_profile_form() {
 		array_filter( (array) get_usermeta( $userdata->ID, 'race_profile' ) )
 	);
 ?>
-	<table class="form-table" id="race">
+	<table class="form-table race" id="race-bottom">
 		<tbody>
 			<tr>
 				<th>Mailing Address</th>
