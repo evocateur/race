@@ -12,7 +12,7 @@ function race_theme_init() {
 	if (!get_option('race_theme_email'))
 		add_option('race_theme_email', 'info@racecharities.org');
 
-	wp_register_script( 'race_pages', RACE_THEME_ROOT_URI . "/util.js",  array('jquery') );
+	wp_register_script( 'race_pages', RACE_THEME_ROOT_URI . "/lib.js",  array('jquery') );
 	wp_register_script( 'race_admin', RACE_THEME_ROOT_URI . "/admin.js", array('jquery') );
 
 	race_theme_init_hooks();
@@ -358,7 +358,7 @@ function race_thumb_image() {
 function race_header() {
 	if ( is_admin() )
 		return '';
-	// link util.js, conditional ie stylesheet inside header (non-admin)
+	// link lib.js, conditional ie stylesheet inside header (non-admin)
 	$root = RACE_THEME_ROOT_URI;
 
 	// because IE is a friggin retard
