@@ -34,12 +34,12 @@ function race_theme_init_hooks() {
 	add_action('deleted_post', 'race_quadrants_flush');
 
 	// profiles
-	add_action('admin_print_scripts',      'race_profile_css_js',    1);
-	add_action('profile_personal_options', 'race_profile_inline_js', 1);
+	add_action('admin_print_scripts',      'race_profile_css_js',   1);
+	add_action('profile_personal_options', 'race_profile_form_top', 1);
 
-	add_action('show_user_profile', 'race_profile_form', 9);
-	add_action('edit_user_profile', 'race_profile_form', 9);
-	add_action('profile_update',    'race_profile_process');
+	add_action('show_user_profile', 'race_profile_form_bottom', 9);
+	add_action('edit_user_profile', 'race_profile_form_bottom', 9);
+	add_action('profile_update',    'race_profile_form_process');
 
 	/*
 		FILTERS
@@ -458,19 +458,6 @@ function race_footer() {
 	<?php
 }
 
-function race_profile_inline_js() {
-	// alas the odiousness of inline script (to hide color options)
-?>
-<script type="text/javascript">
-(function(){
-    var pp = document.getElementById('profile-page'), ft = pp.getElementsByTagName('TABLE'), h2 = pp.getElementsByTagName('H2');
-    if (ft[0] && ft[0].className == 'form-table') ft[0].style.display = 'none';
-    if (h2[0] && h2[0].firstChild.nodeType == 3)  h2[0].replaceChild(document.createTextNode("Profile Options"), h2[0].firstChild);
-})();
-</script>
-<?php
-}
-
 function race_profile_css_js() {
 	wp_enqueue_script( 'race_admin' );
 ?>
@@ -505,11 +492,83 @@ function race_profile_css_js() {
 	#race-mail-wrap {
 		padding-bottom: 1.5em;
 	}
+	/* top */
+	#profile-page table.race select {
+		margin-right: 2em;
+	}
+	#profile-page table.race label.inline {
+		float: none;
+		display: inline-block;
+	}
+	#profile-page table.race label.inline input {
+		display: inline-block;
+		margin-right: 0.5em;
+		vertical-align: -0.4em; /* IE */
+	}
+	#profile-page table.race label.inline > input {
+		vertical-align: middle;
+	}
+	#profile-page #race-top td span.total {
+		display: inline-block;
+		font-size: 1.5em;
+	}
+	/* neuroses */
+	#profile-page #race-top td span.total,
+	#profile-page table.race label.inline {
+		vertical-align: -0.35em;
+	}
+	/* patch 2.5 default */
+	body.wp-admin #profile-page table.form-table td > #pass-strength-result {
+		margin-bottom: 0.5em;
+	}
 </style>
 <?php
 }
 
-function race_profile_form() {
+function race_profile_form_top() {
+	// alas the odiousness of inline script (to hide color options)
+?>
+<script type="text/javascript">
+(function(){
+    var pp = document.getElementById('profile-page'), ft = pp.getElementsByTagName('TABLE'), h2 = pp.getElementsByTagName('H2');
+    if (ft[0] && ft[0].className == 'form-table') ft[0].style.display = 'none';
+    if (h2[0] && h2[0].firstChild.nodeType == 3)  h2[0].replaceChild(document.createTextNode("Profile Options"), h2[0].firstChild);
+})();
+</script>
+<?php
+	global $userdata;
+	$defaults = array(
+		'goal'  => '',
+		'total' => 0
+	);
+	$opts = array_merge( $defaults, array_filter( (array) $userdata->race_profile ) );
+	$total = wp_sprintf( '<strong>$%d</strong> raised so far', (int) $opts['total'] );
+	/*
+		TODO: "reset current progress" amount
+			(changing events until target reset in-place)
+
+		TODO: "reset target" of fundraising (different events)
+				means seperated tracking
+
+		TODO: "remaining" ? (diff target total)
+	*/
+?>
+	<table class="form-table race" id="race-top">
+		<tbody>
+			<tr>
+				<th><label for="race-goal">Fundraising Goal</label></th>
+				<td>
+					<?php race_goal_select( $opts['goal'] ); ?>
+					<label for="race_reset_progress" class="inline"><input type="checkbox" name="race_reset_progress" value="1" id="race_reset_progress" />Reset Current Progress</label>
+					<span class="total">( <?php echo $total; ?> )</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+<?php
+}
+
+function race_profile_form_bottom() {
 	global $userdata;
 	$defaults = array(
 		'street' => '',
@@ -518,9 +577,7 @@ function race_profile_form() {
 		'zip'    => '',
 		'phone'  => ''
 	);
-	$race_opts = array_merge( $defaults,
-		array_filter( (array) get_usermeta( $userdata->ID, 'race_profile' ) )
-	);
+	$opts = array_merge( $defaults, array_filter( (array) $userdata->race_profile ) );
 ?>
 	<table class="form-table race" id="race-bottom">
 		<tbody>
@@ -528,19 +585,19 @@ function race_profile_form() {
 				<th>Mailing Address</th>
 				<td id="race-mail-wrap">
 					<label for="race-street">Street
-					<input type="text" name="race_profile[street]" value="<?php echo $race_opts['street'] ?>" id="race-street" /></label><br />
+					<input type="text" name="race_profile[street]" value="<?php echo $opts['street'] ?>" id="race-street" /></label><br />
 					<label for="race-city">City
-					<input type="text" name="race_profile[city]" value="<?php echo $race_opts['city']; ?>" id="race-city" /></label>
+					<input type="text" name="race_profile[city]" value="<?php echo $opts['city']; ?>" id="race-city" /></label>
 					<label for="race-state" class="center">State
-					<input type="text" name="race_profile[state]" value="<?php echo $race_opts['state']; ?>" id="race-state" /></label>
+					<input type="text" name="race_profile[state]" value="<?php echo $opts['state']; ?>" id="race-state" /></label>
 					<label for="race-zip">Zip
-					<input type="text" name="race_profile[zip]" value="<?php echo $race_opts['zip']; ?>" id="race-zip" /></label>
+					<input type="text" name="race_profile[zip]" value="<?php echo $opts['zip']; ?>" id="race-zip" /></label>
 				</td>
 			</tr>
 			<tr>
 				<th><label for="race-phone">Phone</label></th>
 				<td>
-					<input type="text" name="race_profile[phone]" value="<?php echo $race_opts['phone']; ?>" id="race-phone" />
+					<input type="text" name="race_profile[phone]" value="<?php echo $opts['phone']; ?>" id="race-phone" />
 					<input type="hidden" name="race_profile_update" value="1" />
 				</td>
 			</tr>
@@ -549,22 +606,28 @@ function race_profile_form() {
 <?php
 }
 
-function race_profile_process( $uid ) {
+function race_profile_form_process( $uid ) {
 	if ( isset( $_POST['race_profile_update'] ) ) {
+		global $wpdb;
 		$postage = array(
 			'street' => '',
 			'city'   => '',
 			'state'  => '',
 			'zip'    => '',
-			'phone'  => ''
+			'phone'  => '',
+			'goal'   => ''
 		);
 		$posted = maybe_unserialize( $_POST['race_profile'] );
 
 		foreach ( $posted as $k => $v ) {
-			$postage[$k] = wp_specialchars( trim($v) );
+			$postage[$k] = $wpdb->escape( wp_specialchars( trim($v) ) );
 		}
 
 		update_usermeta( $uid, 'race_profile', $postage );
+
+		if ( isset( $_POST['race_reset_progress'] ) ) {
+			// TODO: reset fundraising progress processing
+		}
 	}
 }
 
