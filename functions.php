@@ -429,39 +429,44 @@ function race_thumb_image() {
 	echo "<img src=\"{$thumb_src}\" alt=\"\" />";
 }
 
-function race_goal_select( $selected = '', $name = '', $id = '', $indent = 5, $echo = true ) {
-	// TODO: look into instance of subclassed Walker
-	$t = str_repeat("\t", $indent);
-	if ( empty( $name ) )
-		$name = "race_profile[goal]";
-	if ( empty( $id ) )
-		$id = 'race-goal';
+function race_amount_select( $data, $selected = '', $args = array() ) {
+	if ( empty( $data ) )
+		return '';
+
+	extract( array_merge(
+		array(
+			'name'     => 'race_profile[goal]',
+			'id'       => 'race-goal',
+			'indent'   => 5,
+			'echo'     => true
+		),
+		$args
+	), EXTR_SKIP );
+
+	// dollarize $data for display
+	foreach ( $data as $datum ) {
+		$option["$$datum"] = $datum;
+	}
+	$t = "\n" . str_repeat("\t", $indent);
 	$selected = (int) $selected;
-	$sel = <<<HTML
-<select name="$name" id="$id">
-$t	<option value="">Amount</option>
-$t	<option value="50">$50</option>
-$t	<option value="100">$100</option>
-$t	<option value="150">$150</option>
-$t	<option value="200">$200</option>
-$t	<option value="250">$250</option>
-$t	<option value="300">$300</option>
-$t	<option value="400">$400</option>
-$t	<option value="500">$500</option>
-$t	<option value="600">$600</option>
-$t	<option value="750">$750</option>
-$t	<option value="1000">$1000</option>
-$t	<option value="1500">$1500</option>
-$t	<option value="2000">$2000</option>
-$t</select>\n
-HTML;
+
+	$sel[] = "<select name=\"$name\" id=\"$id\">";
+	$sel[] = "\t<option value=\"\">Amount</option>";
+	foreach ( $option as $name => $value ) {
+		$sel[] = "\t<option value=\"$value\">$name</option>";
+	}
+	$sel[] = "</select>\n";
+
 	if ( ! empty( $selected ) ) {
 		$sel = preg_replace("/$selected/", "$selected\" selected=\"selected", $sel, 1 );
 	}
+
+	$tag = implode( "$t", $sel );
+
 	if ( $echo )
-		echo $sel;
+		echo $tag;
 	else
-		return "\n$t" . $sel;
+		return $t . $tag;
 }
 
 
@@ -623,6 +628,9 @@ function race_profile_form_top() {
 	);
 	$opts = array_merge( $defaults, array_filter( (array) $userdata->race_profile ) );
 	$total = wp_sprintf( '<strong>$%d</strong> pledged so far', (int) $opts['total'] );
+	$goals = array(
+		50, 100, 150, 250, 300, 400, 500, 600, 750, 1000, 1500, 2000
+	);
 	/*
 		TODO: "reset current progress" amount
 			(changing events until target reset in-place)
@@ -638,7 +646,7 @@ function race_profile_form_top() {
 			<tr>
 				<th><label for="race-goal">Fundraising Goal</label></th>
 				<td>
-					<?php race_goal_select( $opts['goal'] ); ?>
+					<?php race_amount_select( $goals, $opts['goal'] ); ?>
 					<label for="race_reset_progress" class="inline"><input type="checkbox" name="race_reset_progress" value="1" id="race_reset_progress" />Reset Current Progress</label>
 					<span class="total">( <?php echo $total; ?> )</span>
 				</td>
