@@ -10,7 +10,7 @@ jQuery(function($) {
 	*/
 	if ('undefined' != typeof WPFB) {
 		var loggedin = $(document.body).hasClass('loggedin');
-		var sub = $('#submenu');
+		var sub = $('ul.submenu-parent');
 
 		$('a[title=Signup],a[title=Login]', sub).each(function(i) {
 			var iz = this.title.toLowerCase();

@@ -299,18 +299,18 @@ div.sidebar li {
 }
 
 /* submenu widget */
-#submenu {
+#submenu, #warrior-sidebar {
 	margin: 0.8em 0 1.2em 0;
 }
-#submenu ul {
+ul.submenu-parent {
 	border-bottom: 1px solid;
 	margin: 0 0.35em;
 }
-#submenu ul li {
+ul.submenu-parent li {
 	margin: 0;
 	border-top: 1px solid;
 }
-#submenu ul li a {
+ul.submenu-parent li a {
 	text-decoration: none;
 	display: block;
 	font-size: 0.9em;
@@ -390,8 +390,8 @@ a:link, .edit-link a {
 	background:   #24B300; /* dark */
 	border-color: #24B300; /* dark */
 }
-#submenu ul,
-#submenu ul li {
+ul.submenu-parent,
+ul.submenu-parent li {
 	border-color: #99FF80; /* mint */
 }
 
