@@ -387,6 +387,111 @@ $race_widgets = array();
 $race_widgets['warrior'] = new RaceProfileWidget( 'Warrior Sidebar' );
 }
 
+class RACE_Warrior {
+	var $user_ID;
+
+	function RACE_Warrior( $login, $collection ) {
+		$this->login = $login;
+		$this->collection  = $collection;
+		$this->init();
+	}
+
+	function init() {
+		$this->user = get_userdatabylogin( $this->login );
+		$this->user_ID = (int) $this->user->ID;
+		$this->profile = $this->user->race_profile;
+		$this->amounts = array(
+			10, 20, 50, 75, 100, 250, 500, 750
+		);
+		add_action( 'wp_print_scripts', array( &$this, 'hook_css') );
+	}
+
+	function amount_select( $key, $indent ) {
+		$opts = array(
+			'name'     => "{$this->collection}[$key]",
+			'id'       => "{$this->collection}-$key",
+			'indent'   => $indent
+		);
+		$data = $this->amounts;
+		race_amount_select( $data, '', $opts );
+	}
+
+	function hook_css() {
+?>
+<style type="text/css">
+	#donate table.warrior {
+		line-height: 20px;
+		font-size: 11px;
+		margin-bottom: 50px;
+	}
+	#donate table.warrior input {
+		margin: 1px 0;
+		padding: 2px;
+	}
+	#donate table.warrior label {
+		float: left;
+		margin-right: 0.4em; /* IE */
+	}
+	#donate table.warrior td > label {
+		margin-right: 0.5em;
+	}
+	#donate table.warrior td.center,
+	#donate table.warrior label.center,
+	#donate table.warrior label.center input {
+		text-align: center;
+	}
+	#donate table.warrior label input {
+		display: block;
+	}
+	#donate table.warrior td br {
+		clear: both;
+	}
+	#donor-name,
+	#donor-email { width: 15em; }
+	#donor-city  { width: 12em; }
+	#donor-state { width:  2em; }
+	#donor-amount,
+	#donor-submit {
+		font-size: 1.6em;
+		margin: 0.8em 0;
+	}
+	/* detail */
+	#donate table.warrior td.detail {}
+</style>
+<?php
+	}
+
+	function displayDonorForm() {
+		?>
+
+<form name="donor_info" id="donor-info" action="" method="POST">
+	<h3>Donor Information</h3>
+<table id="donor" class="warrior">
+	<tr>
+		<td>
+			<label for="donor_name">Name<input type="text" name="donor[name]" value="" id="donor-name" /></label><br />
+			<label for="donor_email">Email<input type="text" name="donor[email]" value="" id="donor-email" /></label><br />
+			<label for="donor_city">City<input type="text" name="donor[city]" value="" id="donor-city" /></label>
+			<label for="donor_state" class="center">State<input type="text" name="donor[state]" value="" id="donor-state" /></label>
+		</td>
+		<td class="detail">
+			<!-- legal mumbo jumbo -->
+		</td>
+	</tr>
+	<tr>
+		<td class="center"><?php $this->amount_select( 'amount', 2 ); ?></td>
+		<td class="controls">
+			<input type="submit" value="Donate" id="donor-submit" />
+			<input type="hidden" name="warrior_id" value="<?php echo $warrior->ID; ?>" />
+		</td>
+	</tr>
+</table>
+</form>
+
+<?php
+	}
+}
+
 
 /********************
  *     Utilities    *
@@ -723,6 +828,11 @@ function race_template_hijack() {
 	global $post;
 	if ( is_front_page() ) {
 		include( STYLESHEETPATH . '/root.php' );
+		exit;
+	}
+	if ( is_page() && 'warrior' == $post->post_name && $login = array_shift(array_keys( $_GET )) ) {
+		$warrior = new RACE_Warrior( $login, 'donor' );
+		include( STYLESHEETPATH . '/donate.php' );
 		exit;
 	}
 }
