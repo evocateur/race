@@ -111,7 +111,7 @@ function widget_race_gallery( $args ) {
 	$gallery = race_build_gallery();
 
 	if ( $gallery ) {
-		echo $before_widget . "\n\t\t\t\t" . $gallery . $after_widget;
+		echo $before_widget . $gallery . $after_widget;
 	}
 }
 
@@ -142,19 +142,22 @@ function race_build_gallery() {
 	$captiontag = tag_escape( $captiontag );
 	$columns    = intval( $columns );
 
-	$output = apply_filters( 'gallery_style', '<ul class="gallery">' );
+	$t = "\n" . str_repeat("\t", 4);
+
+	$output  = $t;
+	$output .= apply_filters( 'gallery_style', '<ul class="gallery">' );
 
 	foreach ( $attachments as $id => $attachment ) {
 		$link = wp_get_attachment_link( $id, $size );
-		$output .= "\n\t\t\t\t\t<{$itemtag} class='gallery-item'>";
-		$output .= "\n\t\t\t\t\t\t{$link}";
+		$output .= "$t\t<{$itemtag} class='gallery-item'>";
+		$output .= "$t\t\t{$link}";
 		if ( $captiontag && trim( $attachment->post_excerpt ) ) {
-			$output .= "\n\t\t\t\t\t\t<{$captiontag} class='gallery-caption'>{$attachment->post_excerpt}</{$captiontag}>";
+			$output .= "$t\t\t<{$captiontag} class='gallery-caption'>{$attachment->post_excerpt}</{$captiontag}>";
 		}
-		$output .= "\n\t\t\t\t\t</{$itemtag}>";
+		$output .= "$t\t</{$itemtag}>";
 	}
 
-	$output .= "\n\t\t\t\t</ul>";
+	$output .= "$t</ul>$t";
 
 	return $output;
 }
@@ -170,35 +173,38 @@ function widget_race_submenu( $args ) {
 	extract( $args, EXTR_SKIP );
 
 	global $post;
-
-	$list_ops = "title_li=&echo=0&sort_column=menu_order&depth=1&child_of=";
+	$parent = '';
 
 	if ( $post->post_parent ) {
-		$list_ops .= $post->post_parent;
-	}
-	else if ( $post->slug == 'author-list' ) {
-		$child = array_shift( query_posts( 'pagename=warriors/current' ) );
-		$list_ops .= $child->post_parent;
-	}
-	else if ( $post->slug == 'author-profile' ) {
-		$child = array_shift( query_posts( 'pagename=donations/online' ) );
-		$list_ops .= $child->ID;
+		$parent .= $post->post_parent;
 	}
 	else if ( is_page() && !is_front_page() ) {
-		$list_ops .= $post->ID;
+		$parent .= $post->ID;
 	}
-	else
-		return '';
 
-	$children = wp_list_pages( $list_ops );
+	$submenu = race_build_submenu( $parent );
+
+	if ( $submenu ) {
+		echo $before_widget . $submenu . $after_widget;
+	}
+}
+
+function race_build_submenu( $parent = '' ) {
+	$parent = (int) $parent;
+	if ( empty( $parent ) ) return false;
+
+	$output = '';
+	$t = "\n" . str_repeat("\t", 4);
+
+	$children = wp_list_pages( "title_li=&echo=0&sort_column=menu_order&depth=1&child_of=$parent" );
 
 	if ( $children ) {
-		echo $before_widget . "\n"; ?>
-				<ul class="submenu-parent">
-					<?php echo trim( implode( "\n\t\t\t\t\t", explode( "\n", $children ) ) ) ."\n"; ?>
-				</ul><?php
-		echo $after_widget;
+		$output .= "$t<ul class=\"submenu-parent\">";
+		$output .= trim( implode( "$t\t", explode( "\n", $children ) ) );
+		$output .= "$t</ul>$t";
 	}
+
+	return $output;
 }
 
 // spotlight ===================================
