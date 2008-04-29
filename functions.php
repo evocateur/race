@@ -317,7 +317,7 @@ function race_quadrants_flush() {
 }
 
 // aleph
-if (class_exists('AlephWidget')):
+if (class_exists('AlephWidget')) {
 class RaceProfileWidget extends AlephWidget {
 	var $menu;
 	var $user;
@@ -366,7 +366,9 @@ class RaceProfileWidget extends AlephWidget {
 		$menu = $this->menu;
 		if ( $this->user_ID ) {
 			// attach userid queryvar to donate link
-			$menu = preg_replace('/(donations\/online\/warrior\/)/', "$1?$this->user_ID", $menu, 1);
+			$re = '/(donations\/online\/warrior\/)/';
+			$qv = $this->user->display_name;
+			$menu = preg_replace( $re, "$1?$qv", $menu, 1 );
 		}
 		if ( $echo ) echo $menu; else return $menu;
 	}
@@ -383,7 +385,7 @@ class RaceProfileWidget extends AlephWidget {
 global $race_widgets;
 $race_widgets = array();
 $race_widgets['warrior'] = new RaceProfileWidget( 'Warrior Sidebar' );
-endif;
+}
 
 
 /********************
