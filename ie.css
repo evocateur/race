@@ -4,15 +4,15 @@
 #menu ul li a {
 	padding: 0.15em 0.4em;
 }
-#submenu ul {
+ul.xoxo ul.submenu-parent {
 	margin-top: -1.1em;
 	border-bottom: 0;
 }
-#submenu ul li {
+ul.xoxo ul.submenu-parent li {
 	border-top: 0;
 	width: 100%;
 }
-#submenu ul li a {
+ul.xoxo ul.submenu-parent li a {
 	float: left;
 	clear: left;
 	width: 99%;
