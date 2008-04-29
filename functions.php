@@ -521,6 +521,9 @@ function race_profile_css_js() {
 	body.wp-admin #profile-page table.form-table td > #pass-strength-result {
 		margin-bottom: 0.5em;
 	}
+	body.wp-admin #profile-page div.color-option {
+		display: none !important;
+	}
 </style>
 <?php
 }
