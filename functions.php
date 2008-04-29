@@ -316,6 +316,80 @@ function race_quadrants_flush() {
 	wp_cache_delete( 'theme_race_quadrants' );
 }
 
+// aleph
+if (class_exists('AlephWidget')):
+class RaceProfileWidget extends AlephWidget {
+	var $page;
+	var $user;
+	var $menu;
+
+	function RaceProfileWidget( $name ) {
+		$this->AlephWidget( $name );
+		$this->display_title = false;
+	}
+	function configure() {
+		if ( is_user_list() || is_profile() ) {
+			global $post;
+			$this->setPage( $post );
+
+			if ( $this->valid_content && is_profile() ) {
+				global $user;
+				$this->setUser( $user );
+			}
+
+			if ( $this->valid_content ) {
+				$this->setMenu( array(
+					'path' => is_profile() ? 'donations/online' : 'warriors/current',
+					'key'  => is_profile() ? 'ID'               : 'post_parent'
+				) );
+			}
+		}
+	}
+
+	function getMenu( $echo = true ) {
+		$menu = $this->menu;
+		if ( $this->user_ID ) {
+			// attach userid queryvar to donate link
+			$menu = preg_replace('/(donations\/online\/warrior\/)/', "$1?$this->user_ID", $menu, 1);
+		}
+		if ( $echo ) echo $menu; else return $menu;
+	}
+	function setMenu( $args ) {
+		extract( $args );
+		$child = array_shift( query_posts( "pagename=$path" ) );
+		$id = $child->{$key};
+		if ( $id ) {
+			$this->menu = race_build_submenu( $id );
+		}
+	}
+
+	function setPage( $page ) {
+		if ( preg_match("/^author-(list|profile)$/", $page->slug ) ) {
+			$this->page = $page;
+			$this->valid_content = true;
+		} else {
+			$this->valid_content = false;
+		}
+	}
+	function setUser( $user ) {
+		$this->user_ID = intval($user->ID);
+		$this->user = $user;
+	}
+
+	function displayContent() {
+		$this->getMenu();
+		if ( $this->user ) { ?>
+		<ul id="profile-sidebar">
+			<li><!-- thermometer --></li>
+		</ul>
+		<?php }
+	}
+}
+global $race_widgets;
+$race_widgets = array();
+$race_widgets['warrior'] = new RaceProfileWidget( 'Warrior Sidebar' );
+endif;
+
 
 /********************
  *     Utilities    *
