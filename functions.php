@@ -400,20 +400,26 @@ class RACE_Warrior {
 		$this->user = get_userdatabylogin( $this->login );
 		$this->user_ID = (int) $this->user->ID;
 		$this->profile = $this->user->race_profile;
+		$this->full_name = $this->user->first_name . ' ' . $this->user->last_name;
 		$this->amounts = array(
 			10, 20, 50, 75, 100, 250, 500, 750
 		);
 		add_action( 'wp_print_scripts', array( &$this, 'hook_css') );
 	}
 
-	function amount_select( $key, $indent ) {
+	function amount_select( $key, $indent, $tabindex ) {
 		$opts = array(
 			'name'     => "{$this->collection}[$key]",
 			'id'       => "{$this->collection}-$key",
-			'indent'   => $indent
+			'indent'   => $indent,
+			'tabindex' => $tabindex
 		);
 		$data = $this->amounts;
 		race_amount_select( $data, '', $opts );
+	}
+
+	function fullName() {
+		echo $this->full_name;
 	}
 
 	function hook_css() {
@@ -423,6 +429,7 @@ class RACE_Warrior {
 		line-height: 20px;
 		font-size: 11px;
 		margin-bottom: 50px;
+		width: 100%;
 	}
 	#donate table.warrior input {
 		margin: 1px 0;
@@ -454,6 +461,13 @@ class RACE_Warrior {
 	#donor-submit {
 		font-size: 1.6em;
 		margin: 0.8em 0;
+		vertical-align: middle;
+	}
+	* html #donor-submit {
+		font-size: 1.4em;
+	}
+	#donate table.warrior tr.controls span {
+		font-size: 1.6em;
 	}
 	/* detail */
 	#donate table.warrior td.detail {}
@@ -469,20 +483,21 @@ class RACE_Warrior {
 <table id="donor" class="warrior">
 	<tr>
 		<td>
-			<label for="donor_name">Name<input type="text" name="donor[name]" value="" id="donor-name" /></label><br />
-			<label for="donor_email">Email<input type="text" name="donor[email]" value="" id="donor-email" /></label><br />
-			<label for="donor_city">City<input type="text" name="donor[city]" value="" id="donor-city" /></label>
-			<label for="donor_state" class="center">State<input type="text" name="donor[state]" value="" id="donor-state" /></label>
+			<label for="donor_name">Name<input type="text" name="donor[name]" value="" tabindex="1" id="donor-name" /></label><br />
+			<label for="donor_email">Email<input type="text" name="donor[email]" value="" tabindex="1" id="donor-email" /></label><br />
+			<label for="donor_city">City<input type="text" name="donor[city]" value="" tabindex="1" id="donor-city" /></label>
+			<label for="donor_state" class="center">State<input type="text" name="donor[state]" value="" tabindex="1" id="donor-state" /></label>
 		</td>
 		<td class="detail">
 			<!-- legal mumbo jumbo -->
 		</td>
 	</tr>
-	<tr>
-		<td class="center"><?php $this->amount_select( 'amount', 2 ); ?></td>
-		<td class="controls">
-			<input type="submit" value="Donate" id="donor-submit" />
-			<input type="hidden" name="warrior_id" value="<?php echo $warrior->ID; ?>" />
+	<tr class="controls">
+		<td class="center" colspan="2">
+			<input type="submit" value="Donate" id="donor-submit" tabindex="10" />
+			<?php $this->amount_select( 'amount', 3, 5 ); ?>
+			<span>toward <?php $this->fullName(); ?>'s goal!</span>
+			<input type="hidden" name="warrior_id" value="<?php echo $this->user_ID; ?>" />
 		</td>
 	</tr>
 </table>
@@ -554,8 +569,11 @@ function race_amount_select( $data, $selected = '', $args = array() ) {
 	}
 	$t = "\n" . str_repeat("\t", $indent);
 	$selected = (int) $selected;
+	$index = '';
+	if ( isset( $tabindex ) )
+		$index = " tabindex=\"$tabindex\"";
 
-	$sel[] = "<select name=\"$name\" id=\"$id\">";
+	$sel[] = "<select name=\"$name\" id=\"$id\"$index>";
 	$sel[] = "\t<option value=\"\">Amount</option>";
 	foreach ( $option as $name => $value ) {
 		$sel[] = "\t<option value=\"$value\">$name</option>";
