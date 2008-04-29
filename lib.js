@@ -41,5 +41,8 @@ jQuery(function($) {
 					'href': path
 				});
 		});
+		// highlight ancestor on profile/userlist pages
+		$(':has(.profile,.userlist) #menu li:has(a[href*=/warriors/])')
+			.addClass('current_page_parent');
 	}
 });

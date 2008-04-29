@@ -319,18 +319,19 @@ function race_quadrants_flush() {
 // aleph
 if (class_exists('AlephWidget')):
 class RaceProfileWidget extends AlephWidget {
-	var $page;
-	var $user;
 	var $menu;
+	var $user;
+	var $user_ID;
 
 	function RaceProfileWidget( $name ) {
 		$this->AlephWidget( $name );
 		$this->display_title = false;
 	}
+
 	function configure() {
 		if ( is_user_list() || is_profile() ) {
 			global $post;
-			$this->setPage( $post );
+			$this->checkPage( $post );
 
 			if ( $this->valid_content && is_profile() ) {
 				global $user;
@@ -346,6 +347,21 @@ class RaceProfileWidget extends AlephWidget {
 		}
 	}
 
+	function checkPage( $page ) {
+		$this->valid_content = preg_match("/^author-(list|profile)$/", $page->slug );
+	}
+
+	function setUser( $user ) {
+		$this->user_ID = intval($user->ID);
+		$this->user = $user;
+	}
+
+	function setMenu( $args ) {
+		extract( $args );
+		$child = array_shift( query_posts( "pagename=$path" ) );
+		$this->menu = race_build_submenu( (int) $child->{$key} );
+	}
+
 	function getMenu( $echo = true ) {
 		$menu = $this->menu;
 		if ( $this->user_ID ) {
@@ -353,27 +369,6 @@ class RaceProfileWidget extends AlephWidget {
 			$menu = preg_replace('/(donations\/online\/warrior\/)/', "$1?$this->user_ID", $menu, 1);
 		}
 		if ( $echo ) echo $menu; else return $menu;
-	}
-	function setMenu( $args ) {
-		extract( $args );
-		$child = array_shift( query_posts( "pagename=$path" ) );
-		$id = $child->{$key};
-		if ( $id ) {
-			$this->menu = race_build_submenu( $id );
-		}
-	}
-
-	function setPage( $page ) {
-		if ( preg_match("/^author-(list|profile)$/", $page->slug ) ) {
-			$this->page = $page;
-			$this->valid_content = true;
-		} else {
-			$this->valid_content = false;
-		}
-	}
-	function setUser( $user ) {
-		$this->user_ID = intval($user->ID);
-		$this->user = $user;
 	}
 
 	function displayContent() {
@@ -750,7 +745,15 @@ function race_sandbox_menu() {
 function race_sandbox_class( $c ) {
 	// remove date crap, untagged
 	// remove ids of -1, or - dangling at end
-	return preg_grep('/(^[ymdh]\d{2,4}|untagged|-(-1)?)$/', $c, PREG_GREP_INVERT);
+	$c = preg_grep('/(^[ymdh]\d{2,4}|untagged|-(-1)?)$/', $c, PREG_GREP_INVERT);
+
+	// aleph
+	if ( is_profile() )
+		$c[] = "profile";
+	else if ( is_user_list() )
+		$c[] = "userlist";
+
+	return $c;
 }
 
 function race_wp_register( $arg ) {
