@@ -37,7 +37,7 @@ blockquote:before, blockquote:after, q:before, q:after {
 	content: none;
 }
 :focus {
-	outline: 0;
+	/*outline: 0;*/
 }
 ins {
 	text-decoration: none;
