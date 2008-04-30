@@ -47,6 +47,12 @@ jQuery(function($) {
 			.addClass('current_page_parent');
 
 		// donor page
-		$('#donor-info').submit(function(){ return false; });
+		if ($.fieldValue) {	// has forms plugin included
+			$('#donor').ajaxForm({ dataType: 'script',
+				beforeSubmit: function() {
+					// TODO: validate form
+				}
+			});
+		}
 	}
 });

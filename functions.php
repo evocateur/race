@@ -390,93 +390,125 @@ $race_widgets['warrior'] = new RaceProfileWidget( 'Warrior Sidebar' );
 class RACE_Warrior {
 	var $user_ID;
 
-	function RACE_Warrior( $login, $collection ) {
+	function RACE_Warrior( $type, $login, $hook = true ) {
+		$this->type  = $type;
 		$this->login = $login;
-		$this->collection  = $collection;
+		$this->hook  = $hook; // pass false in ajax responder
 		$this->init();
 	}
 
 	function init() {
-		$this->user = get_userdatabylogin( $this->login );
-		$this->user_ID = (int) $this->user->ID;
-		$this->profile = $this->user->race_profile;
-		$this->full_name = $this->user->first_name . ' ' . $this->user->last_name;
+		$this->init_user();
+		$this->init_links();
 		$this->amounts = array(
 			10, 20, 50, 75, 100, 250, 500, 750
 		);
-		$this->load_links( array(
+		if ( $this->hook ) {
+			// only setup when generating page
+			$this->ajax_url = RACE_THEME_ROOT_URI . '/ajax.php';
+			wp_enqueue_script( 'jquery-form' );
+			add_action( 'wp_print_scripts', array( &$this, 'hook_css') );
+		}
+	}
+
+	function init_links() {
+		$this->links = array();
+		$home = get_option('home');
+		// TODO: merge with db options
+		$defaults = array(
 			'privacy' => '/home/privacy-policy/',
 			'club'    => '/donations/warriors-club/',
 			'warrior' => '/warriors/',
 			'signup'  => '/warriors/signup/'
-		));
-		add_action( 'wp_print_scripts', array( &$this, 'hook_css') );
-	}
-
-	function load_links( $links ) {
-		$this->links = array();
-		$home = get_option('home');
-		foreach ( $links as $link => $path ) {
+		);
+		foreach ( $defaults as $link => $path ) {
 			$this->links[$link] = $home . $path;
 		}
 	}
 
-	function amount_select( $key, $indent, $tabindex ) {
+	function init_user() {
+		$login = $this->login;
+
+		// defaults
+		$this->user    = NULL;
+		$this->user_ID = NULL;
+
+		// $login may be a numeric id
+		$user = ( is_numeric( $login ) ) ? get_userdata( $login ) : get_userdatabylogin( $login );
+		if ( $user ) {
+			$this->user      = $user;
+			$this->user_ID   = (int) $user->ID;
+			$this->profile   = $user->race_profile;
+			$this->full_name = $user->first_name . ' ' . $user->last_name;
+			$this->nonce_key = "race-warrior-{$this->user_ID}-{$this->type}";
+		}
+	}
+
+	function ajaxNonce( $echo = true ) {
+		$nonce = wp_create_nonce( $this->nonce_key );
+		if ( $echo ) echo $nonce; else return $nonce;
+	}
+
+	function amountSelect( $echo = true ) {
 		$opts = array(
-			'name'     => "{$this->collection}[$key]",
-			'id'       => "{$this->collection}-$key",
-			'indent'   => $indent,
-			'tabindex' => $tabindex
+			'name'     => "{$this->type}[amount]",
+			'id'       => "{$this->type}-amount",
+			'indent'   => 3,
+			'tabindex' => 1,
+			'echo'     => $echo
 		);
 		$data = $this->amounts;
 		race_amount_select( $data, '', $opts );
 	}
 
-	function fullName() {
-		echo $this->full_name;
+	function formAction( $echo = true ) {
+		$r = $this->ajax_url;
+		if ( $echo ) echo $r; else return $r;
+	}
+
+	function fullName( $echo = true ) {
+		$r = $this->full_name;
+		if ( $echo ) echo $r; else return $r;
 	}
 
 	function pageLink( $key = '', $text = 'here', $echo = true ) {
-		$link = '';
+		$r = '';
 		if ( array_key_exists( $key, $this->links ) ) {
-			$link = "<a href=\"{$this->links[$key]}\">$text</a>";
+			$r = "<a href=\"{$this->links[$key]}\">$text</a>";
 		}
-		if ( $echo )
-			echo $link;
-		else
-			return $link;
+		if ( $echo ) echo $r; else return $r;
 	}
 
 	function hook_css() {
 ?>
 <style type="text/css">
-	#donate table.warrior {
+	#donor table.warrior {
 		line-height: 20px;
 		font-size: 11px;
 		margin-top: 2em;
 		margin-bottom: 20px;
 		width: 100%;
 	}
-	#donate table.warrior input {
+	#donor table.warrior input {
 		margin: 1px 0;
 		padding: 2px;
 	}
-	#donate table.warrior label {
+	#donor table.warrior label {
 		float: left;
 		margin-right: 0.4em; /* IE */
 	}
-	#donate table.warrior td > label {
+	#donor table.warrior td > label {
 		margin-right: 0.5em;
 	}
-	#donate table.warrior td.center,
-	#donate table.warrior label.center,
-	#donate table.warrior label.center input {
+	#donor table.warrior td.center,
+	#donor table.warrior label.center,
+	#donor table.warrior label.center input {
 		text-align: center;
 	}
-	#donate table.warrior label input {
+	#donor table.warrior label input {
 		display: block;
 	}
-	#donate table.warrior td br {
+	#donor table.warrior td br {
 		clear: both;
 	}
 	#donor-name,
@@ -488,31 +520,31 @@ class RACE_Warrior {
 	}
 	#donor-amount { font-size: 1.0em; }
 	#donor-submit { font-size: 1.2em; }
-	#donate table.warrior tr.controls {
+	#donor table.warrior tr.controls {
 		font-size: 1.6em;
 	}
-	#donate table.warrior tr.controls td.submit {
+	#donor table.warrior tr.controls td.submit {
 		padding-top: 1em;
 	}
-	#donate table.warrior th {
+	#donor table.warrior th {
 		padding-top: 0.3em;
 		font-size: 1.25em;
 	}
-	#donate table.warrior th,
-	#donate table.warrior tr > td {
+	#donor table.warrior th,
+	#donor table.warrior tr > td {
 		white-space: nowrap;
 	}
-	#donate table.warrior tr td {
+	#donor table.warrior tr td {
 		vertical-align: top;
 	}
-	#donate table.warrior tr p {
+	#donor table.warrior tr p {
 		white-space: normal;
 		margin: 0.3em 0 0.7em;
 	}
-	#donate tfoot td {
+	#donor tfoot td {
 		padding-top: 2.5em;
 	}
-	#donate #pledge { padding-bottom: 1em; }
+	#donor #pledge { padding-bottom: 1em; }
 </style>
 <?php
 	}
@@ -520,8 +552,8 @@ class RACE_Warrior {
 	function displayDonorForm() {
 		?>
 
-<form name="donor_info" id="donor-info" action="" method="POST">
-<table id="donor" class="warrior">
+<form name="donor" id="donor" action="<?php $this->formAction(); ?>" method="POST">
+<table class="warrior">
 <tfoot>
 	<tr>
 		<td colspan="2">
@@ -542,7 +574,7 @@ class RACE_Warrior {
 	<tr class="controls">
 		<td id="pledge" class="center" colspan="2">
 			Pledge
-			<?php $this->amount_select( 'amount', 3, 1 ); ?>
+			<?php $this->amountSelect(); ?>
 			toward <strong><?php $this->fullName(); ?>&#8217;s</strong> goal!
 		</td>
 	</tr>
@@ -566,6 +598,7 @@ class RACE_Warrior {
 		<td class="center submit" colspan="2">
 			<input type="submit" value="Submit" id="donor-submit" tabindex="10" />
 			<input type="hidden" name="warrior_id" value="<?php echo $this->user_ID; ?>" />
+			<input type="hidden" name="_ajax_nonce"  value="<?php $this->ajaxNonce(); ?>" />
 		</td>
 	</tr>
 </tbody>
@@ -921,7 +954,7 @@ function race_template_hijack() {
 		exit;
 	}
 	if ( is_page() && 'warrior' == $post->post_name && $login = array_shift(array_keys( $_GET )) ) {
-		$warrior = new RACE_Warrior( $login, 'donor' );
+		$warrior = new RACE_Warrior( 'donor', $login );
 		include( STYLESHEETPATH . '/donate.php' );
 		exit;
 	}
