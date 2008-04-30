@@ -265,6 +265,10 @@ div.sidebar h3 {
 	display: none;
 }
 div.sidebar input#s {
+	width: 6em;
+	margin-left: 1em;
+}
+div.sidebar * > input#s {
 	width: 7em;
 	margin-left: 2em;
 }
