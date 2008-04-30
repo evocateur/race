@@ -590,17 +590,20 @@ function race_amount_select( $data, $selected = '', $args = array() ) {
 
 	// dollarize $data for display
 	foreach ( $data as $datum ) {
-		$option["$$datum"] = $datum;
+		$key = str_pad( '$' . $datum, 4, ' ', STR_PAD_LEFT );
+		$option["$key"] = $datum;
 	}
 	$t = "\n" . str_repeat("\t", $indent);
+	$pad = '&nbsp;';
 	$selected = (int) $selected;
 	$index = '';
 	if ( isset( $tabindex ) )
 		$index = " tabindex=\"$tabindex\"";
 
-	$sel[] = "<select name=\"$name\" id=\"$id\"$index>";
-	$sel[] = "\t<option value=\"\">Amount</option>";
+	$sel[] = "<select name=\"$name\" class=\"amount\" id=\"$id\"$index>";
+	$sel[] = "\t<option value=\"\">....</option>";
 	foreach ( $option as $name => $value ) {
+		$name = strtr( $name, array( ' ' => '&nbsp;' ));
 		$sel[] = "\t<option value=\"$value\">$name</option>";
 	}
 	$sel[] = "</select>\n";
