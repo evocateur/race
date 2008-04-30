@@ -183,15 +183,22 @@ body.page h2.entry-title { display: none; }
 	border: 1px solid #aaa;
 }
 
-/* hanging bullets in content lists */
-#content ul {
+/* hanging bullets and numbers in content lists */
+#content ul,    #content ol {
 	margin: 1em 0 1.5em;
 	padding-right: 6em;
 }
-#content ul li {
+#content ul li, #content ol li  {
 	line-height: 1.5;
 	margin-bottom: 1em;
+}
+#content ol li {
+	list-style-type: decimal;
+	margin-left: 2.5em;
+}
+#content ul li {
 	list-style-type: disc;
+	margin-left: 1.25em;
 }
 
 #nav-above,#nav-below {
