@@ -330,23 +330,26 @@ ul.submenu-parent li a {
 }
 
 /* footer --------------------------------------------------------------------- */
-#footer {
-	display: none;
+#ft a, #content a {
+	text-decoration: none;
+	color: #1F9900;
+	background: inherit;
+}
+#ft a {
+	background-color: #fff;
+}
+#ft a:focus,
+#ft a:hover,
+#content a:focus,
+#content a:hover {
+	color: #000;
+	background-color: #CCFFBF;
+	border-bottom: 1px dotted #1F9900;
 }
 #ft {
 	text-align: center;
 	font-size: 0.8em;
 	padding: 0.25em 0;
-}
-#ft a {
-	text-decoration: none;
-	color: #1F9900;
-	background: #fff;
-}
-#ft a:focus,
-#ft a:hover {
-	color: #000;
-	border-bottom: 1px dotted #1F9900;
 }
 #ft ul.menu-parent {
 	margin: 0.5em 0 1em;
@@ -363,6 +366,9 @@ ul.submenu-parent li a {
 #ft #ft-admin {
 	margin: 1.25em 0 0.5em;
 }
+#footer {
+	display: none;
+}
 
 /* ============ Colors ============ */
 /*
@@ -378,7 +384,7 @@ ul.submenu-parent li a {
 	FFBFDC   "bubble"  soft light pink (black)
 	FF80B8   "pepto"   healthy pink
 */
-a:link, .edit-link a {
+a:link, .edit-link a, #donate a {
 	color: #1F9900; /* dark */
 	text-decoration: none;
 }
@@ -584,16 +590,29 @@ body.home #primary,
 
 /* typography ----------------------------------------------------------------- */
 
-blockquote {
+blockquote, p.emphatic, address {
 	margin: 0.5em 3.5em 0.5em 2em;
 	padding: 0 1em;
 	border: 2px solid #99FF80; /* mint */
-	border-left-width: 1.5em;
+	border-left-width: 2em;
 	background: #CCFFBF; /* ta */
 }
 blockquote cite {
 	display: block;
 	text-align: right;
+}
+p.emphatic.note {
+	border-left-width: 4em;
+}
+p.emphatic, address {
+	padding: 0.25em 1em;
+}
+address {
+	display: block;
+	font-style: normal;
+	margin: 0.75em 0 0.75em 2em;
+	line-height: 1.2;
+	width: 15em;
 }
 
 /* New gallery feature styles
