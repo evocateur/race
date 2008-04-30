@@ -453,9 +453,9 @@ class RACE_Warrior {
 	#donate table.warrior {
 		line-height: 20px;
 		font-size: 11px;
+		margin-top: 2em;
 		margin-bottom: 20px;
 		width: 100%;
-		margin-top: 1em;
 	}
 	#donate table.warrior input {
 		margin: 1px 0;
@@ -492,11 +492,11 @@ class RACE_Warrior {
 		font-size: 1.6em;
 	}
 	#donate table.warrior tr.controls td.submit {
-		padding-top: 2em;
+		padding-top: 1em;
 	}
 	#donate table.warrior th {
 		padding-top: 0.3em;
-		font-size: 1.5em;
+		font-size: 1.25em;
 	}
 	#donate table.warrior th,
 	#donate table.warrior tr > td {
@@ -510,8 +510,9 @@ class RACE_Warrior {
 		margin: 0.3em 0 0.7em;
 	}
 	#donate tfoot td {
-		padding-top: 4em;
+		padding-top: 2.5em;
 	}
+	#donate #pledge { padding-bottom: 1em; }
 </style>
 <?php
 	}
@@ -538,6 +539,13 @@ class RACE_Warrior {
 	</tr>
 </tfoot>
 <tbody>
+	<tr class="controls">
+		<td id="pledge" class="center" colspan="2">
+			Pledge
+			<?php $this->amount_select( 'amount', 3, 1 ); ?>
+			toward <strong><?php $this->fullName(); ?>&#8217;s</strong> goal!
+		</td>
+	</tr>
 	<tr>
 		<th>Donor Information</th>
 		<td class="detail" rowspan="2">
@@ -552,13 +560,6 @@ class RACE_Warrior {
 			<label for="donor_email">Email<input type="text" name="donor[email]" value="" tabindex="1" id="donor-email" /></label><br />
 			<label for="donor_city">City<input type="text" name="donor[city]" value="" tabindex="1" id="donor-city" /></label>
 			<label for="donor_state" class="center">State<input type="text" name="donor[state]" value="" tabindex="1" id="donor-state" /></label>
-		</td>
-	</tr>
-	<tr class="controls">
-		<td class="center" colspan="2">
-			Pledge
-			<?php $this->amount_select( 'amount', 3, 5 ); ?>
-			toward <strong><?php $this->fullName(); ?>&#8217;s</strong> goal!
 		</td>
 	</tr>
 	<tr class="controls">
