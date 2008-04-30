@@ -404,7 +404,21 @@ class RACE_Warrior {
 		$this->amounts = array(
 			10, 20, 50, 75, 100, 250, 500, 750
 		);
+		$this->load_links( array(
+			'privacy' => '/home/privacy-policy/',
+			'club'    => '/donations/warriors-club/',
+			'warrior' => '/warriors/',
+			'signup'  => '/warriors/signup/'
+		));
 		add_action( 'wp_print_scripts', array( &$this, 'hook_css') );
+	}
+
+	function load_links( $links ) {
+		$this->links = array();
+		$home = get_option('home');
+		foreach ( $links as $link => $path ) {
+			$this->links[$link] = $home . $path;
+		}
 	}
 
 	function amount_select( $key, $indent, $tabindex ) {
@@ -420,6 +434,17 @@ class RACE_Warrior {
 
 	function fullName() {
 		echo $this->full_name;
+	}
+
+	function pageLink( $key = '', $text = 'here', $echo = true ) {
+		$link = '';
+		if ( array_key_exists( $key, $this->links ) ) {
+			$link = "<a href=\"{$this->links[$key]}\">$text</a>";
+		}
+		if ( $echo )
+			echo $link;
+		else
+			return $link;
 	}
 
 	function hook_css() {
