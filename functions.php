@@ -453,8 +453,9 @@ class RACE_Warrior {
 	#donate table.warrior {
 		line-height: 20px;
 		font-size: 11px;
-		margin-bottom: 50px;
+		margin-bottom: 20px;
 		width: 100%;
+		margin-top: 1em;
 	}
 	#donate table.warrior input {
 		margin: 1px 0;
@@ -482,20 +483,35 @@ class RACE_Warrior {
 	#donor-email { width: 15em; }
 	#donor-city  { width: 12em; }
 	#donor-state { width:  2em; }
-	#donor-amount,
-	#donor-submit {
-		font-size: 1.6em;
-		margin: 0.8em 0;
+	#donor-amount, #donor-submit {
 		vertical-align: middle;
 	}
-	* html #donor-submit {
-		font-size: 1.4em;
-	}
-	#donate table.warrior tr.controls span {
+	#donor-amount { font-size: 1.0em; }
+	#donor-submit { font-size: 1.2em; }
+	#donate table.warrior tr.controls {
 		font-size: 1.6em;
 	}
-	/* detail */
-	#donate table.warrior td.detail {}
+	#donate table.warrior tr.controls td.submit {
+		padding-top: 2em;
+	}
+	#donate table.warrior th {
+		padding-top: 0.3em;
+		font-size: 1.5em;
+	}
+	#donate table.warrior th,
+	#donate table.warrior tr > td {
+		white-space: nowrap;
+	}
+	#donate table.warrior tr td {
+		vertical-align: top;
+	}
+	#donate table.warrior tr p {
+		white-space: normal;
+		margin: 0.3em 0 0.7em;
+	}
+	#donate tfoot td {
+		padding-top: 4em;
+	}
 </style>
 <?php
 	}
@@ -504,8 +520,32 @@ class RACE_Warrior {
 		?>
 
 <form name="donor_info" id="donor-info" action="" method="POST">
-	<h3>Donor Information</h3>
 <table id="donor" class="warrior">
+<tfoot>
+	<tr>
+		<td colspan="2">
+			<p class="emphatic note"><strong>Note</strong>: All donations are final, no refunds. <?php $this->pageLink('privacy', 'View the privacy policy'); ?>.</p>
+			<p>RACE Charities is a 501(c)3 organization with all donations being tax deductible.  Donations received will go toward Glory’s original vision of fighting cancer and advancing all early detection research and development. Becca Murfin is the Glory Gensch Fund trustee and handles the accounting as well as the donation statements and 'Thank You' letters.</p>
+			<p>Donation Checks can be mailed and made payable to:</p>
+			<address>
+				RACE Charities, Inc.<br />
+				P.O. Box 1976<br />
+				Denver, CO 80201
+			</address>
+			<p>Each donor is added to the official <?php $this->pageLink('club', 'RACE Charities Warrior List'); ?>.</p>
+			<p>Please consider joining us in our fundraising efforts as a <?php $this->pageLink('warrior', 'WARRIOR-RUNNER'); ?>. You do not have to actually run in a RACE event in order to become an offical WARRIOR-RUNNER. <?php $this->pageLink('signup', 'Sign up to become a WARRIOR-RUNNER here') ?>. Each WARRIOR-RUNNER sends their custom hyperlink to people to donate to their own specific fund-raising account.</p>
+		</td>
+	</tr>
+</tfoot>
+<tbody>
+	<tr>
+		<th>Donor Information</th>
+		<td class="detail" rowspan="2">
+			<p class="emphatic">We consider the term 'donation' to have <em>several</em> meanings, not merely monetary.</p>
+			<p>Sacrificing time and energy to volunteer for helping or actively participate in one of RACE’s events are considered donations. Taking time to discuss with physicians or medical administrators the importance of awareness of family history of cancer on forms or consultations as a mandatory part of patient visits is also considered a donation.</p>
+			<p><em>Any</em> sacrifice that promotes the <strong><em>early detection of cancer</em></strong> is a valuable donation.</p>
+		</td>
+	</tr>
 	<tr>
 		<td>
 			<label for="donor_name">Name<input type="text" name="donor[name]" value="" tabindex="1" id="donor-name" /></label><br />
@@ -513,18 +553,21 @@ class RACE_Warrior {
 			<label for="donor_city">City<input type="text" name="donor[city]" value="" tabindex="1" id="donor-city" /></label>
 			<label for="donor_state" class="center">State<input type="text" name="donor[state]" value="" tabindex="1" id="donor-state" /></label>
 		</td>
-		<td class="detail">
-			<!-- legal mumbo jumbo -->
-		</td>
 	</tr>
 	<tr class="controls">
 		<td class="center" colspan="2">
-			<input type="submit" value="Donate" id="donor-submit" tabindex="10" />
+			Pledge
 			<?php $this->amount_select( 'amount', 3, 5 ); ?>
-			<span>toward <?php $this->fullName(); ?>'s goal!</span>
+			toward <strong><?php $this->fullName(); ?>&#8217;s</strong> goal!
+		</td>
+	</tr>
+	<tr class="controls">
+		<td class="center submit" colspan="2">
+			<input type="submit" value="Submit" id="donor-submit" tabindex="10" />
 			<input type="hidden" name="warrior_id" value="<?php echo $this->user_ID; ?>" />
 		</td>
 	</tr>
+</tbody>
 </table>
 </form>
 
