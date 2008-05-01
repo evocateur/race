@@ -701,28 +701,23 @@ function race_amount_select( $data, $selected = '', $args = array() ) {
 		$args
 	), EXTR_SKIP );
 
-	// dollarize $data for display
-	foreach ( $data as $datum ) {
-		$key = str_pad( '$' . $datum, 4, ' ', STR_PAD_LEFT );
-		$option["$key"] = $datum;
-	}
 	$t = "\n" . str_repeat("\t", $indent);
-	$pad = '&nbsp;';
 	$selected = (int) $selected;
 	$index = '';
 	if ( isset( $tabindex ) )
 		$index = " tabindex=\"$tabindex\"";
 
-	$sel[] = "<select name=\"$name\" class=\"amount\" id=\"$id\"$index>";
+	$dollar = "<span class=\"dollar\">\$</span>";
+
+	$sel[] = "$dollar<select name=\"$name\" class=\"amount\" id=\"$id\"$index>";
 	$sel[] = "\t<option value=\"\">....</option>";
-	foreach ( $option as $name => $value ) {
-		$name = strtr( $name, array( ' ' => '&nbsp;' ));
-		$sel[] = "\t<option value=\"$value\">$name</option>";
+	foreach ( $data as $value ) {
+		$sel[] = "\t<option value=\"$value\">$value</option>";
 	}
 	$sel[] = "</select>\n";
 
 	if ( ! empty( $selected ) ) {
-		$sel = preg_replace("/$selected/", "$selected\" selected=\"selected", $sel, 1 );
+		$sel = preg_replace("/value=\"$selected\"/", "value=\"$selected\" selected=\"selected\"", $sel, 1 );
 	}
 
 	$tag = implode( "$t", $sel );
@@ -870,6 +865,10 @@ function race_profile_css_js() {
 	body.wp-admin #profile-page div.color-option {
 		display: none !important;
 	}
+	span.dollar {
+		font-size: 1.5em;
+		vertical-align: middle;
+	}
 </style>
 <?php
 }
@@ -960,20 +959,16 @@ function race_profile_form_bottom() {
 
 function race_profile_form_process( $uid ) {
 	if ( isset( $_POST['race_profile_update'] ) ) {
-		global $wpdb;
-		$postage = array(
+		$posted = array_merge( array(
 			'street' => '',
 			'city'   => '',
 			'state'  => '',
 			'zip'    => '',
 			'phone'  => '',
 			'goal'   => ''
-		);
-		$posted = maybe_unserialize( $_POST['race_profile'] );
+		), maybe_unserialize( $_POST['race_profile'] ));
 
-		foreach ( $posted as $k => $v ) {
-			$postage[$k] = $wpdb->escape( wp_specialchars( trim($v) ) );
-		}
+		$postage = array_map( 'race_escape', $posted);
 
 		update_usermeta( $uid, 'race_profile', $postage );
 

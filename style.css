@@ -656,7 +656,10 @@ address {
 	line-height: 1.2;
 	width: 15em;
 }
-
+span.dollar {
+	font-size: 1.5em;
+	vertical-align: top;
+}
 /* New gallery feature styles
 	Can't use div.attachment because shortcodes can link to galleries in other posts 
 */
