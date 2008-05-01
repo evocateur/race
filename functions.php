@@ -825,12 +825,13 @@ HTML;
 }
 
 function race_login_header() {
+	$home = get_option('home');
 	echo <<<HTML
 	<script type="text/javascript">
 	function ale(f){var o=window.onload;if(typeof o!='function'){window.onload=f;}else{window.onload=function(){o();f();};}}
 	function patch_redirect() {
 		var r = document.forms[0]['redirect_to'];
-		if (r && r.value == 'wp-admin/') r.value = 'warriors/login/';
+		if (r && r.value == 'wp-admin/') r.value = '$home/warriors/login/';
 	}
 	ale(patch_redirect);
 	function registered_blurb() {
