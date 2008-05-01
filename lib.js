@@ -61,6 +61,22 @@ jQuery(function($) {
 						href: WPFB.home + '/warrior/' + login
 					});
 
+			// ajaxify form
+			$('#donor').ajaxForm({
+				beforeSubmit: function() {
+					var empties = $(':input', $('#donor')).filter(function() {
+						return 0 === $.trim(this.value).length
+					});
+					if (empties.length) {
+						alert('Please fill in all fields.');
+						empties[0].focus();
+						return false;
+					}
+				},
+				success: function(r) {
+					if (r.length) alert(r);
+				}
+			});
 		}
 	}
 });
