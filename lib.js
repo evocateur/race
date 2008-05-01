@@ -48,11 +48,19 @@ jQuery(function($) {
 
 		// donor page
 		if ($.fieldValue) {	// has forms plugin included
-			$('#donor').ajaxForm({ dataType: 'script',
-				beforeSubmit: function() {
-					// TODO: validate form
-				}
-			});
+
+			// create "back" link from submenu "Donate" (redundant)
+			var login = window.location.search
+				? window.location.search.split('?').pop() + '/'
+				: ''; // should never happen
+			$('#submenu li.current_page_item')
+				.removeClass('current_page_item')
+				.find('a:first-child')
+					.text('Back')
+					.attr({
+						href: WPFB.home + '/warrior/' + login
+					});
+
 		}
 	}
 });
