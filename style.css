@@ -567,18 +567,49 @@ body.home #primary,
 }
 
 /* profile */
+#profile h2.profile-title {
+	margin: 1.5em 0;
+	font-size: 1.5em;
+}
 #profile div.user-image {
 	float: left;
-	margin-right: 1em;
-	margin-bottom: 1em;
+	border: 1px solid #24B300;
+	padding: 0.5em;
+	background-color: #CCFFBF;
+}
+#profile div.user-image img {
+	float: left;
+	border: 1px solid #99FF80;
+	margin-bottom: 1.25em;
+}
+#profile div.entry-content p {
+	padding-left: 180px;
 }
 #content #race-summary {
 	clear: left;
-	font-size: 0.9em;
+	font-size: 0.8em;
 	padding-top: 1em;
 }
 #content #race-summary p {
 	line-height: 1.4;
+	padding: 0 4em;
+	text-align: justify;
+}
+body.profile #warrior-sidebar ul.submenu-parent {
+	border-bottom: none;
+}
+body.profile #warrior-sidebar ul.submenu-parent li {
+	margin-left: 8px;
+}
+body.profile #warrior-sidebar ul.submenu-parent li a {
+	font-size: 2em;
+	text-align: center;
+	color: #fff;
+	padding: 0.45em 0 0.5em;
+}
+body.profile #warrior-sidebar ul.submenu-parent li a:focus,
+body.profile #warrior-sidebar ul.submenu-parent li a:hover {
+	color: #fff;
 }
 
 /* user list */
