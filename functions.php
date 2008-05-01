@@ -390,6 +390,9 @@ $race_widgets['warrior'] = new RaceProfileWidget( 'Warrior Sidebar' );
 class RACE_Warrior {
 	var $user_ID;
 
+	/*
+		Constructor
+	*/
 	function RACE_Warrior( $type, $login, $hook = true ) {
 		$this->type  = $type;
 		$this->login = $login;
@@ -403,6 +406,9 @@ class RACE_Warrior {
 		$this->amounts = array(
 			10, 20, 50, 75, 100, 250, 500, 750
 		);
+		$this->response = NULL;
+		$this->error = NULL;
+
 		if ( $this->hook ) {
 			// only setup when generating page
 			$this->ajax_url = RACE_THEME_ROOT_URI . '/ajax.php';
@@ -444,6 +450,9 @@ class RACE_Warrior {
 		}
 	}
 
+	/*
+		Accessors
+	*/
 	function ajaxNonce( $echo = true ) {
 		$nonce = wp_create_nonce( $this->nonce_key );
 		if ( $echo ) echo $nonce; else return $nonce;
@@ -479,6 +488,29 @@ class RACE_Warrior {
 		if ( $echo ) echo $r; else return $r;
 	}
 
+	/*
+		Database
+	*/
+	function savePledge( $scope ) {
+		$response = '';
+		$postage = maybe_unserialize( $_POST['donor'] );
+		$uid = (int) $_POST['warrior_id'];
+		$postage = array_map( 'race_escape', $postage );
+		// $response = print_r($postage);
+		$this->response = $response;
+	}
+
+	function getResponse() {
+		return ( $this->error ) ? implode( "\n", $this->error ) : $this->response;
+	}
+
+	function setError( $errtxt ) {
+		$this->error[] = $errtxt;
+	}
+
+	/*
+		Output
+	*/
 	function hook_css() {
 ?>
 <style type="text/css">
@@ -613,6 +645,10 @@ class RACE_Warrior {
 /********************
  *     Utilities    *
  ********************/
+
+function race_escape( $v ) {
+	return $GLOBALS['wpdb']->escape( wp_specialchars( trim($v) ) );
+}
 
 function race_menu( $before = '', $after = '' ) {
 	$content = '';
