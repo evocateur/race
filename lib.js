@@ -43,8 +43,13 @@ jQuery(function($) {
 		});
 
 		// highlight ancestor on profile/userlist pages
-		$(':has(.profile,.userlist) #menu li:has(a[href*=/warriors/])')
-			.addClass('current_page_parent');
+		$(':has(.profile,.userlist)')
+			.find('#menu li:has(a[href*=/warriors/])')
+				.addClass('current_page_parent')
+			.end()
+		.filter('.profile')
+			.find('#warrior-sidebar li:last-child')
+				.hide();
 
 		// donor page
 		if ($.fieldValue) {	// has forms plugin included
@@ -53,15 +58,20 @@ jQuery(function($) {
 			var login = window.location.search
 				? window.location.search.split('?').pop() + '/'
 				: ''; // should never happen
-			$('#submenu li.current_page_item')
-				.removeClass('current_page_item')
-				.find('a:first-child')
-					.text('Back')
-					.attr({
-						href: WPFB.home + '/warrior/' + login
-					});
+			$('li', sub)
+				.filter(':not(.current_page_item)')
+					.hide()
+				.end()
+				.filter('.current_page_item')
+					.removeClass('current_page_item')
+					.find('a:first-child')
+						.text('Back')
+						.attr({
+							href: WPFB.home + '/warrior/' + login
+						});
 
 			// ajaxify form
+			$.ajaxSetup({ cache: false });
 			$('#donor').ajaxForm({
 				beforeSubmit: function() {
 					var empties = $(':input', $('#donor')).filter(function() {
@@ -72,9 +82,22 @@ jQuery(function($) {
 						empties[0].focus();
 						return false;
 					}
+					$(':submit').enable(false);
 				},
 				success: function(r) {
-					if (r.length) alert(r);
+					if (!parseInt(r)) {
+						alert(r);
+						$(':submit').enable();
+						$(':text:first').focus();
+					} else {
+						// $(this).clearForm();
+						var url = "http://bmb.goemerchant.com/cart/cart.aspx" +
+							"?ST=buy&Action=add&Merchant=racecharities&ItemNumber=" + r;
+						var bmb = window.open(url, 'race_donation');
+						if (bmb) setTimeout(function(){
+							window.location = WPFB.home + '/donations/online/thankyou/'
+						}, 10);
+					}
 				}
 			});
 		}

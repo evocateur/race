@@ -4,6 +4,7 @@
  ********************/
 define( 'RACE_DEFAULT_AVATAR', get_option('siteurl') . '/wp-content/uploads/default_avatar.jpg' );
 define( 'RACE_THEME_ROOT_URI', get_stylesheet_directory_uri() );
+define( 'RACE_EVENT_ID_HACK', 1 );
 
 add_action('init', 'race_theme_init');
 add_action('widgets_init', 'race_widget_init');
@@ -404,10 +405,17 @@ class RACE_Warrior {
 		$this->init_user();
 		$this->init_links();
 		$this->amounts = array(
-			10, 20, 50, 75, 100, 250, 500, 750
+			'101' => 10,
+			'102' => 20,
+			'103' => 50,
+			'104' => 75,
+			'105' => 100,
+			'106' => 250,
+			'107' => 500,
+			'108' => 750
 		);
-		$this->response = NULL;
-		$this->error = NULL;
+		// $this->response = NULL;
+		// $this->error = NULL;
 
 		if ( $this->hook ) {
 			// only setup when generating page
@@ -466,7 +474,7 @@ class RACE_Warrior {
 			'tabindex' => 1,
 			'echo'     => $echo
 		);
-		$data = $this->amounts;
+		$data = array_values( $this->amounts );
 		race_amount_select( $data, '', $opts );
 	}
 
@@ -492,20 +500,91 @@ class RACE_Warrior {
 		Database
 	*/
 	function savePledge( $scope ) {
-		$response = '';
-		$postage = maybe_unserialize( $_POST['donor'] );
-		$uid = (int) $_POST['warrior_id'];
+		/*
+			eventually, real tables will replace the utterly hacky usermeta stash
+
+		race_donor
+			id  	PK (FK = race_donation.donor_id)
+			name
+			email	(unique)
+			city
+			state	FK (states.id)
+
+		race_donation
+			id  		PK (FK = ?)
+			donor_id	FK (race_donor)
+			event_id	FK (race_event)
+			user_id		FK (users)
+			amount	(int)
+
+		race_event
+			id  	PK (FK = usermeta->race_profile->current_event_id)
+			name	IDX
+			date
+
+		*/
+		$uid = (int) $scope['warrior_id'];
+		$postage = maybe_unserialize( $scope['donor'] );
 		$postage = array_map( 'race_escape', $postage );
-		// $response = print_r($postage);
-		$this->response = $response;
+
+		// email parsing (special attention because it is effectively a unique identifier)
+		$email = $postage['email'] = sanitize_email( $postage['email'] );
+		if ( ! is_email( $email ) ) {
+			$this->setError( 'Invalid Email' );
+			return false;
+		}
+
+		$outer_key = 'race_donors_for_warrior_' . $uid;
+		$inner_key = 'event_' . RACE_EVENT_ID_HACK . '_donor_' . $email;
+
+		if ( $donors = get_usermeta( $uid, $outer_key ) ) {
+			// previous record(s)
+			if ( count( $donors ) ) {
+				// existing array
+				if ( ! array_key_exists( $inner_key, $donors ) ) {
+					$donors[ $inner_key ] = $postage;
+				} else {
+					$this->setError( 'Duplicate Donor For Event/Runner' );
+					return false;
+				}
+			} else {
+				// single element, into new array
+				$single = maybe_unserialize( $donors[0] );
+				$single_key = 'event_' . RACE_EVENT_ID_HACK . '_donor_' . $single['email'];
+				$donors[ $single_key ] = $single;
+				$donors[ $inner_key  ] = $postage;
+			}
+		} else {
+			// completely new record
+			$donors[ $inner_key ] = $postage;
+		}
+
+		if ( ! $this->error && $success = update_usermeta( $uid, $outer_key, $donors ) ) {
+			$this->response = $this->getItemNumberFromPledged( $postage['amount'] );
+			return true;
+		} else {
+			$this->setError( 'Error Updating Usermeta' );
+			return false;
+		}
+	}
+
+	function getItemNumberFromPledged( $amount ) {
+		$amount = intval( $amount );
+		if ( $needle = array_search( $amount, $this->amounts ) )
+			return "$needle";
+		else {
+			$this->setError( 'Amount not associated with a donation id' );
+			return false;
+		}
 	}
 
 	function getResponse() {
-		return ( $this->error ) ? implode( "\n", $this->error ) : $this->response;
+		return ( $this->error ) ? $this->error : $this->response;
 	}
 
 	function setError( $errtxt ) {
-		$this->error[] = $errtxt;
+		$this->error = $errtxt;
+		return false;
 	}
 
 	/*
