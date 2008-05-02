@@ -367,7 +367,7 @@ class RaceProfileWidget extends AlephWidget {
 			// attach userid queryvar to donate link
 			$re = '/(donations\/online\/warrior\/)/';
 			$qv = $this->user->display_name;
-			$menu = preg_replace( $re, "$1?$qv", $menu, 1 );
+			$menu = preg_replace( $re, "$1?runner=$qv", $menu, 1 );
 		}
 		if ( $echo ) echo $menu; else return $menu;
 	}
@@ -1109,8 +1109,7 @@ function race_template_hijack() {
 		include( STYLESHEETPATH . '/root.php' );
 		exit;
 	}
-	global $post;
-	if ( is_page() && 'warrior' == $post->post_name && $login = array_shift(array_keys( $_GET )) ) {
+	if ( is_page('warrior') && $login = $_GET['runner'] ) {
 		$race_donor = new RACE_Warrior_Donor( $login );
 		include( STYLESHEETPATH . '/donate.php' );
 		exit;

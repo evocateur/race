@@ -56,7 +56,7 @@ jQuery(function($) {
 
 			// create "back" link from submenu "Donate" (redundant)
 			var login = window.location.search
-				? window.location.search.split('?').pop() + '/'
+				? window.location.search.split('=').pop().replace(/\./,'') + '/'
 				: ''; // should never happen
 			$('li', sub)
 				.filter(':not(.current_page_item)')
