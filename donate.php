@@ -4,7 +4,7 @@
 		<div id="content">
 
 			<div id="donate" class="<?php sandbox_post_class() ?>">
-<?php $warrior->displayDonorForm(); ?>
+<?php $race_donor->display(); ?>
 			</div><!-- #donate -->
 
 		</div><!-- #content -->

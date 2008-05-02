@@ -6,6 +6,9 @@ define( 'RACE_DEFAULT_AVATAR', get_option('siteurl') . '/wp-content/uploads/defa
 define( 'RACE_THEME_ROOT_URI', get_stylesheet_directory_uri() );
 define( 'RACE_EVENT_ID_HACK', 1 );
 
+$RACE = array();
+$RACE_widgets = $RACE['widgets'] = array();
+
 add_action('init', 'race_theme_init');
 add_action('widgets_init', 'race_widget_init');
 
@@ -34,13 +37,8 @@ function race_theme_init_hooks() {
 	add_action('save_post',    'race_quadrants_flush');
 	add_action('deleted_post', 'race_quadrants_flush');
 
-	// profiles
-	add_action('admin_print_scripts',      'race_profile_css_js',   1);
-	add_action('profile_personal_options', 'race_profile_form_top', 1);
-
-	add_action('show_user_profile', 'race_profile_form_bottom', 9);
-	add_action('edit_user_profile', 'race_profile_form_bottom', 9);
-	add_action('profile_update',    'race_profile_form_process');
+	// profile
+	race_maybe_hook_profile();
 
 	/*
 		FILTERS
@@ -383,27 +381,20 @@ class RaceProfileWidget extends AlephWidget {
 		<?php }
 	}
 }
-global $race_widgets;
-$race_widgets = array();
-$race_widgets['warrior'] = new RaceProfileWidget( 'Warrior Sidebar' );
+
+$RACE_widgets['warrior'] = new RaceProfileWidget( 'Warrior Sidebar' );
 }
 
 class RACE_Warrior {
 	var $user_ID;
 
-	/*
-		Constructor
-	*/
-	function RACE_Warrior( $type, $login, $hook = true ) {
-		$this->type  = $type;
-		$this->login = $login;
-		$this->hook  = $hook; // pass false in ajax responder
-		$this->init();
+	function RACE_Warrior( $login, $type = 'donor' ) { // constructor
+		$this->type = $type;
+		$this->set_user( $login );
+		$this->class_config();
 	}
 
-	function init() {
-		$this->init_user();
-		$this->init_links();
+	function class_config() {
 		$this->amounts = array(
 			'101' => 10,
 			'102' => 20,
@@ -414,18 +405,95 @@ class RACE_Warrior {
 			'107' => 500,
 			'108' => 750
 		);
-		// $this->response = NULL;
-		// $this->error = NULL;
+		$this->instance_config();
+	}
 
-		if ( $this->hook ) {
-			// only setup when generating page
-			$this->ajax_url = RACE_THEME_ROOT_URI . '/ajax.php';
-			wp_enqueue_script( 'jquery-form' );
-			add_action( 'wp_print_scripts', array( &$this, 'hook_css') );
+	function instance_config() {
+		// overwritten by subclass
+	}
+
+	function set_user( $u ) {
+		// defaults
+		$this->user    = NULL;
+		$this->user_ID = NULL;
+
+		// $u may be a numeric id
+		$user = ( is_numeric( $u ) )
+			? get_userdata( $u )
+			: get_userdatabylogin( $u );
+
+		if ( $user ) {
+			$this->user      = $user;
+			$this->user_ID   = (int) $user->ID;
+			$this->profile   = $user->race_profile;
+			$this->full_name = $user->first_name . ' ' . $user->last_name;
+			$this->nonce_key = "race-warrior-{$this->user_ID}-{$this->type}";
 		}
 	}
 
-	function init_links() {
+	function amount_select( $selected = '' ) {
+		$data = array_values( $this->amounts );
+
+		if ( empty( $data ) )
+			return '';
+
+		extract( array_merge(
+			array(
+				'name'     => "{$this->type}[{$this->select_key}]",
+				'id'       => "{$this->type}-{$this->select_key}",
+				'indent'   => 5,
+				'echo'     => true
+			),
+			array_filter( (array) $this->select_opt )
+		), EXTR_SKIP );
+
+		$t = "\n" . str_repeat("\t", $indent);
+		$selected = (int) $selected;
+		$index = '';
+		if ( isset( $tabindex ) )
+			$index = " tabindex=\"$tabindex\"";
+
+		$dollar = "<span class=\"dollar\">\$</span>";
+
+		$sel[] = "$dollar<select name=\"$name\" class=\"amount\" id=\"$id\"$index>";
+		$sel[] = "\t<option value=\"\">....</option>";
+		foreach ( $data as $value ) {
+			$sel[] = "\t<option value=\"$value\">$value</option>";
+		}
+		$sel[] = "</select>\n";
+
+		if ( ! empty( $selected ) ) {
+			$sel = preg_replace("/value=\"$selected\"/", "value=\"$selected\" selected=\"selected\"", $sel, 1 );
+		}
+
+		$tag = implode( "$t", $sel );
+
+		if ( $echo )
+			echo $tag;
+		else
+			return $t . $tag;
+	}
+}
+
+class RACE_Warrior_Donor	extends RACE_Warrior {
+
+	function RACE_Warrior_Donor( $user ) { // constructor
+		$this->RACE_Warrior( $user );
+	}
+
+	function instance_config() {
+		$this->set_links();
+		$this->select_key = 'amount';
+		$this->select_opt = array(
+			'indent'   => 3,
+			'tabindex' => 1
+		);
+		$this->ajax_url = RACE_THEME_ROOT_URI . '/ajax.php';
+		wp_enqueue_script( 'jquery-form' );
+		add_action( 'wp_print_scripts', array( &$this, 'hook_css') );
+	}
+
+	function set_links() {
 		$this->links = array();
 		$home = get_option('home');
 		// TODO: merge with db options
@@ -440,42 +508,12 @@ class RACE_Warrior {
 		}
 	}
 
-	function init_user() {
-		$login = $this->login;
-
-		// defaults
-		$this->user    = NULL;
-		$this->user_ID = NULL;
-
-		// $login may be a numeric id
-		$user = ( is_numeric( $login ) ) ? get_userdata( $login ) : get_userdatabylogin( $login );
-		if ( $user ) {
-			$this->user      = $user;
-			$this->user_ID   = (int) $user->ID;
-			$this->profile   = $user->race_profile;
-			$this->full_name = $user->first_name . ' ' . $user->last_name;
-			$this->nonce_key = "race-warrior-{$this->user_ID}-{$this->type}";
-		}
-	}
-
 	/*
 		Accessors
 	*/
 	function ajaxNonce( $echo = true ) {
 		$nonce = wp_create_nonce( $this->nonce_key );
 		if ( $echo ) echo $nonce; else return $nonce;
-	}
-
-	function amountSelect( $echo = true ) {
-		$opts = array(
-			'name'     => "{$this->type}[amount]",
-			'id'       => "{$this->type}-amount",
-			'indent'   => 3,
-			'tabindex' => 1,
-			'echo'     => $echo
-		);
-		$data = array_values( $this->amounts );
-		race_amount_select( $data, '', $opts );
 	}
 
 	function formAction( $echo = true ) {
@@ -494,97 +532,6 @@ class RACE_Warrior {
 			$r = "<a href=\"{$this->links[$key]}\">$text</a>";
 		}
 		if ( $echo ) echo $r; else return $r;
-	}
-
-	/*
-		Database
-	*/
-	function savePledge( $scope ) {
-		/*
-			eventually, real tables will replace the utterly hacky usermeta stash
-
-		race_donor
-			id  	PK (FK = race_donation.donor_id)
-			name
-			email	(unique)
-			city
-			state	FK (states.id)
-
-		race_donation
-			id  		PK (FK = ?)
-			donor_id	FK (race_donor)
-			event_id	FK (race_event)
-			user_id		FK (users)
-			amount	(int)
-
-		race_event
-			id  	PK (FK = usermeta->race_profile->current_event_id)
-			name	IDX
-			date
-
-		*/
-		$uid = (int) $scope['warrior_id'];
-		$postage = maybe_unserialize( $scope['donor'] );
-		$postage = array_map( 'race_escape', $postage );
-
-		// email parsing (special attention because it is effectively a unique identifier)
-		$email = $postage['email'] = sanitize_email( $postage['email'] );
-		if ( ! is_email( $email ) ) {
-			$this->setError( 'Invalid Email' );
-			return false;
-		}
-
-		$outer_key = 'race_donors_for_warrior_' . $uid;
-		$inner_key = 'event_' . RACE_EVENT_ID_HACK . '_donor_' . $email;
-
-		if ( $donors = get_usermeta( $uid, $outer_key ) ) {
-			// previous record(s)
-			if ( count( $donors ) ) {
-				// existing array
-				if ( ! array_key_exists( $inner_key, $donors ) ) {
-					$donors[ $inner_key ] = $postage;
-				} else {
-					$this->setError( 'Duplicate Donor For Event/Runner' );
-					return false;
-				}
-			} else {
-				// single element, into new array
-				$single = maybe_unserialize( $donors[0] );
-				$single_key = 'event_' . RACE_EVENT_ID_HACK . '_donor_' . $single['email'];
-				$donors[ $single_key ] = $single;
-				$donors[ $inner_key  ] = $postage;
-			}
-		} else {
-			// completely new record
-			$donors[ $inner_key ] = $postage;
-		}
-
-		if ( ! $this->error && $success = update_usermeta( $uid, $outer_key, $donors ) ) {
-			$this->response = $this->getItemNumberFromPledged( $postage['amount'] );
-			return true;
-		} else {
-			$this->setError( 'Error Updating Usermeta' );
-			return false;
-		}
-	}
-
-	function getItemNumberFromPledged( $amount ) {
-		$amount = intval( $amount );
-		if ( $needle = array_search( $amount, $this->amounts ) )
-			return "$needle";
-		else {
-			$this->setError( 'Amount not associated with a donation id' );
-			return false;
-		}
-	}
-
-	function getResponse() {
-		return ( $this->error ) ? $this->error : $this->response;
-	}
-
-	function setError( $errtxt ) {
-		$this->error = $errtxt;
-		return false;
 	}
 
 	/*
@@ -660,7 +607,8 @@ class RACE_Warrior {
 <?php
 	}
 
-	function displayDonorForm() {
+	function display() {
+		// TODO: modal "proceed to checkout", multiple additions possible...
 		?>
 
 <form name="donor" id="donor" action="<?php $this->formAction(); ?>" method="POST">
@@ -685,7 +633,7 @@ class RACE_Warrior {
 	<tr class="controls">
 		<td id="pledge" class="center" colspan="2">
 			Pledge
-			<?php $this->amountSelect(); ?>
+			<?php $this->amount_select(); ?>
 			toward <strong><?php $this->fullName(); ?>&#8217;s</strong> goal!
 		</td>
 	</tr>
@@ -717,6 +665,324 @@ class RACE_Warrior {
 </form>
 
 <?php
+	}
+}
+
+class RACE_Warrior_Pledge	extends RACE_Warrior {
+
+	function RACE_Warrior_Pledge( $user ) { // constructor
+		$this->RACE_Warrior( $user );
+	}
+
+	function instance_config() {
+		$this->response = NULL;
+		$this->error    = NULL;
+	}
+
+	function valid_request() {
+		return check_ajax_referer( $this->nonce_key , '_ajax_nonce', false );
+	}
+
+	function add( $postage ) {
+		/*
+			eventually, real tables will replace the utterly hacky usermeta stash
+
+		race_donor
+			id  	PK (FK = race_donation.donor_id)
+			name
+			email	(unique)
+			city
+			state	FK (states.id)
+
+		race_donation
+			id  		PK (FK = ?)
+			donor_id	FK (race_donor)
+			event_id	FK (race_event)
+			user_id		FK (users)
+			amount	(int)
+
+		race_event
+			id  	PK (FK = usermeta->race_profile->current_event_id)
+			name	IDX
+			date
+
+		*/
+		$postage = array_map( 'race_escape', (array) $postage );
+
+		// email parsing (special attention because it is effectively a unique identifier)
+		$email = $postage['email'] = sanitize_email( $postage['email'] );
+		if ( ! is_email( $email ) ) {
+			$this->setError( 'Invalid Email' );
+			return false;
+		}
+
+		$outer_key = 'race_donors_for_warrior_' . $this->user_ID;
+		$inner_key = 'event_' . RACE_EVENT_ID_HACK . '_donor_' . $email;
+
+		if ( $donors = get_usermeta( $this->user_ID, $outer_key ) ) {
+			// previous record(s)
+			if ( count( $donors ) ) {
+				// existing array
+				if ( ! array_key_exists( $inner_key, $donors ) ) {
+					$donors[ $inner_key ] = $postage;
+				} else {
+					$this->setError( 'Duplicate Donor For Event/Runner' );
+					return false;
+				}
+			} else {
+				// single element, into new array
+				$single = maybe_unserialize( $donors[0] );
+				$single_key = 'event_' . RACE_EVENT_ID_HACK . '_donor_' . $single['email'];
+				$donors[ $single_key ] = $single;
+				$donors[ $inner_key  ] = $postage;
+			}
+		} else {
+			// completely new record
+			$donors[ $inner_key ] = $postage;
+		}
+
+		if ( ! $this->error && $success = update_usermeta( $this->user_ID, $outer_key, $donors ) ) {
+			$this->response = $this->mapItemToAmount( $postage['amount'] );
+			return true;
+		} else {
+			$this->setError( 'Error Updating Usermeta' );
+			return false;
+		}
+	}
+
+	function mapItemToAmount( $amount ) {
+		if ( $needle = array_search( (int) $amount, $this->amounts ) )
+			return "$needle";
+		else {
+			$this->setError( 'Amount not associated with a donation id' );
+			return false;
+		}
+	}
+
+	function getResponse() {
+		return ( $this->error ) ? $this->error : $this->response;
+	}
+
+	function setError( $text ) {
+		$this->error = $text;
+	}
+}
+
+class RACE_Warrior_Profile	extends RACE_Warrior {
+
+	function RACE_Warrior_Profile( $user ) { // constructor
+		$this->RACE_Warrior( $user, 'race_profile' );
+	}
+
+	function instance_config() {
+		$this->hook();
+		$this->select_key = 'goal';
+		// overwrite parent amounts
+		$this->amounts = array(
+			50, 100, 150, 250, 300, 400, 500, 600, 750, 1000, 1500, 2000
+		);
+		$this->options = array_merge( array(
+			 'street' => ''
+			,'city'   => ''
+			,'state'  => ''
+			,'zip'    => ''
+			,'phone'  => ''
+			,'goal'   => ''
+			,'total'  => ''
+		), array_filter( (array) $this->profile ) );
+	}
+
+	function hook() {
+		add_action('admin_print_scripts',      array( &$this, 'css_js' ),   1);
+
+		add_action('profile_personal_options', array( &$this, 'form_top' ), 1);
+		add_action('edit_user_profile',        array( &$this, 'form_top' ), 1);
+
+		add_action('edit_user_profile', array( &$this, 'form_bottom' ), 9);
+		add_action('show_user_profile', array( &$this, 'form_bottom' ), 9);
+
+		add_action('profile_update',    array( &$this, 'form_process' ) );
+	}
+
+	function css_js() {
+		wp_enqueue_script( 'race_admin' );
+	?>
+	<style type="text/css">
+		#profile-page table.race input {
+			margin: 1px 0;
+			padding: 3px;
+		}
+		/* bottom */
+		#profile-page table.race label {
+			float: left;
+			margin-right: 0.4em; /* IE */
+		}
+		#profile-page table.race td > label {
+			margin-right: 0.5em;
+		}
+		#profile-page table.race label.center,
+		#profile-page table.race label.center input {
+			text-align: center;
+		}
+		#profile-page table.race label input {
+			display: block;
+		}
+		#profile-page table.race td br {
+			clear: both;
+		}
+		#profile-page #race-street { width: 20em; }
+		#profile-page #race-city   { width: 12em; }
+		#profile-page #race-state  { width:  2em; }
+		#profile-page #race-zip    { width:  4em; }
+		#profile-page #race-phone  { width:  8em; }
+		#race-mail-wrap {
+			padding-bottom: 1.5em;
+		}
+		/* top */
+		#profile-page table.race select {
+			margin-right: 2em;
+		}
+		#profile-page table.race label.inline {
+			float: none;
+			display: inline-block;
+		}
+		#profile-page table.race label.inline input {
+			display: inline-block;
+			margin-right: 0.5em;
+			vertical-align: -0.4em; /* IE */
+		}
+		#profile-page table.race label.inline > input {
+			vertical-align: middle;
+		}
+		#profile-page #race-top td span.total {
+			display: inline-block;
+			font-size: 1.5em;
+		}
+		/* neuroses */
+		#profile-page #race-top td span.total,
+		#profile-page table.race label.inline {
+			vertical-align: -0.35em;
+		}
+		/* patch 2.5 default */
+		body.wp-admin #profile-page table.form-table td > #pass-strength-result {
+			margin-bottom: 0.5em;
+		}
+		body.wp-admin #profile-page div.color-option {
+			display: none !important;
+		}
+		span.dollar {
+			font-size: 1.5em;
+			vertical-align: middle;
+		}
+	</style>
+	<?php
+	}
+
+	function form_top() {
+		$is_profile = defined('IS_PROFILE_PAGE') && IS_PROFILE_PAGE;
+		$title = $is_profile ? 'Profile Options' : 'Edit User';
+?>
+<script type="text/javascript">
+(function(){
+    var pp = document.getElementById('profile-page'), ft = pp.getElementsByTagName('TABLE'), h2 = pp.getElementsByTagName('H2');
+    if (ft[0] && ft[0].className == 'form-table') ft[0].style.display = 'none';
+    if (h2[0] && h2[0].firstChild.nodeType == 3)  h2[0].replaceChild(document.createTextNode("<?php echo $title; ?>"), h2[0].firstChild);
+})();
+</script>
+<?php
+		// alas the odiousness of inline script (to hide color options)
+		/*
+			TODO: "reset current progress" amount
+				(changing events until target reset in-place)
+
+			TODO: "reset target" of fundraising (different events)
+					means seperated tracking
+
+			TODO: "remaining" ? (diff target total)
+		*/
+?>
+	<table class="form-table race" id="race-top">
+		<tbody>
+			<tr>
+				<th><label for="race-goal">Fundraising Goal</label></th>
+				<td>
+					<?php $this->amount_select( $this->options['goal'] ); ?>
+					<label for="race_reset_progress" class="inline"><input type="checkbox" name="race_reset_progress" value="1" id="race_reset_progress" />Reset Current Progress</label>
+					<span class="total">( <?php echo $this->total_pledged(); ?> )</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<?php }
+
+	function form_bottom() { ?>
+	<table class="form-table race" id="race-bottom">
+		<tbody>
+			<tr>
+				<th>Mailing Address</th>
+				<td id="race-mail-wrap">
+					<label for="race-street">Street
+					<input type="text" name="race_profile[street]" value="<?php echo $this->options['street'] ?>" id="race-street" /></label><br />
+					<label for="race-city">City
+					<input type="text" name="race_profile[city]" value="<?php echo $this->options['city']; ?>" id="race-city" /></label>
+					<label for="race-state" class="center">State
+					<input type="text" name="race_profile[state]" value="<?php echo $this->options['state']; ?>" id="race-state" /></label>
+					<label for="race-zip">Zip
+					<input type="text" name="race_profile[zip]" value="<?php echo $this->options['zip']; ?>" id="race-zip" /></label>
+				</td>
+			</tr>
+			<tr>
+				<th><label for="race-phone">Phone</label></th>
+				<td>
+					<input type="text" name="race_profile[phone]" value="<?php echo $this->options['phone']; ?>" id="race-phone" />
+					<input type="hidden" name="race_profile_update" value="1" />
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<?php }
+
+	function form_process( $uid ) {
+		if ( isset( $_POST['race_profile_update'] ) ) {
+			$posted = array_merge( array(
+				'street' => '',
+				'city'   => '',
+				'state'  => '',
+				'zip'    => '',
+				'phone'  => '',
+				'goal'   => ''
+			), maybe_unserialize( $_POST['race_profile'] ));
+
+			$postage = array_map( 'race_escape', $posted);
+
+			update_usermeta( $uid, 'race_profile', $postage );
+
+			if ( isset( $_POST['race_reset_progress'] ) ) {
+				// TODO: reset fundraising progress processing
+			}
+		}
+	}
+
+	function total_pledged() {
+		$total = (int) $this->options['total'];
+		// TODO: actually find total pledged
+		return wp_sprintf( '<strong>$%d</strong> pledged so far', $total );
+	}
+}
+
+function race_maybe_hook_profile() {
+	if ( is_admin() ) {
+		$id = 0;
+		if ( defined('IS_PROFILE_PAGE') && IS_PROFILE_PAGE ) {
+			$id = (int) $GLOBALS['userdata']->ID;
+		} elseif ( !empty( $_GET['user_id'] ) ) {
+			$id = (int) $_GET['user_id'];
+		}
+
+		if ( $id ) {
+			global $RACE;
+			$RACE['profile'] = new RACE_Warrior_Profile( $id );
+		}
 	}
 }
 
@@ -764,47 +1030,6 @@ function race_thumb_image() {
 	}
 
 	echo "<img src=\"{$thumb_src}\" alt=\"\" />";
-}
-
-function race_amount_select( $data, $selected = '', $args = array() ) {
-	if ( empty( $data ) )
-		return '';
-
-	extract( array_merge(
-		array(
-			'name'     => 'race_profile[goal]',
-			'id'       => 'race-goal',
-			'indent'   => 5,
-			'echo'     => true
-		),
-		$args
-	), EXTR_SKIP );
-
-	$t = "\n" . str_repeat("\t", $indent);
-	$selected = (int) $selected;
-	$index = '';
-	if ( isset( $tabindex ) )
-		$index = " tabindex=\"$tabindex\"";
-
-	$dollar = "<span class=\"dollar\">\$</span>";
-
-	$sel[] = "$dollar<select name=\"$name\" class=\"amount\" id=\"$id\"$index>";
-	$sel[] = "\t<option value=\"\">....</option>";
-	foreach ( $data as $value ) {
-		$sel[] = "\t<option value=\"$value\">$value</option>";
-	}
-	$sel[] = "</select>\n";
-
-	if ( ! empty( $selected ) ) {
-		$sel = preg_replace("/value=\"$selected\"/", "value=\"$selected\" selected=\"selected\"", $sel, 1 );
-	}
-
-	$tag = implode( "$t", $sel );
-
-	if ( $echo )
-		echo $tag;
-	else
-		return $t . $tag;
 }
 
 
@@ -879,193 +1104,14 @@ function race_footer() {
 	<?php
 }
 
-function race_profile_css_js() {
-	wp_enqueue_script( 'race_admin' );
-?>
-<style type="text/css">
-	#profile-page table.race input {
-		margin: 1px 0;
-		padding: 3px;
-	}
-	/* bottom */
-	#profile-page table.race label {
-		float: left;
-		margin-right: 0.4em; /* IE */
-	}
-	#profile-page table.race td > label {
-		margin-right: 0.5em;
-	}
-	#profile-page table.race label.center,
-	#profile-page table.race label.center input {
-		text-align: center;
-	}
-	#profile-page table.race label input {
-		display: block;
-	}
-	#profile-page table.race td br {
-		clear: both;
-	}
-	#profile-page #race-street { width: 20em; }
-	#profile-page #race-city   { width: 12em; }
-	#profile-page #race-state  { width:  2em; }
-	#profile-page #race-zip    { width:  4em; }
-	#profile-page #race-phone  { width:  8em; }
-	#race-mail-wrap {
-		padding-bottom: 1.5em;
-	}
-	/* top */
-	#profile-page table.race select {
-		margin-right: 2em;
-	}
-	#profile-page table.race label.inline {
-		float: none;
-		display: inline-block;
-	}
-	#profile-page table.race label.inline input {
-		display: inline-block;
-		margin-right: 0.5em;
-		vertical-align: -0.4em; /* IE */
-	}
-	#profile-page table.race label.inline > input {
-		vertical-align: middle;
-	}
-	#profile-page #race-top td span.total {
-		display: inline-block;
-		font-size: 1.5em;
-	}
-	/* neuroses */
-	#profile-page #race-top td span.total,
-	#profile-page table.race label.inline {
-		vertical-align: -0.35em;
-	}
-	/* patch 2.5 default */
-	body.wp-admin #profile-page table.form-table td > #pass-strength-result {
-		margin-bottom: 0.5em;
-	}
-	body.wp-admin #profile-page div.color-option {
-		display: none !important;
-	}
-	span.dollar {
-		font-size: 1.5em;
-		vertical-align: middle;
-	}
-</style>
-<?php
-}
-
-function race_profile_form_top() {
-	// alas the odiousness of inline script (to hide color options)
-?>
-<script type="text/javascript">
-(function(){
-    var pp = document.getElementById('profile-page'), ft = pp.getElementsByTagName('TABLE'), h2 = pp.getElementsByTagName('H2');
-    if (ft[0] && ft[0].className == 'form-table') ft[0].style.display = 'none';
-    if (h2[0] && h2[0].firstChild.nodeType == 3)  h2[0].replaceChild(document.createTextNode("Profile Options"), h2[0].firstChild);
-})();
-</script>
-<?php
-	global $userdata;
-	$defaults = array(
-		'goal'  => '',
-		'total' => 0
-	);
-	$opts = array_merge( $defaults, array_filter( (array) $userdata->race_profile ) );
-	$total = wp_sprintf( '<strong>$%d</strong> pledged so far', (int) $opts['total'] );
-	$goals = array(
-		50, 100, 150, 250, 300, 400, 500, 600, 750, 1000, 1500, 2000
-	);
-	/*
-		TODO: "reset current progress" amount
-			(changing events until target reset in-place)
-
-		TODO: "reset target" of fundraising (different events)
-				means seperated tracking
-
-		TODO: "remaining" ? (diff target total)
-	*/
-?>
-	<table class="form-table race" id="race-top">
-		<tbody>
-			<tr>
-				<th><label for="race-goal">Fundraising Goal</label></th>
-				<td>
-					<?php race_amount_select( $goals, $opts['goal'] ); ?>
-					<label for="race_reset_progress" class="inline"><input type="checkbox" name="race_reset_progress" value="1" id="race_reset_progress" />Reset Current Progress</label>
-					<span class="total">( <?php echo $total; ?> )</span>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-<?php
-}
-
-function race_profile_form_bottom() {
-	global $userdata;
-	$defaults = array(
-		'street' => '',
-		'city'   => '',
-		'state'  => '',
-		'zip'    => '',
-		'phone'  => ''
-	);
-	$opts = array_merge( $defaults, array_filter( (array) $userdata->race_profile ) );
-?>
-	<table class="form-table race" id="race-bottom">
-		<tbody>
-			<tr>
-				<th>Mailing Address</th>
-				<td id="race-mail-wrap">
-					<label for="race-street">Street
-					<input type="text" name="race_profile[street]" value="<?php echo $opts['street'] ?>" id="race-street" /></label><br />
-					<label for="race-city">City
-					<input type="text" name="race_profile[city]" value="<?php echo $opts['city']; ?>" id="race-city" /></label>
-					<label for="race-state" class="center">State
-					<input type="text" name="race_profile[state]" value="<?php echo $opts['state']; ?>" id="race-state" /></label>
-					<label for="race-zip">Zip
-					<input type="text" name="race_profile[zip]" value="<?php echo $opts['zip']; ?>" id="race-zip" /></label>
-				</td>
-			</tr>
-			<tr>
-				<th><label for="race-phone">Phone</label></th>
-				<td>
-					<input type="text" name="race_profile[phone]" value="<?php echo $opts['phone']; ?>" id="race-phone" />
-					<input type="hidden" name="race_profile_update" value="1" />
-				</td>
-			</tr>
-		</tbody>
-	</table>
-<?php
-}
-
-function race_profile_form_process( $uid ) {
-	if ( isset( $_POST['race_profile_update'] ) ) {
-		$posted = array_merge( array(
-			'street' => '',
-			'city'   => '',
-			'state'  => '',
-			'zip'    => '',
-			'phone'  => '',
-			'goal'   => ''
-		), maybe_unserialize( $_POST['race_profile'] ));
-
-		$postage = array_map( 'race_escape', $posted);
-
-		update_usermeta( $uid, 'race_profile', $postage );
-
-		if ( isset( $_POST['race_reset_progress'] ) ) {
-			// TODO: reset fundraising progress processing
-		}
-	}
-}
-
 function race_template_hijack() {
-	global $post;
 	if ( is_front_page() ) {
 		include( STYLESHEETPATH . '/root.php' );
 		exit;
 	}
+	global $post;
 	if ( is_page() && 'warrior' == $post->post_name && $login = array_shift(array_keys( $_GET )) ) {
-		$warrior = new RACE_Warrior( 'donor', $login );
+		$race_donor = new RACE_Warrior_Donor( $login );
 		include( STYLESHEETPATH . '/donate.php' );
 		exit;
 	}
