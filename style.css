@@ -383,17 +383,11 @@ ul.submenu-parent li a {
 
 /* ============ Colors ============ */
 /*
-	Green & Pink:  http://tinyurl.com/6rrwr9
-	
-	33FF00   "lime"    current highlight  (black)
+	1F9900   "very"    very dark green
 	24B300   "dark"    unselected default (white)
+	33FF00   "lime"    current highlight  (black)
 	CCFFBF   "tan"     very light greenish tan (black)
 	99FF80   "mint"    soft light green, accent/block (black)
-	
-	E60066   "barbie"  very pink (white)
-	A10048   "cherry"  deep reddish pink (white)
-	FFBFDC   "bubble"  soft light pink (black)
-	FF80B8   "pepto"   healthy pink
 */
 a:link, .edit-link a, #donate a {
 	color: #1F9900; /* dark */
@@ -610,6 +604,68 @@ body.profile #warrior-sidebar ul.submenu-parent li a {
 body.profile #warrior-sidebar ul.submenu-parent li a:focus,
 body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 	color: #fff;
+}
+
+/* progress meter */
+/* http://meyerweb.com/eric/css/edge/bargraph/demo.html */
+#progress,#progress li,
+#progress #ticks,
+#progress #ticks .tick,
+#progres li.bar { width: 65px; }
+#progress,
+#progress #ticks  { height: 200px; }
+#progress li.goal { height: 198px; }
+
+#progress {
+	margin: 36px 0 0 53px;
+	position: relative;
+	background: #CCFFBF;
+	border: 2px solid #1F9900;
+	font: 9px Helvetica, Geneva, sans-serif;
+}
+#progress ul,#progress li {
+	margin:  0;
+	padding: 0;
+}
+#progress li {
+	position: absolute;
+	bottom: 0;
+	z-index: 2;
+	text-align: center;
+}
+#progress li.goal {
+	padding-top: 2px;
+	color: #000;
+	left: 0;
+}
+#progress li.goal p {
+	margin-top: -2em;
+	font-size: 1.5em;
+}
+#progress li.bar {
+	left: 0;
+	color: #fff;
+	background: #33FF00;
+}
+#progress li.bar p {
+	margin: 5px 0 0;
+	padding: 0;
+	font-size: 2.5em;
+}
+
+#progress #ticks {
+	z-index: 1;
+}
+#progress #ticks .tick {
+	position: relative;
+	margin-bottom: -1px;
+	border-bottom: 1px solid #24B300;
+}
+#progress #ticks .tick p {
+	position: absolute;
+	left: 100%;
+	top: -0.67em;
+	margin: 0 0 0 0.5em;
 }
 
 /* user list */

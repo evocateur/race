@@ -338,10 +338,19 @@ class RaceProfileWidget extends AlephWidget {
 			}
 
 			if ( $this->valid_content ) {
-				$this->setMenu( array(
+				$this->buildMenu( array(
 					'path' => is_profile() ? 'donations/online' : 'warriors/current',
 					'key'  => is_profile() ? 'ID'               : 'post_parent'
 				) );
+				if ( $this->user ) {
+					$this->buildMeter( array(
+						'progress' => 300,
+						'goal' => 500,
+						'ticks' => array(
+							100, 50, 75, 25
+						)
+					) );
+				}
 			}
 		}
 	}
@@ -355,7 +364,7 @@ class RaceProfileWidget extends AlephWidget {
 		$this->user = $user;
 	}
 
-	function setMenu( $args ) {
+	function buildMenu( $args ) {
 		extract( $args );
 		$child = array_shift( query_posts( "pagename=$path" ) );
 		$this->menu = race_build_submenu( (int) $child->{$key} );
@@ -372,13 +381,62 @@ class RaceProfileWidget extends AlephWidget {
 		if ( $echo ) echo $menu; else return $menu;
 	}
 
+	function buildMeter( $args ) {
+		// http://meyerweb.com/eric/css/edge/bargraph/demo.html
+		/*
+			<ul id="progress">
+				<li class="goal">$GOAL
+					<ul>
+						<li class="bar" style="height: 110px;"><p>$CURRENT_PROGRESS</p></li>
+					</ul>
+				</li>
+				<li id="ticks">
+					<div class="tick" style="height: 59px;"><p>$50,000</p></div>
+					<div class="tick" style="height: 59px;"><p>$40,000</p></div>
+					<div class="tick" style="height: 59px;"><p>$30,000</p></div>
+					<div class="tick" style="height: 59px;"><p>$20,000</p></div>
+					<div class="tick" style="height: 59px;"><p>$10,000</p></div>
+				</li>
+			</ul>
+		*/
+		extract( $args );
+		$goal = (int) $goal;
+		$progress = (int) $progress;
+		$complete = 100 * round( ( $progress / $goal ), 2);
+		$meter = array(
+			"<ul id='progress'>",
+			"\t<li class='goal'><p>\$$goal</p>",
+			"\t\t<ul>",
+			"\t\t\t<li class='bar' style='height:$complete%;'><p>\$$progress</p></li>",
+			"\t\t</ul>",
+			"\t</li>",
+			"\t<li id='ticks'>",
+			"\t</li>",
+			"</ul>"
+		);
+		$interval = 100 / count( $ticks );
+		rsort( $ticks );
+		foreach ( $ticks as $tick ) {
+			array_splice( $meter, -2, 0,
+				"\t\t<div class='tick' style='height:$interval%;'><p>$tick<span>%</span></p></div>"
+			);
+		}
+		$this->meter = $meter;
+	}
+
+	function getMeter( $indent = 4, $echo = true ) {
+		if ( empty( $this->meter ) )
+			return '';
+
+		$glue  = "\n" . str_repeat( "\t", $indent );
+		$meter = implode( $glue, $this->meter );
+
+		if ( $echo ) echo $glue . $meter; else return $meter;
+	}
+
 	function displayContent() {
 		$this->getMenu();
-		if ( $this->user ) { ?>
-		<ul id="profile-sidebar">
-			<li><!-- thermometer --></li>
-		</ul>
-		<?php }
+		$this->getMeter();
 	}
 }
 

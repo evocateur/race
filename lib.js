@@ -48,7 +48,7 @@ jQuery(function($) {
 				.addClass('current_page_parent')
 			.end()
 		.filter('.profile')
-			.find('#warrior-sidebar li:last-child')
+			.find('#warrior-sidebar ul.submenu-parent li:last-child')
 				.hide();
 
 		// donor page
