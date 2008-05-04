@@ -198,7 +198,7 @@ function race_build_submenu( $parent = '' ) {
 	$children = wp_list_pages( "title_li=&echo=0&sort_column=menu_order&depth=1&child_of=$parent" );
 
 	if ( $children ) {
-		$output .= "$t<ul class=\"submenu-parent\">";
+		$output .= "$t<ul class=\"submenu-parent\">$t\t";
 		$output .= trim( implode( "$t\t", explode( "\n", $children ) ) );
 		$output .= "$t</ul>$t";
 	}
@@ -370,6 +370,8 @@ class RACE_ProfileMenu  	extends RACE_AlephWidget {
 					'path' => $is_profile ? 'donations/online' : 'warriors/current',
 					'key'  => $is_profile ? 'ID'               : 'post_parent'
 				) );
+				// add filter for customization
+				add_filter('wp_list_pages', array( &$this, 'filter_menu' ), 9);
 			}
 		}
 	}
@@ -382,14 +384,17 @@ class RACE_ProfileMenu  	extends RACE_AlephWidget {
 		$child = array_shift( query_posts( "pagename=$path" ) );
 		$menu  = race_build_submenu( (int) $child->{$key} );
 
+		if ( $echo ) echo $menu; else return $menu;
+	}
+
+	function filter_menu( $menu ) {
 		if ( $this->user_ID ) {
 			// attach userid queryvar to donate link
 			$re = '/(donations\/online\/warrior\/)/';
 			$qv = $this->user->display_name;
 			$menu = preg_replace( $re, "$1?runner=$qv", $menu, 1 );
 		}
-
-		if ( $echo ) echo $menu; else return $menu;
+		return $menu;
 	}
 
 	function display_instance() {
@@ -418,12 +423,7 @@ class RACE_ProgressMeter 	extends RACE_AlephWidget {
 			$this->set_user( $user );
 
 			if ( $this->user ) {
-				$event = 'event_' . RACE_EVENT_ID_HACK;
-				$donors = (array) $this->user->race_donors[$event];
-				$progress = 0;
-				foreach ($donors as $donor => $key) {
-					$progress += (int) $key['amount'];
-				}
+				$progress = race_sum_donations( $this->user );
 				$this->set_args( array(
 					'progress' => $progress,
 					'goal' => $this->profile['goal'],
@@ -792,6 +792,8 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 	}
 
 	function instance_config() {
+		$event_id = (int) $this->profile['event'];
+		$this->event_id = $event_id ? $event_id : RACE_EVENT_ID_HACK;
 		$this->umetakey = 'race_donors';
 		$this->response = NULL;
 		$this->error    = NULL;
@@ -835,7 +837,7 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 		}
 
 		$donor_key = $email;
-		$event_key = 'event_' . RACE_EVENT_ID_HACK;
+		$event_key = 'event_' . $this->event_id;
 
 		if ( $events = get_usermeta( $this->user_ID, $this->umetakey ) ) {
 			// previous record(s)
@@ -850,7 +852,7 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 				}
 			} else {
 				// new array
-				$events[ $event_key ][ $donor_key  ] = $postage;
+				$events[ $event_key ][ $donor_key ] = $postage;
 			}
 		} else {
 			// completely new record
@@ -904,8 +906,13 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 			,'zip'    => ''
 			,'phone'  => ''
 			,'goal'   => ''
-			,'total'  => ''
+			,'event'  => 1
 		), array_filter( (array) $this->profile ) );
+	}
+
+	function get( $key, $echo = true ) {
+		if ( $ok = $this->options[ "$key" ] )
+			if ( $echo ) echo $ok; else return $ok;
 	}
 
 	function hook() {
@@ -922,7 +929,7 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 
 	function css_js() {
 		wp_enqueue_script( 'race_admin' );
-	?>
+?>
 	<style type="text/css">
 		#profile-page table.race input {
 			margin: 1px 0;
@@ -965,6 +972,7 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 		#profile-page table.race label.inline input {
 			display: inline-block;
 			margin-right: 0.5em;
+			margin-left: 2em;
 			vertical-align: -0.4em; /* IE */
 		}
 		#profile-page table.race label.inline > input {
@@ -991,12 +999,13 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 			vertical-align: middle;
 		}
 	</style>
-	<?php
+<?php
 	}
 
 	function form_top() {
 		$is_profile = defined('IS_PROFILE_PAGE') && IS_PROFILE_PAGE;
 		$title = $is_profile ? 'Profile Options' : 'Edit User';
+		// alas the odiousness of inline script (to hide color options)
 ?>
 <script type="text/javascript">
 (function(){
@@ -1006,7 +1015,6 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 })();
 </script>
 <?php
-		// alas the odiousness of inline script (to hide color options)
 		/*
 			TODO: "reset current progress" amount
 				(changing events until target reset in-place)
@@ -1022,66 +1030,63 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 			<tr>
 				<th><label for="race-goal">Fundraising Goal</label></th>
 				<td>
-					<?php $this->amount_select( $this->options['goal'] ); ?>
-					<label for="race_reset_progress" class="inline"><input type="checkbox" name="race_reset_progress" value="1" id="race_reset_progress" />Reset Current Progress</label>
+					<?php $this->amount_select( $this->get('goal', false) ); ?>
 					<span class="total">( <?php echo $this->total_pledged(); ?> )</span>
+					<label for="race_reset_progress" class="inline"><input type="checkbox" name="race_reset_progress" value="1" id="race_reset_progress" />Reset Current Progress</label>
 				</td>
 			</tr>
 		</tbody>
 	</table>
-	<?php }
+<?php
+	}
 
-	function form_bottom() { ?>
+	function form_bottom() {
+?>
 	<table class="form-table race" id="race-bottom">
 		<tbody>
 			<tr>
 				<th>Mailing Address</th>
 				<td id="race-mail-wrap">
 					<label for="race-street">Street
-					<input type="text" name="race_profile[street]" value="<?php echo $this->options['street'] ?>" id="race-street" /></label><br />
+					<input type="text" name="race_profile[street]" value="<?php $this->get('street'); ?>" id="race-street" /></label><br />
 					<label for="race-city">City
-					<input type="text" name="race_profile[city]" value="<?php echo $this->options['city']; ?>" id="race-city" /></label>
+					<input type="text" name="race_profile[city]" value="<?php $this->get('city'); ?>" id="race-city" /></label>
 					<label for="race-state" class="center">State
-					<input type="text" name="race_profile[state]" value="<?php echo $this->options['state']; ?>" id="race-state" /></label>
+					<input type="text" name="race_profile[state]" value="<?php $this->get('state'); ?>" id="race-state" /></label>
 					<label for="race-zip">Zip
-					<input type="text" name="race_profile[zip]" value="<?php echo $this->options['zip']; ?>" id="race-zip" /></label>
+					<input type="text" name="race_profile[zip]" value="<?php $this->get('zip'); ?>" id="race-zip" /></label>
 				</td>
 			</tr>
 			<tr>
 				<th><label for="race-phone">Phone</label></th>
 				<td>
-					<input type="text" name="race_profile[phone]" value="<?php echo $this->options['phone']; ?>" id="race-phone" />
+					<input type="text" name="race_profile[phone]" value="<?php $this->get('phone'); ?>" id="race-phone" />
 					<input type="hidden" name="race_profile_update" value="1" />
 				</td>
 			</tr>
 		</tbody>
 	</table>
-	<?php }
+<?php
+	}
 
 	function form_process( $uid ) {
 		if ( isset( $_POST['race_profile_update'] ) ) {
-			$posted = array_merge( array(
-				'street' => '',
-				'city'   => '',
-				'state'  => '',
-				'zip'    => '',
-				'phone'  => '',
-				'goal'   => ''
-			), maybe_unserialize( $_POST['race_profile'] ));
-
-			$postage = array_map( 'race_escape', $posted);
-
-			update_usermeta( $uid, 'race_profile', $postage );
+			$posted = array_merge( $this->options,
+				maybe_unserialize( $_POST['race_profile'] )
+			);
 
 			if ( isset( $_POST['race_reset_progress'] ) ) {
 				// TODO: reset fundraising progress processing
 			}
+
+			$postage = array_map( 'race_escape', $posted);
+
+			update_usermeta( $uid, 'race_profile', $postage );
 		}
 	}
 
 	function total_pledged() {
-		$total = (int) $this->options['total'];
-		// TODO: actually find total pledged
+		$total = race_sum_donations( $this->user );
 		return wp_sprintf( '<strong>$%d</strong> pledged so far', $total );
 	}
 }
@@ -1169,6 +1174,20 @@ function race_thumb_image() {
 	}
 
 	echo "<img src=\"{$thumb_src}\" alt=\"\" />";
+}
+
+function race_sum_donations( $user ) {
+	if ( ! $user ) return false;
+	$total = 0;
+	if ( array_key_exists( 'race_donors', $user ) ) {
+		$eid = (int) $user->race_profile->event;
+		$event = 'event_' . ( $eid ? $eid : RACE_EVENT_ID_HACK );
+		$donors = (array) $user->race_donors[ $event ];
+		foreach ($donors as $donor => $key) {
+			$total += (int) $key['amount'];
+		}
+	}
+	return $total;
 }
 
 
