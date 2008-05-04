@@ -511,7 +511,7 @@ class RACE_Warrior {
 	}
 
 	function class_config() {
-		race_maybe_update_donor_schema( $this->user_ID ); // TEMPORARY
+		// race_maybe_update_donor_schema( $this->user_ID );
 		$this->amounts = array(
 			'101' => 10,
 			'102' => 20,
@@ -1102,7 +1102,7 @@ function race_maybe_hook_profile() {
 	}
 }
 
-function race_maybe_update_donor_schema( $user_ID ) { // TEMPORARY
+/*function race_maybe_update_donor_schema( $user_ID ) {
 	$new_key = 'race_donors';
 	$event_key = 'event_' . RACE_EVENT_ID_HACK;
 
@@ -1123,7 +1123,7 @@ function race_maybe_update_donor_schema( $user_ID ) { // TEMPORARY
 			}
 		}
 	}
-}
+}*/
 
 
 /********************
