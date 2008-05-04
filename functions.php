@@ -511,6 +511,7 @@ class RACE_Warrior {
 	}
 
 	function class_config() {
+		race_maybe_update_donor_schema( $this->user_ID ); // TEMPORARY
 		$this->amounts = array(
 			'101' => 10,
 			'102' => 20,
@@ -791,6 +792,7 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 	}
 
 	function instance_config() {
+		$this->umetakey = 'race_donors';
 		$this->response = NULL;
 		$this->error    = NULL;
 	}
@@ -835,7 +837,7 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 		$donor_key = $email;
 		$event_key = 'event_' . RACE_EVENT_ID_HACK;
 
-		if ( $events = get_usermeta( $this->user_ID, 'race_donors' ) ) {
+		if ( $events = get_usermeta( $this->user_ID, $this->umetakey ) ) {
 			// previous record(s)
 			if ( array_key_exists( $event_key, $events ) ) {
 				$donors =& $events[ $event_key ];
@@ -855,7 +857,7 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 			$events[ $event_key ][ $donor_key ] = $postage;
 		}
 
-		if ( ! $this->error && $meta = update_usermeta( $this->user_ID, 'race_donors', $events ) ) {
+		if ( ! $this->error && $um = update_usermeta( $this->user_ID, $this->umetakey, $events ) ) {
 			$this->response = $this->mapItemToAmount( $postage['amount'] );
 			return true;
 		} else {
@@ -1096,6 +1098,29 @@ function race_maybe_hook_profile() {
 		if ( $id ) {
 			global $RACE;
 			$RACE['profile'] = new RACE_Warrior_Profile( $id );
+		}
+	}
+}
+
+function race_maybe_update_donor_schema( $user_ID ) { // TEMPORARY
+	$new_key = 'race_donors';
+	$event_key = 'event_' . RACE_EVENT_ID_HACK;
+
+	$old_key = $new_key . '_for_warrior_' . $user_ID;
+	$old_prefix = $event_key . '_donor_';
+
+	if ( $old = get_usermeta( $user_ID, $old_key ) ) {
+		$new = array();
+		foreach ($old as $k => $v) {
+			if ( preg_match( "/^$old_prefix/", $k ) ) {
+				$new[ $v['email'] ] = $v;
+			}
+		}
+		if ( count( $new ) ) {
+			$events = array( "$event_key" => $new );
+			if ( $um = update_usermeta( $user_ID, $new_key, $events ) ) {
+				delete_usermeta( $user_ID, $old_key );
+			}
 		}
 	}
 }
