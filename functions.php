@@ -317,71 +317,125 @@ function race_quadrants_flush() {
 
 // aleph
 if (class_exists('AlephWidget')) {
-class RaceProfileWidget extends AlephWidget {
-	var $menu;
-	var $user;
-	var $user_ID;
+class RACE_AlephWidget  	extends AlephWidget {
 
-	function RaceProfileWidget( $name ) {
+	function RACE_AlephWidget( $name, $valid_pattern ) {
 		$this->AlephWidget( $name );
 		$this->display_title = false;
+		$this->valid_pattern = $valid_pattern;
+	}
+	function configure() {
+		$this->configure_instance();
+	}
+	function displayContent() {
+		$this->display_instance();
 	}
 
-	function configure() {
-		if ( is_user_list() || is_profile() ) {
-			global $post;
-			$this->checkPage( $post );
+	function validate( $page ) {
+		$this->valid_content = preg_match( $this->valid_pattern, $page->slug );
+	}
+	function set_args( $args ) {
+		$this->instance_args = $args;
+	}
+	function set_user( $user ) {
+		if ( ! is_object( $user ) ) {
+			$user = get_userdatabylogin( $user );
+		}
+		$this->user_ID = intval($user->ID);
+		$this->user = $user;
+		$this->profile = $user->race_profile;
+	}
+}
 
-			if ( $this->valid_content && is_profile() ) {
+class RACE_ProfileMenu  	extends RACE_AlephWidget {
+
+	function RACE_ProfileMenu( $name ) {
+		$pattern = "/^author-(list|profile)$/";
+		$this->RACE_AlephWidget( $name, $pattern );
+	}
+
+	function configure_instance() {
+		$is_profile = is_profile();
+		if ( is_user_list() || $is_profile ) {
+			global $post;
+			$this->validate( $post );
+
+			if ( $this->valid_content && $is_profile ) {
 				global $user;
-				$this->setUser( $user );
+				$this->set_user( $user );
 			}
 
 			if ( $this->valid_content ) {
-				$this->buildMenu( array(
-					'path' => is_profile() ? 'donations/online' : 'warriors/current',
-					'key'  => is_profile() ? 'ID'               : 'post_parent'
+				$this->set_args( array(
+					'path' => $is_profile ? 'donations/online' : 'warriors/current',
+					'key'  => $is_profile ? 'ID'               : 'post_parent'
 				) );
-				if ( $this->user ) {
-					$this->buildMeter( array(
-						'progress' => 300,
-						'goal' => 500,
-						'ticks' => array(
-							100, 50, 75, 25
-						)
-					) );
-				}
 			}
 		}
 	}
 
-	function checkPage( $page ) {
-		$this->valid_content = preg_match("/^author-(list|profile)$/", $page->slug );
-	}
-
-	function setUser( $user ) {
-		$this->user_ID = intval($user->ID);
-		$this->user = $user;
-	}
-
-	function buildMenu( $args ) {
-		extract( $args );
+	function build_menu( $echo = true ) {
+		if ( empty( $this->instance_args ) ) {
+			return '';
+		}
+		extract( $this->instance_args );
 		$child = array_shift( query_posts( "pagename=$path" ) );
-		$this->menu = race_build_submenu( (int) $child->{$key} );
-	}
+		$menu  = race_build_submenu( (int) $child->{$key} );
 
-	function getMenu( $echo = true ) {
-		$menu = $this->menu;
 		if ( $this->user_ID ) {
 			// attach userid queryvar to donate link
 			$re = '/(donations\/online\/warrior\/)/';
 			$qv = $this->user->display_name;
 			$menu = preg_replace( $re, "$1?runner=$qv", $menu, 1 );
 		}
+
 		if ( $echo ) echo $menu; else return $menu;
 	}
 
-	function buildMeter( $args ) {
+	function display_instance() {
+		$this->build_menu();
+	}
+}
+
+class RACE_ProgressMeter 	extends RACE_AlephWidget {
+
+	function RACE_ProgressMeter( $name ) {
+		$pattern = "/^(author-profile)$/";
+		$this->RACE_AlephWidget( $name, $pattern );
+	}
+
+	function configure_instance() {
+		global $post, $user;
+		$this->validate( $post );
+
+		if ( array_key_exists( 'runner', $_GET ) ) {
+			$user = $_GET['runner'];
+			$this->valid_content = true;
+		}
+
+		if ( $this->valid_content ) {
+			global $user;
+			$this->set_user( $user );
+
+			if ( $this->user ) {
+				$event = 'event_' . RACE_EVENT_ID_HACK;
+				$donors = (array) $this->user->race_donors[$event];
+				$progress = 0;
+				foreach ($donors as $donor => $key) {
+					$progress += (int) $key['amount'];
+				}
+				$this->set_args( array(
+					'progress' => $progress,
+					'goal' => $this->profile['goal'],
+					'ticks' => array(
+						100, 50, 75, 25
+					)
+				) );
+			}
+		}
+	}
+
+	function build_meter( $echo = true ) {
 		// http://meyerweb.com/eric/css/edge/bargraph/demo.html
 		/*
 			<ul id="progress">
@@ -399,10 +453,14 @@ class RaceProfileWidget extends AlephWidget {
 				</li>
 			</ul>
 		*/
-		extract( $args );
+		if ( empty( $this->instance_args ) ) {
+			return '';
+		}
+		extract( $this->instance_args );
 		$goal = (int) $goal;
 		$progress = (int) $progress;
-		$complete = 100 * round( ( $progress / $goal ), 2);
+		$complete = ( $goal && $progress ) ? 100 * round( ( $progress / $goal ), 2) : 0;
+
 		$meter = array(
 			"<ul id='progress'>",
 			"\t<li class='goal'><p>\$$goal</p>",
@@ -414,6 +472,7 @@ class RaceProfileWidget extends AlephWidget {
 			"\t</li>",
 			"</ul>"
 		);
+
 		$interval = 100 / count( $ticks );
 		rsort( $ticks );
 		foreach ( $ticks as $tick ) {
@@ -421,26 +480,20 @@ class RaceProfileWidget extends AlephWidget {
 				"\t\t<div class='tick' style='height:$interval%;'><p>$tick<span>%</span></p></div>"
 			);
 		}
-		$this->meter = $meter;
-	}
 
-	function getMeter( $indent = 4, $echo = true ) {
-		if ( empty( $this->meter ) )
-			return '';
-
-		$glue  = "\n" . str_repeat( "\t", $indent );
-		$meter = implode( $glue, $this->meter );
+		$glue  = "\n" . str_repeat( "\t", 4 );
+		$meter = implode( $glue, $meter );
 
 		if ( $echo ) echo $glue . $meter; else return $meter;
 	}
 
-	function displayContent() {
-		$this->getMenu();
-		$this->getMeter();
+	function display_instance() {
+		$this->build_meter();
 	}
 }
 
-$RACE_widgets['warrior'] = new RaceProfileWidget( 'Warrior Sidebar' );
+$RACE_widgets['warrior']  = new RACE_ProfileMenu(  'Warrior Sidebar' );
+$RACE_widgets['progress'] = new RACE_ProgressMeter( 'Progress Meter' );
 }
 
 class RACE_Warrior {
@@ -774,32 +827,30 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 			return false;
 		}
 
-		$outer_key = 'race_donors_for_warrior_' . $this->user_ID;
-		$inner_key = 'event_' . RACE_EVENT_ID_HACK . '_donor_' . $email;
+		$donor_key = $email;
+		$event_key = 'event_' . RACE_EVENT_ID_HACK;
 
-		if ( $donors = get_usermeta( $this->user_ID, $outer_key ) ) {
+		if ( $events = get_usermeta( $this->user_ID, 'race_donors' ) ) {
 			// previous record(s)
-			if ( count( $donors ) ) {
+			if ( array_key_exists( $event_key, $events ) ) {
+				$donors =& $events[ $event_key ];
 				// existing array
-				if ( ! array_key_exists( $inner_key, $donors ) ) {
-					$donors[ $inner_key ] = $postage;
+				if ( ! array_key_exists( $donor_key, (array) $donors ) ) {
+					$donors[ $donor_key ] = $postage;
 				} else {
 					$this->setError( 'Duplicate Donor For Event/Runner' );
 					return false;
 				}
 			} else {
-				// single element, into new array
-				$single = maybe_unserialize( $donors[0] );
-				$single_key = 'event_' . RACE_EVENT_ID_HACK . '_donor_' . $single['email'];
-				$donors[ $single_key ] = $single;
-				$donors[ $inner_key  ] = $postage;
+				// new array
+				$events[ $event_key ][ $donor_key  ] = $postage;
 			}
 		} else {
 			// completely new record
-			$donors[ $inner_key ] = $postage;
+			$events[ $event_key ][ $donor_key ] = $postage;
 		}
 
-		if ( ! $this->error && $success = update_usermeta( $this->user_ID, $outer_key, $donors ) ) {
+		if ( ! $this->error && $meta = update_usermeta( $this->user_ID, 'race_donors', $events ) ) {
 			$this->response = $this->mapItemToAmount( $postage['amount'] );
 			return true;
 		} else {
