@@ -460,15 +460,20 @@ class RACE_ProgressMeter 	extends RACE_AlephWidget {
 		$goal = (int) $goal;
 		$progress = (int) $progress;
 		$complete = ( $goal && $progress ) ? 100 * round( ( $progress / $goal ), 2) : 0;
+		$class = '';
+		if ( $complete > 100 ) {
+			$complete = 100;
+			$class = ' class="complete"';
+		}
 
 		$meter = array(
-			"<ul id='progress'>",
-			"\t<li class='goal'><p>\$$goal</p>",
+			"<ul id=\"progress\"$class>",
+			"\t<li class=\"goal\"><p>\$$goal</p>",
 			"\t\t<ul>",
-			"\t\t\t<li class='bar' style='height:$complete%;'><p>\$$progress</p></li>",
+			"\t\t\t<li class=\"bar\" style=\"height:$complete%;\"><p>\$$progress</p></li>",
 			"\t\t</ul>",
 			"\t</li>",
-			"\t<li id='ticks'>",
+			"\t<li id=\"ticks\">",
 			"\t</li>",
 			"</ul>"
 		);
@@ -477,7 +482,7 @@ class RACE_ProgressMeter 	extends RACE_AlephWidget {
 		rsort( $ticks );
 		foreach ( $ticks as $tick ) {
 			array_splice( $meter, -2, 0,
-				"\t\t<div class='tick' style='height:$interval%;'><p>$tick<span>%</span></p></div>"
+			"\t\t<div class=\"tick\" style=\"height:$interval%;\"><p>$tick<span>%</span></p></div>"
 			);
 		}
 
