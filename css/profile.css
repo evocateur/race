@@ -1,0 +1,67 @@
+#profile-page table.race input {
+	margin: 1px 0;
+	padding: 3px;
+}
+/* bottom */
+#profile-page table.race label {
+	float: left;
+	margin-right: 0.4em; /* IE */
+}
+#profile-page table.race td > label {
+	margin-right: 0.5em;
+}
+#profile-page table.race label.center,
+#profile-page table.race label.center input {
+	text-align: center;
+}
+#profile-page table.race label input {
+	display: block;
+}
+#profile-page table.race td br {
+	clear: both;
+}
+#profile-page #race-street { width: 20em; }
+#profile-page #race-city   { width: 12em; }
+#profile-page #race-state  { width:  2em; }
+#profile-page #race-zip    { width:  4em; }
+#profile-page #race-phone  { width:  8em; }
+#race-mail-wrap {
+	padding-bottom: 1.5em;
+}
+/* top */
+#profile-page table.race select {
+	margin-right: 2em;
+}
+#profile-page table.race label.inline {
+	float: none;
+	display: inline-block;
+}
+#profile-page table.race label.inline input {
+	display: inline-block;
+	margin-right: 0.5em;
+	margin-left: 2em;
+	vertical-align: -0.4em; /* IE */
+}
+#profile-page table.race label.inline > input {
+	vertical-align: middle;
+}
+#profile-page #race-top td span.total {
+	display: inline-block;
+	font-size: 1.5em;
+}
+/* neuroses */
+#profile-page #race-top td span.total,
+#profile-page table.race label.inline {
+	vertical-align: -0.35em;
+}
+/* patch 2.5 default */
+body.wp-admin #profile-page table.form-table td > #pass-strength-result {
+	margin-bottom: 0.5em;
+}
+body.wp-admin #profile-page div.color-option {
+	display: none !important;
+}
+span.dollar {
+	font-size: 1.5em;
+	vertical-align: middle;
+}

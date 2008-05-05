@@ -16,8 +16,8 @@ function race_theme_init() {
 	if (!get_option('race_theme_email'))
 		add_option('race_theme_email', 'info@racecharities.org');
 
-	wp_register_script( 'race_pages', RACE_THEME_ROOT_URI . "/lib.js",  array('jquery') );
-	wp_register_script( 'race_admin', RACE_THEME_ROOT_URI . "/admin.js", array('jquery') );
+	wp_register_script( 'race_pages', RACE_THEME_ROOT_URI . "/js/race.js",    array('jquery') );
+	wp_register_script( 'race_admin', RACE_THEME_ROOT_URI . "/js/profile.js", array('jquery') );
 
 	race_theme_init_hooks();
 }
@@ -612,7 +612,7 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 		);
 		$this->ajax_url = RACE_THEME_ROOT_URI . '/ajax.php';
 		wp_enqueue_script( 'jquery-form' );
-		add_action( 'wp_print_scripts', array( &$this, 'hook_css') );
+		add_action( 'wp_print_scripts', array( &$this, 'hook_css'), 9 );
 	}
 
 	function set_links() {
@@ -660,73 +660,9 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 		Output
 	*/
 	function hook_css() {
-?>
-<style type="text/css">
-	#donor table.warrior {
-		line-height: 20px;
-		font-size: 11px;
-		margin-top: 2em;
-		margin-bottom: 20px;
-		width: 100%;
-	}
-	#donor table.warrior input {
-		margin: 1px 0;
-		padding: 2px;
-	}
-	#donor table.warrior label {
-		float: left;
-		margin-right: 0.4em; /* IE */
-	}
-	#donor table.warrior td > label {
-		margin-right: 0.5em;
-	}
-	#donor table.warrior td.center,
-	#donor table.warrior label.center,
-	#donor table.warrior label.center input {
-		text-align: center;
-	}
-	#donor table.warrior label input {
-		display: block;
-	}
-	#donor table.warrior td br {
-		clear: both;
-	}
-	#donor-name,
-	#donor-email { width: 15em; }
-	#donor-city  { width: 12em; }
-	#donor-state { width:  2em; }
-	#donor-amount, #donor-submit {
-		vertical-align: middle;
-	}
-	#donor-amount { font-size: 1.0em; }
-	#donor-submit { font-size: 1.2em; }
-	#donor table.warrior tr.controls {
-		font-size: 1.6em;
-	}
-	#donor table.warrior tr.controls td.submit {
-		padding-top: 1em;
-	}
-	#donor table.warrior th {
-		padding-top: 0.3em;
-		font-size: 1.25em;
-	}
-	#donor table.warrior th,
-	#donor table.warrior tr > td {
-		white-space: nowrap;
-	}
-	#donor table.warrior tr td {
-		vertical-align: top;
-	}
-	#donor table.warrior tr p {
-		white-space: normal;
-		margin: 0.3em 0 0.7em;
-	}
-	#donor tfoot td {
-		padding-top: 2.5em;
-	}
-	#donor #pledge { padding-bottom: 1em; }
-</style>
-<?php
+		$link = '<link rel="stylesheet" type="text/css" href="';
+		$link .= RACE_THEME_ROOT_URI . '/css/donor.css" />';
+		echo "$link\n";
 	}
 
 	function display() {
@@ -934,77 +870,9 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 
 	function css_js() {
 		wp_enqueue_script( 'race_admin' );
-?>
-	<style type="text/css">
-		#profile-page table.race input {
-			margin: 1px 0;
-			padding: 3px;
-		}
-		/* bottom */
-		#profile-page table.race label {
-			float: left;
-			margin-right: 0.4em; /* IE */
-		}
-		#profile-page table.race td > label {
-			margin-right: 0.5em;
-		}
-		#profile-page table.race label.center,
-		#profile-page table.race label.center input {
-			text-align: center;
-		}
-		#profile-page table.race label input {
-			display: block;
-		}
-		#profile-page table.race td br {
-			clear: both;
-		}
-		#profile-page #race-street { width: 20em; }
-		#profile-page #race-city   { width: 12em; }
-		#profile-page #race-state  { width:  2em; }
-		#profile-page #race-zip    { width:  4em; }
-		#profile-page #race-phone  { width:  8em; }
-		#race-mail-wrap {
-			padding-bottom: 1.5em;
-		}
-		/* top */
-		#profile-page table.race select {
-			margin-right: 2em;
-		}
-		#profile-page table.race label.inline {
-			float: none;
-			display: inline-block;
-		}
-		#profile-page table.race label.inline input {
-			display: inline-block;
-			margin-right: 0.5em;
-			margin-left: 2em;
-			vertical-align: -0.4em; /* IE */
-		}
-		#profile-page table.race label.inline > input {
-			vertical-align: middle;
-		}
-		#profile-page #race-top td span.total {
-			display: inline-block;
-			font-size: 1.5em;
-		}
-		/* neuroses */
-		#profile-page #race-top td span.total,
-		#profile-page table.race label.inline {
-			vertical-align: -0.35em;
-		}
-		/* patch 2.5 default */
-		body.wp-admin #profile-page table.form-table td > #pass-strength-result {
-			margin-bottom: 0.5em;
-		}
-		body.wp-admin #profile-page div.color-option {
-			display: none !important;
-		}
-		span.dollar {
-			font-size: 1.5em;
-			vertical-align: middle;
-		}
-	</style>
-<?php
+		$link = '<link rel="stylesheet" type="text/css" href="';
+		$link .= RACE_THEME_ROOT_URI . '/css/profile.css" />';
+		echo "$link\n";
 	}
 
 	function form_top() {
@@ -1207,7 +1075,7 @@ function race_header() {
 
 	// because IE is a friggin retard
 	echo <<<HTML
-<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{$root}/ie.css" /><![endif]-->\n
+<!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{$root}/css/ie.css" /><![endif]-->\n
 HTML;
 
 	wp_enqueue_script( 'race_pages' );
