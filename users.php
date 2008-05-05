@@ -13,7 +13,7 @@
 		?>
 			<li class="user">
 				<a class="user-avatar" href="<?php echo $profile_url; ?>"><?php aleph_the_user_avatar(); ?></a>
-				<h4 class="user-title" id="user-<?php aleph_the_user_ID(); ?>">
+				<h4 class="user-title">
 					<a href="<?php echo $profile_url; ?>"><?php aleph_the_user_complete_name('', ''); ?></a>
 				</h4>
 			</li>

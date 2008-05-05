@@ -7,7 +7,7 @@
 			<div id="profile" class="<?php sandbox_post_class() ?>">
 				<h2 class="profile-title"><span><?php aleph_the_user_complete_name(); ?></span> is a Warrior and on a mission to <em>Fight For Life</em>!</h2>
 <?php aleph_the_user_photo('<div class="user-image">', '</div>'); ?>
-				<div class="entry-content" id="user-<?php aleph_the_user_ID(); ?>">
+				<div class="entry-content">
 <?php aleph_the_user_description(); ?>
 				</div>
 			</div><!-- .post -->
