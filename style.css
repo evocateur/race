@@ -2,7 +2,7 @@
 THEME NAME: RACE Charities
 THEME URI: http://danielstockman.com/race/
 DESCRIPTION: CMS-lite theme for RACE Charities
-VERSION: 0.7
+VERSION: 0.8
 AUTHOR: Daniel Stockman
 AUTHOR Uri: http://evocateur.org/
 TAGS: two columns, green, cms
@@ -56,6 +56,7 @@ body {
 	font-family: Verdana, "Helvetica Neue", Helvetica, sans-serif;
 	background-color: #fff;
 }
+/* top right image */
 #glory {
 	position: absolute;
 	top: 0;
@@ -86,14 +87,6 @@ div.sidebar {
 	width: 100%;
 	background-color: #fff;
 }
-/*
-#wrapper {
-	background-image: url(images/glorybg.png);
-	background-repeat: no-repeat;
-	background-position: right top;
-	background-color: #98FF80;
-}
-*/
 
 /* headings ------------------------------------------------------------------- */
 h1, h2 { text-align: center; }
@@ -147,7 +140,7 @@ body.page h2.entry-title { display: none; }
 /* menu ----------------------------------------------------------------------- */
 #menu {
 	font-size: 0.9em;
-	height: 1.75em;
+	height: 2em;
 	width: 100%;
 	background-color: #98FF80;
 }
@@ -158,13 +151,10 @@ body.page h2.entry-title { display: none; }
 #menu ul li a {
 	font-weight: bold;
 	text-decoration: none;
-	padding: 0.25em 0.5em;
+	padding: 2px 0.5em;
 	border-right: 1px solid #99FF80;
-	line-height: 1.6;
+	line-height: 1.75;
 	float: left;
-}
-#menu ul ul {
-	display: none;
 }
 
 /* content -------------------------------------------------------------------- */

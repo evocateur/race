@@ -1159,7 +1159,7 @@ function race_menu( $before = '', $after = '' ) {
 		$content .= str_replace( array( "\r", "\n", "\t" ), '', $menu );
 		$content .= "</ul>";
 	}
-	return $before . $content . $after;
+	return $before . $content . $after . "\n";
 }
 
 function race_thumb_image() {
@@ -1304,10 +1304,7 @@ function race_nuke_dashboard_widgets() {
 }
 
 function race_sandbox_menu() {
-	// hack hack hack hack hack hack hack hack hack
-	$menu = '<img src="' . RACE_THEME_ROOT_URI . '/images/glorybg.png" id="glory" />';
-	$menu .= "\n" . race_menu( '<div id="menu">', '</div>' );
-	return $menu;
+	return race_menu( '<div id="menu">', '</div>' );
 }
 function race_sandbox_class( $c ) {
 	// remove date crap, untagged
