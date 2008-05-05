@@ -54,13 +54,18 @@ table {
 body {
 	font-size: 1em;
 	font-family: Verdana, "Helvetica Neue", Helvetica, sans-serif;
+	background-color: #fff;
+}
+#glory {
+	position: absolute;
+	top: 0;
+	right: 0;
 }
 
 /* 3 column sidebars on both sides */
 #container {
 	float: left;
 	width: 100%;
-	background-color: #fff;
 }
 #content {
 	margin: 0 190px;
@@ -81,12 +86,14 @@ div.sidebar {
 	width: 100%;
 	background-color: #fff;
 }
+/*
 #wrapper {
 	background-image: url(images/glorybg.png);
 	background-repeat: no-repeat;
 	background-position: right top;
 	background-color: #98FF80;
 }
+*/
 
 /* headings ------------------------------------------------------------------- */
 h1, h2 { text-align: center; }
@@ -102,7 +109,7 @@ body.page h2.entry-title { display: none; }
 /* header --------------------------------------------------------------------- */
 #header {
 	height: 138px;
-	background: url(images/fight_logo.png) 20px top no-repeat;
+	background: #98FF80 url(images/fight_logo.png) 20px top no-repeat;
 }
 #access div.skip-link {
 	position: absolute;
@@ -142,6 +149,7 @@ body.page h2.entry-title { display: none; }
 	font-size: 0.9em;
 	height: 1.75em;
 	width: 100%;
+	background-color: #98FF80;
 }
 #menu ul,
 #menu ul li {

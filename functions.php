@@ -1304,7 +1304,10 @@ function race_nuke_dashboard_widgets() {
 }
 
 function race_sandbox_menu() {
-	return race_menu( '<div id="menu">', '</div>' );
+	// hack hack hack hack hack hack hack hack hack
+	$menu = '<img src="' . RACE_THEME_ROOT_URI . '/images/glorybg.png" id="glory" />';
+	$menu .= "\n" . race_menu( '<div id="menu">', '</div>' );
+	return $menu;
 }
 function race_sandbox_class( $c ) {
 	// remove date crap, untagged
