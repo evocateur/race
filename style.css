@@ -615,7 +615,7 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 #progress li.goal { height: 198px; }
 
 #progress {
-	margin: 36px 0 0 53px;
+	margin: 0 0 0 58px;
 	position: relative;
 	background: #CCFFBF;
 	border: 2px solid #1F9900;
@@ -637,7 +637,6 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 	left: 0;
 }
 #progress li.goal p {
-	margin-top: -2em;
 	font-size: 1.5em;
 }
 #progress li.bar {
