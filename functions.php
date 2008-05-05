@@ -60,6 +60,10 @@ function race_theme_init_hooks() {
 	// wp overrides
 	add_filter('register',  'race_wp_register');
 	add_filter('the_title', 'race_wp_title');
+
+	// race menus
+	add_filter('race_menu',    'race_filter_menu');
+	add_filter('race_submenu', 'race_filter_submenu');
 }
 
 function race_widget_init() {
@@ -196,11 +200,12 @@ function race_build_submenu( $parent = '' ) {
 	$t = "\n" . str_repeat("\t", 4);
 
 	$children = wp_list_pages( "title_li=&echo=0&sort_column=menu_order&depth=1&child_of=$parent" );
+	$children = apply_filters( 'race_submenu', explode( "\n", $children ) );
 
-	if ( $children ) {
+	if ( count( $children ) > 1 ) {
 		$output .= "$t<ul class=\"submenu-parent\">$t\t";
-		$output .= trim( implode( "$t\t", explode( "\n", $children ) ) );
-		$output .= "$t</ul>$t";
+		$output .= trim( implode( "$t\t", $children ) );
+		$output .= "$t</ul>";
 	}
 
 	return $output;
@@ -1147,6 +1152,7 @@ function race_menu( $before = '', $after = '' ) {
 	    $options_wp_list .= '&exclude=' . get_option( 'page_on_front' );
 
 	$menu = wp_list_pages( $options_wp_list );
+	$menu = apply_filters( 'race_menu', $menu );
 
 	if ( $menu ) {
 		$content .= '<ul class="menu-parent">';
@@ -1267,7 +1273,8 @@ function race_template_hijack() {
 		include( STYLESHEETPATH . '/root.php' );
 		exit;
 	}
-	if ( is_page('warrior') && $login = $_GET['runner'] ) {
+	global $pagename;
+	if ( 'warrior' == $pagename && $login = $_GET['runner'] ) {
 		$race_donor = new RACE_Warrior_Donor( $login );
 		include( STYLESHEETPATH . '/donate.php' );
 		exit;
@@ -1324,6 +1331,85 @@ function race_wp_register( $arg ) {
 function race_wp_title( $arg ) {
 	// remove 'protected: ' and 'private: ' from the_title
 	return preg_replace( array('/^Protected: /', '/^Private: /'), '', $arg );
+}
+
+function race_filter_menu( $menu ) {
+	global $pagename;
+	if ( in_array( $pagename, array( 'author-list', 'author-profile' ) ) ) {
+		$menu_array = explode( "\n", $menu );
+		$menu_array = preg_replace(
+			'/^(.*class="[^"]+)(".*\/warriors\/".*)/',
+			"$1 current_page_ancestor$2",
+			$menu_array
+		);
+		$menu = implode( "\n", $menu_array );
+	}
+	return $menu;
+}
+function race_filter_submenu( $menu ) {
+	global $pagename;
+	$pagenames = array(
+		 'login'
+		,'warrior'
+		,'thank-you'
+		,'warriors'
+		,'author-list'
+		,'author-profile'
+	);
+	if ( in_array( $pagename, $pagenames ) ) {
+		switch ($pagename) {
+			// donation before + after
+			case 'thank-you':
+			case 'warrior':
+				$runner = ( array_key_exists( 'runner', $_GET ) )
+					? 'warrior/' . $_GET['runner'] . '/' : '';
+				$regexen = array(
+					'/Donate/i', '/donations\/online\/warrior\//',
+					'/\scurrent_page_item/' // removed
+				);
+				$replace = array( 'Back', "$runner" );
+				$menu = preg_replace( $regexen, $replace, $menu );
+			// warrior profile
+			case 'author-profile':
+				array_splice( $menu, -2, 1 );
+			break;
+			// login landing
+			case 'login':
+				$menu = preg_replace( '/\scurrent_page_item/', '', $menu );
+			break;
+			// warrior accounts + user list
+			case 'author-list':
+			case 'warriors':
+				$logged_in = is_user_logged_in();
+				$site = get_option('siteurl');
+				$home = preg_quote( get_option('home'), '/');
+				$req  = ( $logged_in
+					? $_SERVER['REQUEST_URI']
+					: preg_replace('/^(.*\/warriors).*$/', "$1/login/", $_SERVER['REQUEST_URI'])
+				);
+				$regexen = array(
+					"/$home\/warriors\/signup\//",
+					"/$home\/warriors\/login\//"
+				);
+				$replace = array(
+					"$site" . ( $logged_in
+						? "/wp-admin/profile.php"
+						: "/wp-login.php?action=register"
+					),
+					"$site/wp-login.php?" . ( $logged_in
+						? "action=logout&redirect_to=$req"
+						: "redirect_to=$req"
+					)
+				);
+				if ( $logged_in ) {
+					array_push( $regexen, '/Signup/',  '/Login/' );
+					array_push( $replace, 'Edit Profile', 'Logout' );
+				}
+				$menu = preg_replace( $regexen, $replace, $menu );
+			break;
+		}
+	}
+	return $menu;
 }
 
 ?>

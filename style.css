@@ -421,10 +421,10 @@ ul li.current_page_item a:active {
 	background: #33FF00; /* lime */
 }
 
-ul li.current_page_parent a:link,
-ul li.current_page_parent a:visited,
-ul li.current_page_parent a:hover,
-ul li.current_page_parent a:active {
+ul li.current_page_ancestor a:link,
+ul li.current_page_ancestor a:visited,
+ul li.current_page_ancestor a:hover,
+ul li.current_page_ancestor a:active {
 	color: #333; /* dark grey */
 	background: #CCFFBF; /* tan */
 	border-color: #fff;
