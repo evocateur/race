@@ -370,7 +370,7 @@ ul.submenu-parent li a {
 #ft {
 	text-align: center;
 	font-size: 0.8em;
-	padding: 0.25em 0;
+	padding: 1em 0 0.25em;
 }
 #ft ul.menu-parent {
 	margin: 0.5em 0 1em;
@@ -621,13 +621,13 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 #progress,#progress li,
 #progress #ticks,
 #progress #ticks .tick,
-#progres li.bar { width: 65px; }
+#progress li.bar p { width: 65px; }
 #progress,
 #progress #ticks  { height: 200px; }
 #progress li.goal { height: 198px; }
 
 #progress {
-	margin: 0 0 0 58px;
+	margin: 0 0 15px 58px;
 	position: relative;
 	background: #CCFFBF;
 	border: 2px solid #1F9900;
@@ -657,9 +657,15 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 	background: #33FF00;
 }
 #progress li.bar p {
-	margin: 5px 0 0;
+	margin: 0 auto;
 	padding: 0;
-	font-size: 2.5em;
+	width: 55px;
+	font-size: 2em;
+	background-color: #1F9900;
+	-moz-border-radius:    10px;
+	-khtml-border-radius:  10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
 }
 
 #progress #ticks {
