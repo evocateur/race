@@ -462,14 +462,12 @@ function race_footer() {
 
 function race_template_hijack() {
 	if ( is_front_page() ) {
-		include( STYLESHEETPATH . '/root.php' );
-		exit;
+		include(STYLESHEETPATH . '/templates/root.php');	exit;
 	}
 	global $pagename;
 	if ( 'warrior' == $pagename && $login = $_GET['runner'] ) {
 		$race_donor = new RACE_Warrior_Donor( $login );
-		include( STYLESHEETPATH . '/donate.php' );
-		exit;
+		include(STYLESHEETPATH . '/templates/donate.php');	exit;
 	}
 }
 

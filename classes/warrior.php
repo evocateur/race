@@ -104,7 +104,7 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 			'indent'   => 3,
 			'tabindex' => 1
 		);
-		$this->ajax_url = RACE_THEME_ROOT_URI . '/ajax.php';
+		$this->ajax_url = RACE_THEME_ROOT_URI . '/templates/ajax.php';
 		wp_enqueue_script( 'jquery-form' );
 		add_action( 'wp_print_scripts', array( &$this, 'hook_css'), 9 );
 	}
