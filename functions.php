@@ -575,6 +575,7 @@ function race_filter_submenu( $menu ) {
 				);
 				$replace = array( 'Back', "$runner" );
 				$menu = preg_replace( $regexen, $replace, $menu );
+				// fall through
 			// warrior profile
 			case 'author-profile':
 				array_splice( $menu, -2, 1 );
@@ -582,7 +583,7 @@ function race_filter_submenu( $menu ) {
 			// login landing
 			case 'login':
 				$menu = preg_replace( '/\scurrent_page_item/', '', $menu );
-			break;
+				// fall through
 			// warrior accounts + user list
 			case 'author-list':
 			case 'warriors':
