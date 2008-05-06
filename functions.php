@@ -7,7 +7,7 @@ define( 'RACE_THEME_ROOT_URI', get_stylesheet_directory_uri() );
 define( 'RACE_EVENT_ID_HACK', 1 );
 
 $RACE = array();
-$RACE_widgets = $RACE['widgets'] = array();
+$RACE['widgets'] = array();
 
 add_action('init', 'race_theme_init');
 add_action('widgets_init', 'race_widget_init');
@@ -324,8 +324,8 @@ function race_quadrants_flush() {
 require_once 'classes/warrior.php';
 require_once 'classes/widgets.php';
 
-$RACE_widgets['warrior']  = new RACE_ProfileMenu(  'Warrior Sidebar' );
-$RACE_widgets['progress'] = new RACE_ProgressMeter( 'Progress Meter' );
+$RACE['widgets']['warrior']  = new RACE_ProfileMenu(  'Warrior Sidebar' );
+$RACE['widgets']['progress'] = new RACE_ProgressMeter( 'Progress Meter' );
 
 
 /********************

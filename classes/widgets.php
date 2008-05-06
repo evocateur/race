@@ -11,13 +11,21 @@ class AlephWidget {
 	var $wrap_end;
 	var $display_title;
 
-	function AlephWidget( $name ) {
+	function AlephWidget( $name, $description = '' ) {
 		$this->name = $name;
 		$this->class_name = get_class(&$this);
 		$this->wrap_start = '';
 		$this->wrap_end   = '';
 		$this->display_title = true;
-		register_sidebar_widget( $this->name, array(&$this, 'display'));
+
+		$this->widget_id   = sanitize_title( $name );
+		$this->widget_opts = array( 'classname' => 'widget_'. strtolower( $this->class_name ) );
+		if ( !empty( $description ) )
+			$this->widget_opts['description'] = wp_specialchars( $description );
+
+		wp_register_sidebar_widget(
+			$this->widget_id, $this->name, array( &$this, 'display' ), $this->widget_opts
+		);
 	}
 
 	function display( $args ) {
@@ -63,8 +71,8 @@ class AlephWidget {
 **/
 class RACE_Widget  	extends AlephWidget {
 
-	function RACE_Widget( $name, $valid_pattern ) {
-		$this->AlephWidget( $name );
+	function RACE_Widget( $name, $valid_pattern, $description = '' ) {
+		$this->AlephWidget( $name, $description );
 		$this->display_title = false;
 		$this->valid_pattern = $valid_pattern;
 	}
