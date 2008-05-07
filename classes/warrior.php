@@ -1,6 +1,7 @@
 <?php
 
 class RACE_Warrior {
+	var $user;
 	var $user_ID;
 
 	function RACE_Warrior( $login, $type = 'donor' ) { // constructor
@@ -21,6 +22,9 @@ class RACE_Warrior {
 			'107' => 500,
 			'108' => 750
 		);
+		$this->ajax_url = RACE_THEME_ROOT_URI . '/templates/ajax.php';
+		$this->response = NULL;
+		$this->error    = NULL;
 		$this->instance_config();
 	}
 
@@ -33,10 +37,12 @@ class RACE_Warrior {
 		$this->user    = NULL;
 		$this->user_ID = NULL;
 
-		// $u may be a numeric id
-		$user = ( is_numeric( $u ) )
+		// $u may be a numeric id or an object
+		$user = ( is_object( $u ) ? $u : (
+			is_numeric( $u )
 			? get_userdata( $u )
-			: get_userdatabylogin( $u );
+			: get_userdatabylogin( $u )
+		) );
 
 		if ( $user ) {
 			$this->user      = $user;
@@ -45,6 +51,26 @@ class RACE_Warrior {
 			$this->full_name = $user->first_name . ' ' . $user->last_name;
 			$this->nonce_key = "race-warrior-{$this->user_ID}-{$this->type}";
 		}
+	}
+
+	function valid_request() {
+		return check_ajax_referer( $this->nonce_key , '_ajax_nonce', false );
+	}
+
+	function get_klass_var( $v ) {
+		return $this->{$v};
+	}
+
+	function merge_default_options() {
+		$this->options = array_merge( array(
+			 'street' => ''
+			,'city'   => ''
+			,'state'  => ''
+			,'zip'    => ''
+			,'phone'  => ''
+			,'goal'   => ''
+			,'event'  => 1
+		), array_filter( (array) $this->profile ) );
 	}
 
 	function amount_select( $selected = '' ) {
@@ -89,6 +115,37 @@ class RACE_Warrior {
 		else
 			return $t . $tag;
 	}
+
+	function ajaxFormAction() {
+		echo $this->get_klass_var('ajax_url');
+	}
+
+	function ajaxSpinner() {
+		$spinner = '<img src="'.RACE_THEME_ROOT_URI.'/images/spinner.gif" id="spinner" alt="" />';
+		echo $spinner . "\n";
+	}
+
+	function getFullName() {
+		echo $this->get_klass_var('full_name');
+	}
+
+	function getUserID() {
+		echo $this->get_klass_var('user_ID');
+	}
+
+	function generateNonce( $echo = true ) {
+		$nonce = '<input type="hidden" name="_ajax_nonce"  value="';
+		$nonce .= wp_create_nonce( $this->nonce_key ) . "\" />\n";
+		if ( $echo ) echo $nonce; else return $nonce;
+	}
+
+	function getResponse() {
+		return ( $this->error ) ? $this->error : $this->response;
+	}
+
+	function setError( $text ) {
+		$this->error = $text;
+	}
 }
 
 class RACE_Warrior_Donor	extends RACE_Warrior {
@@ -104,7 +161,6 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 			'indent'   => 3,
 			'tabindex' => 1
 		);
-		$this->ajax_url = RACE_THEME_ROOT_URI . '/templates/ajax.php';
 		wp_enqueue_script( 'jquery-form' );
 		add_action( 'wp_print_scripts', array( &$this, 'hook_css'), 9 );
 	}
@@ -124,22 +180,10 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 		}
 	}
 
-	/*
-		Accessors
-	*/
-	function ajaxNonce( $echo = true ) {
-		$nonce = wp_create_nonce( $this->nonce_key );
-		if ( $echo ) echo $nonce; else return $nonce;
-	}
-
-	function formAction( $echo = true ) {
-		$r = $this->ajax_url;
-		if ( $echo ) echo $r; else return $r;
-	}
-
-	function fullName( $echo = true ) {
-		$r = $this->full_name;
-		if ( $echo ) echo $r; else return $r;
+	function hook_css() {
+		$link = '<link rel="stylesheet" type="text/css" href="';
+		$link .= RACE_THEME_ROOT_URI . '/css/donor.css" />';
+		echo "$link\n";
 	}
 
 	function pageLink( $key = '', $text = 'here', $echo = true ) {
@@ -150,20 +194,11 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 		if ( $echo ) echo $r; else return $r;
 	}
 
-	/*
-		Output
-	*/
-	function hook_css() {
-		$link = '<link rel="stylesheet" type="text/css" href="';
-		$link .= RACE_THEME_ROOT_URI . '/css/donor.css" />';
-		echo "$link\n";
-	}
-
 	function display() {
 		// TODO: modal "proceed to checkout", multiple additions possible...
 		?>
 
-<form name="donor" id="donor" action="<?php $this->formAction(); ?>" method="POST">
+<form name="donor" id="donor" action="<?php $this->ajaxFormAction(); ?>" method="POST">
 <table class="warrior">
 <tfoot>
 	<tr>
@@ -186,7 +221,7 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 		<td id="pledge" class="center" colspan="2">
 			Pledge
 			<?php $this->amount_select(); ?>
-			toward <strong><?php $this->fullName(); ?>&#8217;s</strong> goal!
+			toward <strong><?php $this->getFullName(); ?>&#8217;s</strong> goal!
 		</td>
 	</tr>
 	<tr>
@@ -208,8 +243,8 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 	<tr class="controls">
 		<td class="center submit" colspan="2">
 			<input type="submit" value="Submit" id="donor-submit" tabindex="10" />
-			<input type="hidden" name="warrior_id" value="<?php echo $this->user_ID; ?>" />
-			<input type="hidden" name="_ajax_nonce"  value="<?php $this->ajaxNonce(); ?>" />
+			<input type="hidden" name="warrior_id" value="<?php $this->getUserID(); ?>" />
+			<?php $this->generateNonce(); ?>
 		</td>
 	</tr>
 </tbody>
@@ -230,12 +265,6 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 		$event_id = (int) $this->profile['event'];
 		$this->event_id = $event_id ? $event_id : RACE_EVENT_ID_HACK;
 		$this->umetakey = 'race_donors';
-		$this->response = NULL;
-		$this->error    = NULL;
-	}
-
-	function valid_request() {
-		return check_ajax_referer( $this->nonce_key , '_ajax_nonce', false );
 	}
 
 	function add( $postage ) {
@@ -311,14 +340,6 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 			return false;
 		}
 	}
-
-	function getResponse() {
-		return ( $this->error ) ? $this->error : $this->response;
-	}
-
-	function setError( $text ) {
-		$this->error = $text;
-	}
 }
 
 class RACE_Warrior_Profile	extends RACE_Warrior {
@@ -328,26 +349,21 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 	}
 
 	function instance_config() {
-		$this->hook();
 		$this->select_key = 'goal';
 		// overwrite parent amounts
 		$this->amounts = array(
 			50, 100, 150, 250, 300, 400, 500, 600, 750, 1000, 1500, 2000
 		);
-		$this->options = array_merge( array(
-			 'street' => ''
-			,'city'   => ''
-			,'state'  => ''
-			,'zip'    => ''
-			,'phone'  => ''
-			,'goal'   => ''
-			,'event'  => 1
-		), array_filter( (array) $this->profile ) );
+		$this->merge_default_options();
+
+		if ( is_admin() ) $this->hook();
+		else wp_enqueue_script('jquery-form'); // login
 	}
 
 	function get( $key, $echo = true ) {
 		if ( $ok = $this->options[ "$key" ] )
 			if ( $echo ) echo $ok; else return $ok;
+		return '';
 	}
 
 	function hook() {
@@ -370,9 +386,9 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 	}
 
 	function form_top() {
-		$is_profile = defined('IS_PROFILE_PAGE') && IS_PROFILE_PAGE;
-		$title = $is_profile ? 'Profile Options' : 'Edit User';
+		$title = ( defined('IS_PROFILE_PAGE') && IS_PROFILE_PAGE ) ? 'Profile Options' : 'Edit User';
 		// alas the odiousness of inline script (to hide color options)
+		if ( is_admin() ):
 ?>
 <script type="text/javascript">
 (function(){
@@ -382,6 +398,7 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 })();
 </script>
 <?php
+		endif;
 		/*
 			TODO: "reset current progress" amount
 				(changing events until target reset in-place)
@@ -398,8 +415,8 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 				<th><label for="race-goal">Fundraising Goal</label></th>
 				<td>
 					<?php $this->amount_select( $this->get('goal', false) ); ?>
-					<span class="total">( <?php echo $this->total_pledged(); ?> )</span>
-					<label for="race_reset_progress" class="inline"><input type="checkbox" name="race_reset_progress" value="1" id="race_reset_progress" />Reset Current Progress</label>
+					<span class="total">( <?php echo $this->totalPledged(); ?> )</span>
+					<label for="race_reset_pledges" class="inline"><input type="checkbox" name="race_reset_pledges" value="1" id="race_reset_pledges" />Reset Pledges</label>
 				</td>
 			</tr>
 		</tbody>
@@ -436,25 +453,57 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 <?php
 	}
 
-	function form_process( $uid ) {
+	function form_process() {
 		if ( isset( $_POST['race_profile_update'] ) ) {
 			$posted = array_merge( $this->options,
 				maybe_unserialize( $_POST['race_profile'] )
 			);
 
-			if ( isset( $_POST['race_reset_progress'] ) ) {
+			if ( isset( $_POST['race_reset_pledges'] ) ) {
 				// TODO: reset fundraising progress processing
 			}
 
 			$postage = array_map( 'race_escape', $posted);
 
-			update_usermeta( $uid, 'race_profile', $postage );
+			if ( $success = update_usermeta( $this->user_ID, 'race_profile', $postage ) )
+				$this->response = $success;
+			else
+				$this->setError('Unable to update');
 		}
 	}
 
-	function total_pledged() {
+	function loginLandingForm() {
+		// allow goal reset / change from login landing page
+?>
+<div class="floaty">
+	<h4>Fundraising Goal</h4>
+<form name="landing" id="landing" method="POST" accept-charset="utf-8" action="<?php $this->ajaxFormAction(); ?>">
+<?php $this->form_top(); ?>
+
+	<div class="controls">
+		<input type="submit" value="Submit" id="landing-submit" tabindex="10" />
+		<?php $this->ajaxSpinner(); ?>
+		<input type="hidden" name="warrior_id" value="<?php $this->getUserID(); ?>" />
+		<input type="hidden" name="race_profile_update" value="1" />
+		<?php $this->generateNonce(); ?>
+		<span class="message">Updated</span>
+	</div>
+</form>
+</div>
+<?php
+	}
+
+	function theUserPhoto() {
+		if ( function_exists( 'aleph_get_userphoto_image' ) ) {
+			echo '<img src="'. aleph_get_userphoto_image( $this->user ) ."\" alt=\"User Photo\" />\n";
+		}
+	}
+
+	function totalPledged( $format = true ) {
 		$total = race_sum_donations( $this->user );
-		return wp_sprintf( '<strong>$%d</strong> pledged so far', $total );
+		if ( $format )
+			return wp_sprintf( '<strong>$%d</strong> pledged so far', $total );
+		return $total;
 	}
 }
 

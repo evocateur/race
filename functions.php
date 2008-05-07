@@ -469,6 +469,11 @@ function race_template_hijack() {
 		$race_donor = new RACE_Warrior_Donor( $login );
 		include(STYLESHEETPATH . '/templates/donate.php');	exit;
 	}
+	if ( 'login' == $pagename && is_user_logged_in() ) {
+		global $userdata;
+		$warrior = new RACE_Warrior_Profile( $userdata );
+		include(STYLESHEETPATH . '/templates/login.php');	exit;
+	}
 }
 
 function race_maybe_hook_profile() {

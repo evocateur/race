@@ -69,7 +69,7 @@ class AlephWidget {
 /**
  *	RACE Subclasses
 **/
-class RACE_Widget  	extends AlephWidget {
+class RACE_Widget	extends AlephWidget {
 
 	function RACE_Widget( $name, $valid_pattern, $description = '' ) {
 		$this->AlephWidget( $name, $description );

@@ -5,11 +5,11 @@ jQuery(function($) {
 	);
 	$('table.zebra tr:odd').addClass('alt');
 
-	if ($.fieldValue) {	// only donor page has forms plugin included
+	if ($.fieldValue) {	// only pages with ajax have forms plugin included
 
 		$.ajaxSetup({ cache: false }); // kinda cargo-cultish
 
-		// ajaxify form
+		// /donations/online/warrior/?runner={login}
 		$('#donor').ajaxForm({
 			beforeSubmit: function() {
 				var empties = $(':input', $('#donor')).filter(function() {
@@ -20,13 +20,13 @@ jQuery(function($) {
 					empties[0].focus();
 					return false;
 				}
-				$(':submit').enable(false);
+				$('#donor :submit').enable(false);
 			},
 			success: function(r) {
 				if (!parseInt(r)) {
 					alert(r);
-					$(':submit').enable();
-					$(':text:first').focus();
+					$('#donor :submit').enable();
+					$('#donor :text:first').focus();
 				} else {
 					// $(this).clearForm();
 					var url = "http://bmb.goemerchant.com/cart/cart.aspx" +
@@ -38,5 +38,20 @@ jQuery(function($) {
 				}
 			}
 		});
+
+		// /warriors/login/
+		$('#landing').ajaxForm({
+			beforeSubmit: function() {
+				$('#landing :submit').enable(false);
+				$('#spinner').show();
+			},
+			success: function(r) {
+				$('#spinner').hide();
+				if (parseInt(r)) {
+					$('span.message').fadeIn("slow", function(){$(this).fadeOut(5000);});
+				}
+				$('#landing :submit').enable();
+			}
+		}).find('select, input[type=checkbox]').attr('tabindex', 1);
 	}
 });
