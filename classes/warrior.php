@@ -475,7 +475,7 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 	function loginLandingForm() {
 		// allow goal reset / change from login landing page
 ?>
-<div class="floaty">
+<div class="floaty rounded">
 	<h4>Fundraising Goal</h4>
 <form name="landing" id="landing" method="POST" accept-charset="utf-8" action="<?php $this->ajaxFormAction(); ?>">
 <?php $this->form_top(); ?>

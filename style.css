@@ -274,6 +274,9 @@ textarea#comment {
 	border-radius: 3px;
 	padding: 3px 4px;
 }
+body #wrapper .edit-link a:hover {
+	border-bottom-style: solid;
+}
 
 /* sidebar -------------------------------------------------------------------- */
 div.sidebar h3 {
@@ -292,31 +295,6 @@ div.sidebar * > input#s {
 div.sidebar li {
 	list-style: none;
 	margin: 0.5em 0;
-}
-
-/* meta widget */
-#meta ul {
-	margin: 0 auto 0 25px;
-	/* push administrivia away from submenu */
-	position: absolute;
-	bottom: 16px;
-	left: 16px;
-}
-#meta ul li a {
-	text-align:center;
-	text-decoration: none;
-	padding: 3px 4px;
-	display: block;
-	letter-spacing: normal;
-	border-width: 1px;
-	border-style: solid;
-	-moz-border-radius: 3px;
-	-khtml-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	font-size: 0.8em;
-	border-color: green;
-	width: 80px;
 }
 
 /* submenu widget */
@@ -445,19 +423,6 @@ li.page_item a:hover,
 li.page_item a:active {
 	color: #fff;
 	background: #33FF00; /* lime */
-}
-
-#meta ul li a {
-	color: #eee; /* light grey */
-	background:   #24B300; /* dark */
-	border-color: #24B300; /* dark */
-}
-#meta ul li a:focus,
-#meta ul li a:hover,
-#meta ul li a:active {
-	color: #fff;
-	background:   #33FF00; /* lime */
-	border-color: #33FF00; /* lime */
 }
 
 /* custom front page ---------------------------------------------------------- */
@@ -662,10 +627,6 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 	width: 55px;
 	font-size: 2em;
 	background-color: #1F9900;
-	-moz-border-radius:    10px;
-	-khtml-border-radius:  10px;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
 }
 
 #progress #ticks {
@@ -702,21 +663,22 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 }
 
 #login h2 {
-	margin: 0.75em 0 1em;
+	margin: 0.75em 0;
 }
 #login div.floaty {
 	width: 220px;
 	float: right;
 	padding: 5px 0 15px 10px;
 	border: 2px solid #99FF80;
-	-webkit-border-radius: 10px;
+	margin-left: 1em;
+	position: relative;
 }
 #login div.floaty h4 {
 	margin-top: 0;
 	margin-bottom: 0.5em;
 }
 #login table.race select {
-	font-size: 2em;
+	font-size: 1.3em;
 }
 #login span.total,
 #login span.message,
@@ -731,16 +693,17 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 	white-space: nowrap;
 }
 #login div.user-image {
-	float: left;
-	padding-bottom: 1em;
-	padding-left: 0.5em;
+	display: none;
 }
 
 /* ajax lawl */
 #spinner {
 	display: none;
-	margin: 0;
-	vertical-align: middle;
+}
+#login #spinner {
+	position: absolute;
+	top: 6px;
+	right: 6px;
 }
 
 /* typography ----------------------------------------------------------------- */
@@ -772,6 +735,13 @@ address {
 span.dollar {
 	font-size: 1.5em;
 	vertical-align: top;
+}
+
+.rounded {
+	-moz-border-radius:    10px;
+	-khtml-border-radius:  10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
 }
 /* New gallery feature styles
 	Can't use div.attachment because shortcodes can link to galleries in other posts 

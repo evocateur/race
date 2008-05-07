@@ -222,7 +222,7 @@ class RACE_ProgressMeter 	extends RACE_Widget {
 			"<ul id=\"progress\"$class>",
 			"\t<li class=\"goal\"><p>\$$goal</p>",
 			"\t\t<ul>",
-			"\t\t\t<li class=\"bar\" style=\"height:$complete%;\"><p>\$$progress</p></li>",
+			"\t\t\t<li class=\"bar\" style=\"height:$complete%;\"><p class=\"rounded\">\$$progress</p></li>",
 			"\t\t</ul>",
 			"\t</li>",
 			"\t<li id=\"ticks\">",
