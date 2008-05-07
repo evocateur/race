@@ -123,7 +123,7 @@ class RACE_ProfileMenu  	extends RACE_Widget {
 					'key'  => $is_profile ? 'ID'               : 'post_parent'
 				) );
 				// add filter for customization
-				add_filter('wp_list_pages', array( &$this, 'filter_menu' ), 9);
+				add_filter('race_submenu',  array( &$this, 'filter_submenu') );
 			}
 		}
 	}
@@ -139,12 +139,21 @@ class RACE_ProfileMenu  	extends RACE_Widget {
 		if ( $echo ) echo $menu; else return $menu;
 	}
 
-	function filter_menu( $menu ) {
+	function filter_submenu( $menu ) {
+		// $menu => array
 		if ( $this->user_ID ) {
-			// attach userid queryvar to donate link
-			$re = '/(donations\/online\/warrior\/)/';
-			$qv = $this->user->display_name;
-			$menu = preg_replace( $re, "$1?runner=$qv", $menu, 1 );
+			// make donate link rounded, text change, attach userid queryvar
+			$regex  = array(
+				'/Donate/i',
+				'/(title=)/',
+				'/(donations\/online\/warrior\/)/'
+			);
+			$values = array(
+				'Click to Donate',
+				'class="rounded" $1',
+				"$1?runner={$this->user->display_name}"
+			);
+			$menu = preg_replace( $regex, $values, $menu );
 		}
 		return $menu;
 	}

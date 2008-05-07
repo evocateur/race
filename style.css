@@ -569,6 +569,7 @@ body.profile #warrior-sidebar ul.submenu-parent {
 }
 body.profile #warrior-sidebar ul.submenu-parent li {
 	margin-left: 8px;
+	border-top: none;
 }
 body.profile #warrior-sidebar ul.submenu-parent li a {
 	font-size: 2em;
