@@ -763,6 +763,10 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 #login div.user-image {
 	display: none;
 }
+/* facebox */
+#facebox div.login {
+	width: 600px;
+}
 
 /* ajax lawl */
 #spinner {

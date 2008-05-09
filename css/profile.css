@@ -65,3 +65,7 @@ span.dollar {
 	font-size: 1.5em;
 	vertical-align: middle;
 }
+/* facebox */
+#facebox div.profile {
+	width: 600px;
+}
