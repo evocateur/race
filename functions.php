@@ -16,7 +16,7 @@ function race_theme_init() {
 	if (!get_option('race_theme_email'))
 		add_option('race_theme_email', 'info@racecharities.org');
 
-	wp_register_script( 'race_pages', RACE_THEME_ROOT_URI . "/js/race.js",    array('jquery') );
+	wp_register_script( 'race_global', RACE_THEME_ROOT_URI . "/global.js",    array('jquery') );
 
 	race_theme_init_hooks();
 }
@@ -399,7 +399,7 @@ function race_header() {
 <!--[if lte IE 6]><link rel="stylesheet" type="text/css" href="{$root}/css/ie.css" /><![endif]-->\n
 HTML;
 
-	wp_enqueue_script( 'race_pages' );
+	wp_enqueue_script( 'race_global' );
 }
 
 function race_login_header() {
