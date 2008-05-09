@@ -66,6 +66,39 @@ span.dollar {
 	vertical-align: middle;
 }
 /* facebox */
+#race_message {
+	display: none;
+}
 #facebox div.profile {
 	width: 600px;
+}
+input.clip-me {
+	width: 60%;
+}
+input.clip-me.read-only {
+	border-color: #fff;
+	border-style: solid;
+}
+#facebox div.content h3 {
+	text-align: center;
+	font-size: 1.75em;
+	margin: 0.5em 0;
+}
+#facebox div.content h4 {
+	margin: 0 0 0.5em;
+}
+#facebox div.content p {
+	margin-top: 0;
+}
+#facebox div.content li {
+	list-style: none;
+	padding-left: 0;
+	margin-left: -20px;
+}
+#facebox div.content li a {
+	text-decoration: none;
+}
+#facebox div.content li a img {
+	vertical-align: bottom;
+	margin-right: 4px;
 }

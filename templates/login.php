@@ -5,13 +5,15 @@
 
 <?php if ( is_user_logged_in() ) { the_post(); ?>
 			<div id="login" class="<?php sandbox_post_class() ?>">
-				<h2 class="login-title"><span>Your Profile</span></h2>
-				<div class="user-image">
-					<?php $warrior->theUserPhoto(); ?>
-				</div>
 				<?php $warrior->loginLandingForm(); ?>
 				<div class="entry-content">
 					<?php the_content(); ?>
+				</div>
+				<div id="race_profile_update" style="display:none;">
+					<h3>Thanks for updating your goal</h3>
+					<p>Be sure to update your profile, too!</p>
+					<p>You can add a picture, enter your address information, and even change your password.</p>
+					<a href="<?php bloginfo('siteurl') ?>/wp-admin/profile.php"><button>Update My Profile</button></a>
 				</div>
 			</div><!-- .post -->
 <?php } else { ?>

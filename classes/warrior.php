@@ -414,13 +414,12 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 				<td>
 					<?php $this->amount_select( $this->get('goal', false) ); ?>
 					<span class="total">( <?php echo $this->totalPledged(); ?> )</span>
-					<label for="race_reset_pledges" class="inline"><input type="checkbox" name="race_reset_pledges" value="1" id="race_reset_pledges" />Reset Pledges</label>
+					<!-- <label for="race_reset_pledges" class="inline"><input type="checkbox" name="race_reset_pledges" value="1" id="race_reset_pledges" />Reset Pledges</label> -->
 				</td>
 			</tr>
 		</tbody>
 	</table>
 <?php
-		$this->successMessage(); // hidden initially
 	}
 
 	function form_bottom() {
@@ -450,6 +449,7 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 		</tbody>
 	</table>
 <?php
+		$this->successMessage(); // hidden initially
 	}
 
 	function form_process() {
@@ -465,9 +465,7 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 			$postage = array_map( 'race_escape', $posted);
 
 			if ( $success = update_usermeta( $this->user_ID, 'race_profile', $postage ) ) {
-				if ( 'ajax' == $_POST['race_profile_update'] ) {
-					$this->response = $this->successMessage( true );
-				}
+				$this->response = $success;
 			} else {
 				$this->setError('Unable to update');
 			}
@@ -493,20 +491,39 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 </form>
 </div>
 <?php
+		$this->successMessage();
 	}
 
 	function successMessage( $ajax = false ) {
 		// display after profile update
 		$wurl = $this->donor_url;
+		$anchor = '<a href="'. $wurl .'" title="Donate to RACE Charities" rel="external">REPLACE</a>';
 		$content = <<<HTML
-	<div id="race_message" style="display:none;">
-		<p>Thank you for becoming a RACE Warrior! We greatly appreciate your efforts in helping raise money to save lives. Your custom Warrior Page URL link is provided below. Clicking the link will take you to your custom Warrior Page. If the link does not automatically launch your Browser, please “copy” the link and “paste” it into your Browser’s address bar.</p>
-		<p class="custom-url">$wurl</p>
-		<p>Please use this link to share with your friends, family, and coworkers. E-mail blasts are excellent ways to get your message out to a lot of people in the shortest amount of time. You can also “paste” the link into any website which sends messages such as MySpace, FaceBook, etc. Recipients who access your Warrior Page will be able to read your message, view your photo, see your targeted rund raising goal progress, scroll through your list of donors, and most importantly be able to click the DONATE HERE button, which will walk them through the Online donation steps. Each of your donors’ amounts will be credited toward your goal. All donors will receive an automated Thank you e-mail from the system and you too will be notified via e-mail as soon as a donation is posted to your account.</p>
-		<p>You can also login to your account at any time to edit any of the settings and/or reset your goal after an event is completed as a way to prepare for the next fund raising event you plan to participate in. Once again, on behalf of the entire RACE Community, we thank you very much for helping us in this crusade and look forward to seeing you at an upcoming RACE event soon!</p>
+	<div id="race_message">
+		<h3>Thank you for being a RACE Warrior!</h3>
+		<p>We greatly appreciate your efforts in helping raise money to save lives!</p>
+		<h4>Your Warrior URL:</h4>
+		<p>
+			<input type="text" value="$wurl" class="clip-me read-only" readonly="readonly" />
+			<button class="clipper">Copy URL to Clipboard</button>
+		</p>
+		<h4>Customize your HTML link: (optional)</h4>
+		<p>
+			<input type="text" value="Donate to my goal at RACE Charities!" class="clip-me" id="custom_a_text" />
+			<input type="hidden" value='$anchor' class="clip-me" />
+			<button class="anchor-clipper">Copy HTML Link to Clipboard</button>
+			<br /><small>Text entered here will be the content of the link</small>
+		</p>
+		<p>Use this link to share with your friends, family, and coworkers. E-mail blasts are excellent ways to get your message out to a lot of people in the shortest amount of time.</p>
+		<h4>Share</h4>
+		<ul>
+			<li><a href="$wurl" rel="share facebook"><img src="http://static.ak.fbcdn.net/images/share/facebook_share_icon.gif?0:26981" height="16" width="16" />Facebook</a></li>
+			<li><a href="$wurl" rel="share myspace"><img src="http://cms.myspacecdn.com/cms/post_myspace_icon.gif" height="16" width="16" />MySpace</a></li>
+		</ul>
+		<p>Once again, on behalf of the entire RACE Community, we thank you very much for helping us in this crusade and look forward to seeing you at an upcoming RACE event soon!</p>
 	</div>
 HTML;
-		if ( $ajax ) return 1; else echo $content;
+		if ( $ajax ) return '1'; else echo $content;
 	}
 
 	function theUserPhoto() {

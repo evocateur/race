@@ -1,3 +1,51 @@
+(function($){
+	var services = {
+		facebook: {
+			dest: 'http://www.facebook.com/sharer.php?',
+			args: 'toolbar=0,status=0,width=626,height=436',
+			keys: { u: 'u', t: 't' }
+		},
+		myspace: {
+			dest: 'http://www.myspace.com/Modules/PostTo/Pages/?',
+			args: '',
+			keys: { u: 'c', t: 't' }
+		}
+	}
+	function social_share(e) {
+		var s = services[e.target.rel.split(' ').pop().toLowerCase()],
+			u = s.keys['u'] + '=' + encodeURIComponent(e.target.href),
+			t = s.keys['t'] + '=' + encodeURIComponent("Support My Effort to Raise Awareness of Cancer Early-On"),
+			d = s.dest + u + '&' + t + '&c&l';
+		window.open(d, 'share', s.args);
+		return false;
+	}
+	// hook facebox init to pass config
+	$(document)
+		.bind('init.facebox', function() {
+			$.extend($.facebox.settings, WPFB.options);
+		})
+		.bind('reveal.facebox', function() {
+			if ($('#facebox div.image').length)
+				return;
+			$.clipboardReady(function() {
+				$("#facebox div.content")
+				.find("button.clipper").click(function() {
+					var text = $(this).prev('.clip-me').val();
+					if (text) $.clipboard(text);
+					return false;
+				}).end()
+				.find("button.anchor-clipper").click(function() {
+					var clip = $(this).prevAll('.clip-me');
+					var text = clip[0].value;
+					text = text.replace(/REPLACE/, clip[1].value);
+					if (text) $.clipboard(text);
+					return false;
+				}).end()
+				.find('a[rel^=share]').click(social_share);
+			}, { swfpath: WPFB.site + "/wp-content/themes/race/js/jquery.clipboard.swf" });
+		});
+})(jQuery);
+
 jQuery(function($) {
 	$('#header h1 a').attr('title','Click to return to RACE Charities homepage');
 	$('#blog-description').html(
@@ -46,11 +94,12 @@ jQuery(function($) {
 				$('#spinner').show();
 			},
 			success: function(r) {
+				if (parseInt(r) === 1 & 'object' == typeof WPFB)
+					$.facebox({div:'#race_profile_update'}, 'login');
+				else
+					alert(r);
 				$('#spinner').hide();
 				$('#landing :submit').enable();
-				if ('object' == typeof WPFB) {
-					$.facebox({div:'#race_message'}, 'login');
-				}
 			}
 		}).find('select, input[type=checkbox]').attr('tabindex', 1);
 	}
@@ -86,16 +135,26 @@ jQuery(function($) {
 
 		// if updated, pop a facebox with "response"
 		if (window.location.search.indexOf('updated=true') >= 0) {
-			// hook facebox init to pass config
-			$(document).bind('init.facebox', function() {
-				$.extend($.facebox.settings, WPFB.options);
-			});
 			// bind facebox launch to custom event
 			profile.bind('updated', function() {
 				$.facebox({div:'#race_message'}, 'profile');
+			});
+			// go to login page after timeout
+			$(document).bind('close.facebox', function() {
+				setTimeout(function() {
+					window.location = WPFB.home + '/warriors/login/';
+				}, 500);
 			});
 			// trigger facebox hook after timeout
 			setTimeout(function(){ profile.triggerHandler('updated') }, 1000);
 		}
 	}
 });
+/*
+	$.clipboardReady(function() {
+		$("a").click(function() {
+			$.clipboard("You clicked on a link and copied this text!");
+			return false;
+		});
+	}, { swfpath: WPFB.site + "/wp-content/themes/race/js/jquery.clipboard.swf" });
+*/

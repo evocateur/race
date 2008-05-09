@@ -765,7 +765,56 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 }
 /* facebox */
 #facebox div.login {
-	width: 600px;
+	width: 400px;
+}
+input.clip-me {
+	width: 40%;
+}
+input.clip-me.read-only {
+	border-color: #fff;
+	border-style: solid;
+}
+#race_message small {
+	font-size: smaller;
+}
+#race_profile_update h3,
+#race_message h3 {
+	text-align: center;
+	font-size: 1.75em;
+	margin: 0.5em 0;
+}
+#race_message h4 {
+	margin: 0 0 0.5em;
+}
+#race_message p {
+	margin-top: 0;
+}
+#race_message li {
+	list-style: none;
+	padding-left: 0;
+	margin-left: -20px;
+}
+#race_message li a {
+	text-decoration: none;
+}
+#race_message li a img {
+	vertical-align: bottom;
+	margin-right: 4px;
+}
+#race_profile_update {
+	font-size: small;
+	text-align: center;
+}
+#race_profile_update h3 {
+	margin-bottom: 0.75em;
+}
+#race_profile_update p {
+	margin: 0.5em 0;
+	text-align: left;
+}
+#race_profile_update button {
+	font-size: 1.5em;
+	margin: 1em auto;
 }
 
 /* ajax lawl */
