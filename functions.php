@@ -17,7 +17,6 @@ function race_theme_init() {
 		add_option('race_theme_email', 'info@racecharities.org');
 
 	wp_register_script( 'race_pages', RACE_THEME_ROOT_URI . "/js/race.js",    array('jquery') );
-	wp_register_script( 'race_admin', RACE_THEME_ROOT_URI . "/js/profile.js", array('jquery') );
 
 	race_theme_init_hooks();
 }
@@ -392,9 +391,7 @@ function race_sum_donations( $user ) {
 // ACTIONS
 
 function race_header() {
-	if ( is_admin() )
-		return '';
-	// link lib.js, conditional ie stylesheet inside header (non-admin)
+	// link global.js, conditional ie stylesheet inside header
 	$root = RACE_THEME_ROOT_URI;
 
 	// because IE is a friggin retard

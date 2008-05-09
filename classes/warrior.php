@@ -168,7 +168,6 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 			'tabindex' => 1
 		);
 		wp_enqueue_script( 'jquery-form' );
-		add_action( 'wp_print_scripts', array( &$this, 'hook_css'), 9 );
 	}
 
 	function set_links() {
@@ -184,12 +183,6 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 		foreach ( $defaults as $link => $path ) {
 			$this->links[$link] = $home . $path;
 		}
-	}
-
-	function hook_css() {
-		$link = '<link rel="stylesheet" type="text/css" href="';
-		$link .= RACE_THEME_ROOT_URI . '/css/donor.css" />';
-		echo "$link\n";
 	}
 
 	function pageLink( $key = '', $text = 'here', $echo = true ) {
@@ -385,7 +378,6 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 	}
 
 	function css_js() {
-		wp_enqueue_script( 'race_admin' );
 		$link = '<link rel="stylesheet" type="text/css" href="';
 		$link .= RACE_THEME_ROOT_URI . '/css/profile.css" />';
 		echo "$link\n";
