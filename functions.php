@@ -16,7 +16,9 @@ function race_theme_init() {
 	if (!get_option('race_theme_email'))
 		add_option('race_theme_email', 'info@racecharities.org');
 
-	wp_register_script( 'race_global', RACE_THEME_ROOT_URI . "/js/global.js", array('jquery') );
+	$root = RACE_THEME_ROOT_URI;
+	wp_register_script( 'race_global', "$root/js/global.js",           array('jquery') );
+	wp_register_script( 'jquery-clip', "$root/js/jquery.clipboard.js", array('jquery') );
 
 	race_theme_init_hooks();
 }
