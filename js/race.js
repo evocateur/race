@@ -47,10 +47,10 @@ jQuery(function($) {
 			},
 			success: function(r) {
 				$('#spinner').hide();
-				if (parseInt(r)) {
-					$('span.message').fadeIn("slow", function(){$(this).fadeOut(5000);});
-				}
 				$('#landing :submit').enable();
+				if ('object' == typeof WPFB) {
+					$.facebox({div:'#race_message'});
+				}
 			}
 		}).find('select, input[type=checkbox]').attr('tabindex', 1);
 	}

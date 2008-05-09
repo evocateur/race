@@ -50,6 +50,7 @@ class RACE_Warrior {
 			$this->profile   = $user->race_profile;
 			$this->full_name = $user->first_name . ' ' . $user->last_name;
 			$this->nonce_key = "race-warrior-{$this->user_ID}-{$this->type}";
+			$this->donor_url = get_option('home') . '/warrior/' . $user->user_nicename . '/';
 		}
 	}
 
@@ -137,6 +138,11 @@ class RACE_Warrior {
 		$nonce = '<input type="hidden" name="_ajax_nonce"  value="';
 		$nonce .= wp_create_nonce( $this->nonce_key ) . "\" />\n";
 		if ( $echo ) echo $nonce; else return $nonce;
+	}
+
+	function donorLink() {
+		$url = $this->get_klass_var('donor_url');
+		echo '<a href="', $url, '">Sponsor me at RACE Charities</a>';
 	}
 
 	function getResponse() {
@@ -422,6 +428,7 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 		</tbody>
 	</table>
 <?php
+		$this->successMessage(); // hidden initially
 	}
 
 	function form_bottom() {
@@ -465,10 +472,13 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 
 			$postage = array_map( 'race_escape', $posted);
 
-			if ( $success = update_usermeta( $this->user_ID, 'race_profile', $postage ) )
-				$this->response = $success;
-			else
+			if ( $success = update_usermeta( $this->user_ID, 'race_profile', $postage ) ) {
+				if ( 'ajax' == $_POST['race_profile_update'] ) {
+					$this->response = $this->successMessage( true );
+				}
+			} else {
 				$this->setError('Unable to update');
+			}
 		}
 	}
 
@@ -484,13 +494,27 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 		<input type="submit" value="Submit" id="landing-submit" tabindex="10" />
 		<?php $this->ajaxSpinner(); ?>
 		<input type="hidden" name="warrior_id" value="<?php $this->getUserID(); ?>" />
-		<input type="hidden" name="race_profile_update" value="1" />
+		<input type="hidden" name="race_profile_update" value="ajax" />
 		<?php $this->generateNonce(); ?>
 		<span class="message">Updated</span>
 	</div>
 </form>
 </div>
 <?php
+	}
+
+	function successMessage( $ajax = false ) {
+		// display after profile update
+		$wurl = $this->donor_url;
+		$content = <<<HTML
+	<div id="race_message" style="display:none;">
+		<p>Thank you for becoming a RACE Warrior! We greatly appreciate your efforts in helping raise money to save lives. Your custom Warrior Page URL link is provided below. Clicking the link will take you to your custom Warrior Page. If the link does not automatically launch your Browser, please “copy” the link and “paste” it into your Browser’s address bar.</p>
+		<p class="custom-url">$wurl</p>
+		<p>Please use this link to share with your friends, family, and coworkers. E-mail blasts are excellent ways to get your message out to a lot of people in the shortest amount of time. You can also “paste” the link into any website which sends messages such as MySpace, FaceBook, etc. Recipients who access your Warrior Page will be able to read your message, view your photo, see your targeted rund raising goal progress, scroll through your list of donors, and most importantly be able to click the DONATE HERE button, which will walk them through the Online donation steps. Each of your donors’ amounts will be credited toward your goal. All donors will receive an automated Thank you e-mail from the system and you too will be notified via e-mail as soon as a donation is posted to your account.</p>
+		<p>You can also login to your account at any time to edit any of the settings and/or reset your goal after an event is completed as a way to prepare for the next fund raising event you plan to participate in. Once again, on behalf of the entire RACE Community, we thank you very much for helping us in this crusade and look forward to seeing you at an upcoming RACE event soon!</p>
+	</div>
+HTML;
+		if ( $ajax ) return 1; else echo $content;
 	}
 
 	function theUserPhoto() {
