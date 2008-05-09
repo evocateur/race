@@ -49,7 +49,7 @@ jQuery(function($) {
 				$('#spinner').hide();
 				$('#landing :submit').enable();
 				if ('object' == typeof WPFB) {
-					$.facebox({div:'#race_message'});
+					$.facebox({div:'#race_message'}, 'login');
 				}
 			}
 		}).find('select, input[type=checkbox]').attr('tabindex', 1);
@@ -92,7 +92,7 @@ jQuery(function($) {
 			});
 			// bind facebox launch to custom event
 			profile.bind('updated', function() {
-				$.facebox({div:'#race_message'});
+				$.facebox({div:'#race_message'}, 'profile');
 			});
 			// trigger facebox hook after timeout
 			setTimeout(function(){ profile.triggerHandler('updated') }, 1000);
