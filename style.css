@@ -185,13 +185,6 @@ body.page h2.entry-title { display: none; }
 #content table td {
 	padding: 0.4em 0.6em;
 }
-/* zebra-striped table rows */
-#content table.zebra tr.alt td {
-	background-color: #ccc;
-}
-#content table.zebra {
-	border: 1px solid #aaa;
-}
 
 /* hanging bullets and numbers in content lists */
 #content ul,    #content ol {
