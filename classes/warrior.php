@@ -355,7 +355,9 @@ class RACE_Warrior_Profile	extends RACE_Warrior {
 		);
 		$this->merge_default_options();
 
-		if ( is_admin() ) $this->hook();
+		global $pagenow;
+		if ( is_admin() && preg_match( '/(profile|user-edit).php/', $pagenow ) )
+			add_action( "load-$pagenow", array( &$this, 'hook' ) );
 		else wp_enqueue_script('jquery-form'); // login
 	}
 
