@@ -54,9 +54,10 @@ function race_theme_init_hooks() {
 	add_filter('wp_dashboard_widgets', 'race_nuke_dashboard_widgets', 1);
 
 	// sandbox
-	add_filter('sandbox_menu', 'race_sandbox_menu');
-	add_filter('body_class',   'race_sandbox_class');
-	add_filter('post_class',   'race_sandbox_class');
+	add_filter('globalnav_menu', 'race_sandbox_menu');
+
+	add_filter('body_class', 'race_sandbox_class');
+	add_filter('post_class', 'race_sandbox_class');
 
 	// wp overrides
 	add_filter('register',  'race_wp_register');
@@ -127,7 +128,7 @@ function race_build_gallery() {
 		return false;
 
 	extract( array(
-		'orderby'    => 'menu_order ASC, ID ASC',
+		'orderby'    => 'menu_order ID',
 		'id'         => $post->ID,
 		'itemtag'    => 'li',
 		'captiontag' => 'p',
