@@ -110,6 +110,7 @@ h5 { font-size: 1.0em; margin-top: 0.99em; }
 
 h2.entry-title { clear: both; }
 body.page h2.entry-title { display: none; }
+body.parent-pageid-5 h2.entry-title { display: block; }/* show title on event pages */
 
 /* header --------------------------------------------------------------------- */
 #header {
