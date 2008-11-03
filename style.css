@@ -608,9 +608,9 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 	clear: both;
 }
 #donor-name,
-#donor-email { width: 15em; }
+#donor-email { width: 17em; }
 #donor-city  { width: 12em; }
-#donor-state { width:  2em; }
+#donor-state { width: auto; display: block; }
 #donor-amount, #donor-submit {
 	vertical-align: middle;
 }

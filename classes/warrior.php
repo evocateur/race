@@ -195,6 +195,7 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 
 	function display() {
 		// TODO: modal "proceed to checkout", multiple additions possible...
+		global $DonorList;
 		?>
 
 <form name="donor" id="donor" action="<?php $this->ajaxFormAction(); ?>" method="POST">
@@ -233,10 +234,10 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 	</tr>
 	<tr>
 		<td>
-			<label for="donor_name">Name<input type="text" name="donor[name]" value="" tabindex="1" id="donor-name" /></label><br />
-			<label for="donor_email">Email<input type="text" name="donor[email]" value="" tabindex="1" id="donor-email" /></label><br />
-			<label for="donor_city">City<input type="text" name="donor[city]" value="" tabindex="1" id="donor-city" /></label>
-			<label for="donor_state" class="center">State<input type="text" name="donor[state]" value="" tabindex="1" id="donor-state" /></label>
+			<label for="donor-name">Name<input type="text" name="donor[name]" value="" tabindex="1" id="donor-name" /></label><br />
+			<label for="donor-email">Email<input type="text" name="donor[email]" value="" tabindex="1" id="donor-email" /></label><br />
+			<label for="donor-city">City<input type="text" name="donor[city]" value="" tabindex="1" id="donor-city" /></label>
+			<label for="donor-state" class="center">State<?php echo $DonorList->state_select(); ?></label>
 		</td>
 	</tr>
 	<tr class="controls">
@@ -270,21 +271,21 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 		/*
 			eventually, real tables will replace the utterly hacky usermeta stash
 
-		race_donor
-			id  	PK (FK = race_donation.donor_id)
+		race_donor_list
+			id  	PK (FK = race_donations.donor_id)
 			name
 			email	(unique)
 			city
 			state	FK (states.id)
 
-		race_donation
-			id  		PK (FK = ?)
+		race_donations
+			id  		PK
 			donor_id	FK (race_donor)
 			event_id	FK (race_event)
 			user_id		FK (users)
-			amount	(int)
+			amount	 (int)
 
-		race_event
+		race_events
 			id  	PK (FK = usermeta->race_profile->current_event_id)
 			name	IDX
 			date

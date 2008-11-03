@@ -10,7 +10,7 @@
 			args: '',
 			keys: { u: 'c', t: 't' }
 		}
-	}
+	};
 	function social_share(e) {
 		var s = services[e.target.rel.split(' ').pop().toLowerCase()],
 			u = s.keys['u'] + '=' + encodeURIComponent(e.target.href),
@@ -60,7 +60,7 @@ jQuery(function($) {
 		$('#donor').ajaxForm({
 			beforeSubmit: function() {
 				var empties = $(':input', $('#donor')).filter(function() {
-					return 0 === $.trim(this.value).length
+					return 0 === $.trim(this.value).length;
 				});
 				if (empties.length) {
 					alert('Please fill in all fields.');
@@ -70,7 +70,7 @@ jQuery(function($) {
 				$('#donor :submit').enable(false);
 			},
 			success: function(r) {
-				if (!parseInt(r)) {
+				if (!parseInt(r, 10)) {
 					alert(r);
 					$('#donor :submit').enable();
 					$('#donor :text:first').focus();
@@ -93,7 +93,7 @@ jQuery(function($) {
 				$('#spinner').show();
 			},
 			success: function(r) {
-				if (parseInt(r) === 1 & 'object' == typeof WPFB)
+				if (parseInt(r, 10) === 1 & 'object' == typeof WPFB)
 					$.facebox({div:'#race_profile_update'}, 'login');
 				else
 					alert(r);
@@ -145,7 +145,7 @@ jQuery(function($) {
 				}, 500);
 			});
 			// trigger facebox hook after timeout
-			setTimeout(function(){ profile.triggerHandler('updated') }, 1000);
+			setTimeout(function(){ profile.triggerHandler('updated'); }, 1000);
 		}
 	}
 });
