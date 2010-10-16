@@ -221,15 +221,19 @@ class RACE_ProgressMeter 	extends RACE_Widget {
 		$goal = (int) $goal;
 		$progress = (int) $progress;
 		$complete = ( $goal && $progress ) ? 100 * round( ( $progress / $goal ), 2) : 0;
+
 		$class = '';
+		$style = '';
+
+		// adjustments for exceeding goal
 		if ( $complete > 100 ) {
-			$complete = 100;
+			$style = ' style="margin-top:' . (($complete - 100) * 2) + 10 . 'px"'; // + 10 for previous menu item
 			$class = ' class="complete"';
 		}
 
 		$meter = array(
-			"<ul id=\"progress\"$class>",
-			"\t<li class=\"goal\"><p>\$$goal</p>",
+			"<ul id=\"progress\"$style>",
+			"\t<li class=\"goal\"><p$class>\$$goal</p>",
 			"\t\t<ul>",
 			"\t\t\t<li class=\"bar\" style=\"height:$complete%;\"><p class=\"rounded\">\$$progress</p></li>",
 			"\t\t</ul>",

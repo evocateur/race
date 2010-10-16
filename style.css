@@ -646,7 +646,8 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 
 /* progress meter */
 /* http://meyerweb.com/eric/css/edge/bargraph/demo.html */
-#progress,#progress li,
+#progress,
+#progress li,
 #progress #ticks,
 #progress #ticks .tick,
 #progress li.bar p { width: 65px; }
@@ -661,7 +662,8 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 	border: 2px solid #1F9900;
 	font: 9px Helvetica, Geneva, sans-serif;
 }
-#progress ul,#progress li {
+#progress ul,
+#progress li {
 	margin:  0;
 	padding: 0;
 }
@@ -705,6 +707,17 @@ body.profile #warrior-sidebar ul.submenu-parent li a:hover {
 	left: 100%;
 	top: -0.67em;
 	margin: 0 0 0 0.5em;
+}
+
+#progress li.goal p.complete {
+	position: relative;
+	z-index: 3;
+	top: -4px;
+	left: -47px;
+	color: #777;
+	width: 113px;
+	text-align: left;
+	border-top: 1px dashed #1F9900;
 }
 
 /* user list */
