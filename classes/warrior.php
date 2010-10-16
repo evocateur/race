@@ -340,6 +340,23 @@ class RACE_Warrior_Pledge	extends RACE_Warrior {
 			return false;
 		}
 	}
+
+	function nukeCachedPage() {
+		if ( function_exists('wp_cache_clean_cache') && function_exists('wp_cache_get_cookies_values') ) {
+			global $blogcacheid, $wp_cache_gzip_encoding;
+
+			// copied from wp-cache-phase1.php
+			$hashprefix = $blogcacheid . md5(
+				aleph_get_user_profile_url( $this->user_ID ) .
+				$wp_cache_gzip_encoding .
+				wp_cache_get_cookies_values()
+			);
+
+			// hashprefix should now resemble that used for a given warrior url
+			// e.g., http://racecharities.org/warrior/ereusser/
+			wp_cache_clean_cache($hashprefix);
+		}
+	}
 }
 
 class RACE_Warrior_Profile	extends RACE_Warrior {
@@ -542,7 +559,6 @@ HTML;
 		return $total;
 	}
 }
-
 
 /*function race_maybe_update_donor_schema( $user_ID ) {
 	$new_key = 'race_donors';

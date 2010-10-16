@@ -15,7 +15,8 @@ if ( isset( $_POST['warrior_id'] ) ) {
 	if ( isset( $_POST['donor'] ) ) {
 		$pledge = new RACE_Warrior_Pledge( $param );
 		if ( $pledge->valid_request() )
-			$pledge->add( $_POST['donor'] );
+			if ( $pledge->add( $_POST['donor'] ) )
+				$pledge->nukeCachedPage();
 		else
 			$pledge->setError( 'Invalid Referer' );
 		$race_ajax_response = $pledge->getResponse();
