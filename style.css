@@ -541,6 +541,7 @@ body.home #primary,
 	border: 1px solid #24B300;
 	padding: 0.5em;
 	background-color: #CCFFBF;
+	margin: 0 1em 0.5em 0;
 }
 #profile div.user-image img {
 	float: left;
