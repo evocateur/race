@@ -227,7 +227,8 @@ class RACE_ProgressMeter 	extends RACE_Widget {
 
 		// adjustments for exceeding goal
 		if ( $complete > 100 ) {
-			$style = ' style="margin-top:' . (($complete - 100) * 2) + 10 . 'px"'; // + 10 for previous menu item
+			$style = ' style="margin-top:' . ((($complete - 100) * 2) + 10) . 'px"';
+			// + 10 for previous menu item
 			$class = ' class="complete"';
 		}
 
