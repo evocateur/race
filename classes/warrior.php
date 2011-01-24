@@ -200,9 +200,9 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 		$citystatezip = $adminUser->city . ', ' . $adminUser->state . ' ' . $adminUser->zip;
 		?>
 		<address>
-			<?php echo $fullname ?><br />
-			<?php echo $address ?><br />
-			<?php echo $citystatezip ?>
+			<?php echo $fullname; ?><br />
+			<?php echo $address; ?><br />
+			<?php echo $citystatezip; ?>
 		</address>
 <?php
 	}
