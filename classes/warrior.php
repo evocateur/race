@@ -194,10 +194,10 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 	}
 
 	function getDonationMailingAddress() {
-		$id = 1; // admin
-		$fullname = get_usermeta($id, 'first_name') . ' ' . get_usermeta($id, 'last_name');
-		$address = get_usermeta($id, 'street');
-		$citystatezip = get_usermeta($id, 'city') . ', ' . get_usermeta($id, 'state') . ' ' . get_usermeta($id, 'zip');
+		$adminUser = get_userdatabylogin('admin');
+		$fullname = $adminUser->first_name . ' ' . $adminUser->last_name;
+		$address = $adminUser->street;
+		$citystatezip = $adminUser->city . ', ' . $adminUser->state . ' ' . $adminUser->zip;
 		?>
 		<address>
 			<?php echo $fullname ?><br />
@@ -220,7 +220,7 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 			<p class="emphatic note"><strong>Note</strong>: All donations are final, no refunds. <?php $this->pageLink('privacy', 'View the privacy policy'); ?>.</p>
 			<p>RACE Charities is a 501(c)3 organization with all donations being tax deductible.  Donations received will go toward Glory’s original vision of fighting cancer and advancing all early detection research and development. Becca Murfin is the Glory Gensch Fund trustee and handles the accounting as well as the donation statements and 'Thank You' letters.</p>
 			<p>Donation Checks can be mailed and made payable to:</p>
-			<address><?php echo get_usermeta(1, 'street'); ?></address>
+			<address><?php echo get_userdatabylogin('admin')->street; ?></address>
 <?php
 			// this->getDonationMailingAddress(); // based on id of admin user (1)
 ?>
