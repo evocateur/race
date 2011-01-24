@@ -193,6 +193,20 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 		if ( $echo ) echo $r; else return $r;
 	}
 
+	function getDonationMailingAddress() {
+		$id = 1; // admin
+		$fullname = get_usermeta($id, 'first_name') . ' ' . get_usermeta($id, 'last_name');
+		$address = get_usermeta($id, 'street');
+		$citystatezip = get_usermeta($id, 'city') . ', ' . get_usermeta($id, 'state') . ' ' . get_usermeta($id, 'zip');
+		?>
+		<address>
+			<?php echo $fullname ?><br />
+			<?php echo $address ?><br />
+			<?php echo $citystatezip ?>
+		</address>
+<?php
+	}
+
 	function display() {
 		// TODO: modal "proceed to checkout", multiple additions possible...
 		global $DonorList;
@@ -206,11 +220,9 @@ class RACE_Warrior_Donor	extends RACE_Warrior {
 			<p class="emphatic note"><strong>Note</strong>: All donations are final, no refunds. <?php $this->pageLink('privacy', 'View the privacy policy'); ?>.</p>
 			<p>RACE Charities is a 501(c)3 organization with all donations being tax deductible.  Donations received will go toward Glory’s original vision of fighting cancer and advancing all early detection research and development. Becca Murfin is the Glory Gensch Fund trustee and handles the accounting as well as the donation statements and 'Thank You' letters.</p>
 			<p>Donation Checks can be mailed and made payable to:</p>
-			<address>
-				RACE Charities, Inc.<br />
-				P.O. Box 1976<br />
-				Denver, CO 80201
-			</address>
+<?php
+			this->getDonationMailingAddress(); // based on id of admin user (1)
+?>
 			<p>Each donor is added to the official <?php $this->pageLink('club', 'RACE Charities Warrior List'); ?>.</p>
 			<p>Please consider joining us in our fundraising efforts as a <?php $this->pageLink('warrior', 'WARRIOR-RUNNER'); ?>. You do not have to actually run in a RACE event in order to become an offical WARRIOR-RUNNER. <?php $this->pageLink('signup', 'Sign up to become a WARRIOR-RUNNER here') ?>. Each WARRIOR-RUNNER sends their custom hyperlink to people to donate to their own specific fund-raising account.</p>
 		</td>
